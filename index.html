@@ -120,6 +120,8 @@ button.chip{cursor:pointer}
 .games span.on{opacity:1;color:var(--paper);background:var(--g);border-color:var(--g)}
 .tk.is-ej{filter:grayscale(.8);opacity:.62}
 .tk.is-ej:hover,.tk.is-ej:focus-within{filter:grayscale(.3);opacity:.85}
+.vacio{display:flex;flex-direction:column;gap:6px;padding:18px;border:1.5px dashed var(--line);border-radius:10px;background:var(--paper);font-size:14px;color:var(--muted)}
+.vacio b{color:var(--ink);font-size:15px}
 .ej-note{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:10px 12px}
 .tk-est{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
 .est{border-left:4px solid var(--line);padding:8px 0 8px 12px;display:flex;flex-direction:column;gap:6px}
@@ -763,7 +765,12 @@ function ocrISO(y, m, d) {
   return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
 }
 // cifra inicial 6, 8 o 9 leída en lugar de 0 cuando el valor no cabe en el rango (p. ej. "65" por "05")
-function ocrCero(x, max) { return x > max && x >= 60 && x % 10 >= 1 && [6, 8, 9].includes(Math.floor(x / 10)) && x % 10 <= max ? x % 10 : x; }
+function ocrCero(x, max) {
+  if (x <= max) return x;
+  if (x >= 60 && x % 10 >= 1 && [6, 8, 9].includes(Math.floor(x / 10)) && x % 10 <= max) return x % 10;
+  if ([6, 8, 9].includes(x % 10) && x - (x % 10) >= 10 && x - (x % 10) <= max) return x - (x % 10);
+  return x;
+}
 function ocrFechas(T, hoy) {
   const out = [];
   let m;
@@ -804,8 +811,9 @@ function ocrApuestas(T, juego) {
   const [n, max] = cfg, out = [];
   for (let line of T.split("\n")) {
     if (/JOKER|MILLON|REINTEGRO|CLAVE|PRECIO|IMPORTE|EUR|TOTAL|FECHA|HORA|\d{1,2}[:]\d{2}|\d{1,2}\/\d{1,2}\/\d{2}/.test(line)) continue;
-    // índice de apuesta al principio: "1.", "1:", "1)", "A:", "1A", "A1"
-    line = line.replace(/^\s*(?:\d{1,2}\s*[A-H]?|[A-H]\s*\d?)\s*[.):\-]\s*/, " ").replace(/^\s*[A-H]\s+(?=\d)/, " ");
+    // índice de apuesta al principio ("1.", "1:", "1)", "A:", "1A"), aunque haya basura delante ("Lu 1. 01 10…")
+    line = line.replace(/^[^\d]{0,6}?(?:\b\d{1,2}\s*[A-H]?|\b[A-H]\s*\d?)\s*[.):\-]+\s*(?=\d)/, " ").replace(/^\s*[A-H]\s+(?=\d)/, " ");
+    const pad = !/(^|[^\d])\d(?!\d)/.test(line.replace(/\*/g, " ")); // los resguardos imprimen siempre dos cifras
     let toks = ocrNumerosLinea(line).filter((x) => x !== -1).map((x) => ocrCero(x, max));
     if (toks.length < n) continue;
     let nums, rest;
@@ -814,13 +822,14 @@ function ocrApuestas(T, juego) {
       const off = toks.length >= 8 && toks[0] <= 10 ? 1 : 0;
       nums = toks.slice(off, off + 5); rest = toks.slice(off + 5);
     } else {
-      const off = toks.length === n + 1 && toks[0] <= 10 && toks[0] < toks[1] ? 1 : 0;
+      const valido = (arr) => arr.length === n && arr.every((x) => x >= 1 && x <= max) && new Set(arr).size === n;
+      const off = toks.length === n + 1 && toks[0] <= 10 && (!valido(toks.slice(0, n)) || toks[0] < toks[1]) && valido(toks.slice(1, n + 1)) ? 1 : 0;
       nums = toks.slice(off, off + n); rest = toks.slice(off + n);
       // apuestas múltiples: hasta 11 números (Primitiva) en la misma línea
       if (rest.length && rest.length <= 5 && rest.every((x) => x >= 1 && x <= max && !nums.includes(x))) { nums = nums.concat(rest); rest = []; }
     }
     if (nums.some((x) => x < 1 || x > max) || new Set(nums).size !== nums.length) continue;
-    const ap = { numeros: nums.slice().sort((a, b) => a - b), estrellas: [] };
+    const ap = { numeros: nums.slice().sort((a, b) => a - b), estrellas: [], pad };
     if (juego === "euromillones") {
       const st = rest.map((x) => ocrCero(x, 12)).filter((x) => x >= 1 && x <= 12).slice(0, 2);
       if (st.length < 2 || st[0] === st[1]) continue;
@@ -843,6 +852,7 @@ function ocrBoleto(texto, hoy) {
   const T = ocrNormaliza(texto);
   const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
   let juego = ocrJuegoTexto(T);
+  if (juego === "elgordo" && !ocrApuestas(T, "elgordo").length && ocrApuestas(T, "primitiva").length) juego = "primitiva";
   if (!juego) {
     juego = ocrJuegoEstructura(T);
     if (juego) dudas.push("No se ha leído el nombre del juego: revisa que sea " + { primitiva: "La Primitiva (o Bonoloto)", euromillones: "Euromillones", elgordo: "El Gordo", loteria_nacional: "Lotería Nacional", once: "un cupón de la ONCE" }[juego] + ".");
@@ -878,6 +888,57 @@ function ocrBoleto(texto, hoy) {
   if (juego !== "euromillones" && b.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
   return { boletos: [b] };
 }
+// Combina varias lecturas de la misma foto: votos por apuesta y por dato
+function ocrCombinar(textos, hoy) {
+  const res = textos.map((t) => ({ t: ocrNormaliza(t), r: ocrBoleto(t, hoy) })).filter((x) => x.r.boletos.length);
+  if (!res.length) return ocrBoleto(textos.join("\n"), hoy);
+  const voto = (vals) => { const c = new Map(); for (const v of vals) if (v !== null && v !== undefined && v !== "") c.set(JSON.stringify(v), (c.get(JSON.stringify(v)) || 0) + 1); let best = null, n = 0; for (const [k, v] of c) if (v > n) { best = JSON.parse(k); n = v; } return best; };
+  const bs = res.map((x) => x.r.boletos[0]);
+  // juego: el leído en el texto pesa más que el deducido
+  const juego = voto(bs.filter((b) => !b.dudas.some((d) => /nombre del juego/.test(d))).map((b) => b.juego)) || voto(bs.map((b) => b.juego));
+  const delJuego = bs.filter((b) => b.juego === juego);
+  const out = Object.assign({}, delJuego[0], { juego });
+  out.fechas = voto(delJuego.map((b) => (b.fechas && b.fechas.length ? b.fechas : null))) || [];
+  for (const k of ["reintegro", "joker", "millon", "numero", "serie", "fraccion"]) out[k] = voto(delJuego.map((b) => b[k]));
+  // apuestas: cuántas dice el resguardo ("3 APUESTA(S)") y las más votadas
+  let esperadas = null;
+  for (const x of res) { const m = x.t.match(/\b(\d{1,2})\s*APUESTA/); if (m && +m[1] >= 1 && +m[1] <= 12) { esperadas = +m[1]; break; } }
+  // cada línea leída en varias pasadas forma un grupo de variantes; gana la de dos cifras y más votada
+  const cands = [];
+  for (const b of delJuego) for (const a of b.apuestas || []) {
+    const k = a.numeros.join(",") + "|" + a.estrellas.join(",");
+    let c = cands.find((x) => x.k === k);
+    if (!c) { c = { k, a, n: 0 }; cands.push(c); }
+    c.n++;
+  }
+  const parecidas = (x, y) => x.a.numeros.length === y.a.numeros.length && x.a.numeros.filter((v) => y.a.numeros.includes(v)).length >= x.a.numeros.length - 2;
+  const grupos = [];
+  for (const c of cands) { const g = grupos.find((gr) => gr.some((y) => parecidas(c, y))); if (g) g.push(c); else grupos.push([c]); }
+  let elegidos = grupos.map((g, i) => ({ i, total: g.reduce((t, c) => t + c.n, 0), mejor: g.slice().sort((x, y) => (y.a.pad ? 1 : 0) - (x.a.pad ? 1 : 0) || y.n - x.n)[0], dudoso: g.length > 1 }));
+  if (esperadas) elegidos = elegidos.sort((x, y) => y.total - x.total).slice(0, esperadas).sort((x, y) => x.i - y.i);
+  out.apuestas = elegidos.map((e) => ({ numeros: e.mejor.a.numeros, estrellas: e.mejor.a.estrellas }));
+  const dudosas = elegidos.filter((e) => e.dudoso).map((e) => elegidos.indexOf(e) + 1);
+  // datos en los que las lecturas no coinciden
+  const discrepan = [];
+  for (const [k, nom] of [["reintegro", "el reintegro"], ["joker", "el Joker"], ["millon", "el código de El Millón"], ["numero", "el número"], ["serie", "la serie"]]) {
+    const vals = new Set(delJuego.map((b) => b[k]).filter((v) => v !== null && v !== undefined && v !== ""));
+    if (vals.size > 1) discrepan.push(nom);
+  }
+  const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
+  if (juego !== "loteria_nacional" && juego !== "once") {
+    if (!out.apuestas.length) dudas.push("No se han podido leer las apuestas: escríbelas.");
+    else if (esperadas && out.apuestas.length < esperadas) dudas.push("El resguardo indica " + esperadas + " apuestas y solo se han leído " + out.apuestas.length + ": añade las que falten.");
+    else dudas.push("Se han leído " + out.apuestas.length + (out.apuestas.length > 1 ? " apuestas" : " apuesta") + (esperadas ? " (las que indica el resguardo)" : "") + ": compruébalas.");
+    if (juego !== "euromillones" && out.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
+  } else if (!out.numero) dudas.push("No se ha leído el número de 5 cifras: escríbelo.");
+  if (!out.fechas.length) dudas.push("No se ha leído la fecha del sorteo: escríbela.");
+  if (delJuego.some((b) => b.dudas.some((d) => /nombre del juego/.test(d))) && !bs.some((b) => b.juego === juego && !b.dudas.some((d) => /nombre del juego/.test(d)))) dudas.push(delJuego[0].dudas.find((d) => /nombre del juego/.test(d)));
+  if (dudosas.length) dudas.push("Revisa con atención la apuesta " + dudosas.join(", ") + ": las lecturas no coinciden del todo.");
+  if (discrepan.length) dudas.push("Revisa " + discrepan.join(", ") + ": las lecturas no coinciden.");
+  out.dudas = dudas;
+  out.esperadas = esperadas;
+  return { boletos: [out] };
+}
 /*OCR-END*/
 let ocrWorker = null;
 function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No se pudo descargar " + src)); document.head.append(sc); }); }
@@ -894,7 +955,7 @@ async function prepararOCR(file, modo, giro) {
   const im = g.getImageData(0, 0, c.width, c.height), d = im.data, n = d.length / 4;
   const y = new Uint8ClampedArray(n);
   let min = 255, max = 0;
-  for (let i = 0; i < n; i++) { const v = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; y[i] = v; if (v < min) min = v; if (v > max) max = v; }
+  for (let i = 0; i < n; i++) { const v = 0.8 * d[i * 4] + 0.2 * (0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 0.701; y[i] = v; if (v < min) min = v; if (v > max) max = v; } // casi solo canal rojo: lo impreso en rojo desaparece
   const k = 255 / Math.max(1, max - min);
   for (let i = 0; i < n; i++) y[i] = (y[i] - min) * k;
   if (modo === "bin") {
@@ -924,28 +985,26 @@ async function leerConOCR(file, progreso) {
     progreso("Preparando lector…");
     ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
   }
-  const pasadas = [["gris", 0, "3"], ["bin", 0, "6"], ["bin", 0, "11"], ["gris", 90, "3"], ["gris", 270, "3"]];
-  let mejor = null, mejorP = -1, textos = [];
-  for (let i = 0; i < pasadas.length; i++) {
-    const [modoImg, giro, psm] = pasadas[i];
-    ocrWorker._paso = "Lectura " + (i + 1) + "/" + pasadas.length;
-    progreso(ocrWorker._paso);
-    const img = await prepararOCR(file, modoImg, giro);
-    await ocrWorker.setParameters({ tessedit_pageseg_mode: psm, tessedit_char_whitelist: "" });
-    const { data } = await ocrWorker.recognize(img);
-    textos.push(data.text);
-    const res = ocrBoleto(data.text, hoyISO());
-    const p = puntuacionOCR(res);
-    if (p > mejorP) { mejor = res; mejorP = p; }
-    const b = res.boletos[0];
-    // suficiente: juego leído y apuestas o número encontrados
-    if (b && !b.dudas.some((x) => /nombre del juego|No se han podido|5 cifras|fecha/.test(x)) && ((b.apuestas || []).length || b.numero)) break;
-    if (i === 2 && mejor.boletos.length) break; // los giros solo si no se ha leído nada
-  }
-  // como último recurso, combinar todos los textos
-  if (!mejor.boletos.length || !((mejor.boletos[0].apuestas || []).length || mejor.boletos[0].numero)) {
-    const comb = ocrBoleto(textos.join("\n"), hoyISO());
-    if (puntuacionOCR(comb) > mejorP) mejor = comb;
+  const textos = [];
+  const pasar = async (lista, total, desde) => {
+    for (let i = 0; i < lista.length; i++) {
+      const [modoImg, giro, psm] = lista[i];
+      ocrWorker._paso = "Lectura " + (desde + i + 1) + "/" + total;
+      progreso(ocrWorker._paso);
+      const img = await prepararOCR(file, modoImg, giro);
+      await ocrWorker.setParameters({ tessedit_pageseg_mode: psm, tessedit_char_whitelist: "" });
+      const { data } = await ocrWorker.recognize(img);
+      textos.push(data.text);
+    }
+  };
+  // cuatro lecturas distintas de la misma foto; se combinan por votos
+  await pasar([["bin", 0, "6"], ["bin", 0, "4"], ["gris", 0, "3"], ["bin", 0, "11"]], 4, 0);
+  let mejor = ocrCombinar(textos, hoyISO());
+  const vacia = (r) => !r.boletos.length || !((r.boletos[0].apuestas || []).length || r.boletos[0].numero);
+  if (vacia(mejor)) {
+    // quizá la foto está de lado
+    await pasar([["bin", 90, "6"], ["bin", 270, "6"]], 6, 4);
+    mejor = ocrCombinar(textos, hoyISO());
   }
   const b = mejor.boletos[0];
   if (b && (b.juego === "loteria_nacional" || b.juego === "once") && !b.numero) {
@@ -1189,7 +1248,7 @@ function refrescarTarjeta(t) {
   c.res.replaceChildren(...vistaResultados(t, info));
   c.info = info;
 }
-function lista() { return tickets.length ? tickets : (ticketsReady || !db ? EJEMPLOS : []); }
+function lista() { return tickets; }
 function renderTodo() {
   const L = lista(), box = $("tickets");
   const act = document.activeElement;
@@ -1198,8 +1257,10 @@ function renderTodo() {
     if (prev && act && prev.art.contains(act) && prev.juego === t.juego) { refrescarTarjeta(t); return prev.art; }
     const c = construirTarjeta(t); c.juego = t.juego; cards.set(t.id, c); return c.art;
   });
-  if (!L.length) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Cargando tus boletos…"));
-  else if (L[0].ejemplo) nodes.unshift(el("p", { class: "ej-note", text: "Ejemplos para ver cómo funciona (atenuados). Desaparecen en cuanto añadas tu primer boleto." }));
+  if (!L.length && !(ticketsReady || !db)) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Cargando tus boletos…"));
+  else if (!L.length) nodes.push(el("div", { class: "vacio" },
+    el("b", { text: "Todavía no has añadido ningún boleto." }),
+    el("span", { text: "Pulsa «Hacer foto» o «Subir fotos» arriba y después «Leer fotos». Si el sorteo ya se ha celebrado, verás aquí mismo el resultado y si tiene premio; si no, cuándo se sortea." })));
   box.replaceChildren(...nodes);
   renderResumen(L);
 }
@@ -1211,6 +1272,7 @@ function renderResumen(L) {
   const ej = L.length && L[0].ejemplo;
   const usados = new Set(ej ? [] : L.map((t) => t.juego));
   document.querySelectorAll("#gamesBar span").forEach((s) => s.classList.toggle("on", usados.has(s.dataset.j)));
+  $("summary").hidden = !L.length;
   $("summary").replaceChildren(
     el("div", {}, el("span", { class: "sub", text: ej ? "Boletos de ejemplo" : "Boletos" }), el("b", { text: String(L.length) })),
     el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Premiados" }), el("b", { text: String(prem) })),
