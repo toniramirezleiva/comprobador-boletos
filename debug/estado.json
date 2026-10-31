@@ -1,0 +1,45 @@
+{
+ "EMIL": {
+  "url": "https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id=EMIL&celebrados=true&fechaInicioInclusiva=20261028&fechaFinInclusiva=20261031",
+  "status": 200,
+  "bytes": 4031,
+  "type": "application/json;charset=UTF-8"
+ },
+ "LAPR": {
+  "url": "https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id=LAPR&celebrados=true&fechaInicioInclusiva=20261028&fechaFinInclusiva=20261031",
+  "status": 200,
+  "bytes": 3235,
+  "type": "application/json;charset=UTF-8"
+ },
+ "BONO": {
+  "url": "https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id=BONO&celebrados=true&fechaInicioInclusiva=20261028&fechaFinInclusiva=20261031",
+  "status": 200,
+  "bytes": 6189,
+  "type": "application/json;charset=UTF-8"
+ },
+ "ELGR": {
+  "url": "https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id=ELGR&celebrados=true&fechaInicioInclusiva=20261028&fechaFinInclusiva=20261031",
+  "status": 200,
+  "bytes": 81,
+  "type": "application/json;charset=UTF-8"
+ },
+ "LNAC": {
+  "url": "https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id=LNAC&celebrados=true&fechaInicioInclusiva=20261028&fechaFinInclusiva=20261031",
+  "status": 200,
+  "bytes": 7659,
+  "type": "application/json;charset=UTF-8"
+ },
+ "ONCE_html": {
+  "url": "https://www.juegosonce.es/resultados-cupon-diario",
+  "status": 200,
+  "bytes": 119546,
+  "type": "text/html;charset=UTF-8"
+ },
+ "ONCE_cuponazo_html": {
+  "url": "https://www.juegosonce.es/resultados-cuponazo",
+  "status": 200,
+  "bytes": 119575,
+  "type": "text/html;charset=UTF-8"
+ },
+ "_hora": "2026-10-31T08:59:09.258186Z"
+}
