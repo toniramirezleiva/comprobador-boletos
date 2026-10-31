@@ -1,112 +1,102 @@
 {
- "actualizado": "2026-10-31T09:58:22+01:00",
+ "actualizado": "2026-10-31T10:02:47+01:00",
  "sorteos": [
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": false,
-   "complementario": null,
-   "completo": true,
-   "estrellas": [],
-   "fecha": "2026-10-30",
-   "fuente": "https://www.juegosonce.es/resultados-cuponazo",
-   "joker": null,
+   "id": "once_2026-10-30",
    "juego": "once",
-   "millon": null,
-   "notas": "Número 38661, serie 088. Importes por cupón; premios no acumulables. La página de resultados no mostraba números/series adicionales.",
+   "fecha": "2026-10-30",
+   "titulo": "Cuponazo",
    "numeros": [],
-   "precioDecimo": 3,
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
    "premios": {},
    "premiosNumericos": [
     {
      "concepto": "5 cifras y serie",
-     "importe": 6000000,
-     "serie": "088",
      "tipo": "exacto",
-     "valor": "38661"
+     "valor": "38661",
+     "serie": 88,
+     "importe": 6000000.0
     },
     {
      "concepto": "5 cifras",
-     "importe": 40000,
-     "serie": null,
      "tipo": "exacto",
-     "valor": "38661"
+     "valor": "38661",
+     "serie": null,
+     "importe": 40000.0
     },
     {
      "concepto": "4 primeras cifras",
-     "importe": 500,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "3866"
+     "valor": "3866",
+     "serie": null,
+     "importe": 500.0
     },
     {
      "concepto": "4 últimas cifras",
-     "importe": 500,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "8661"
+     "valor": "8661",
+     "serie": null,
+     "importe": 500.0
     },
     {
      "concepto": "3 primeras cifras",
-     "importe": 50,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "386"
+     "valor": "386",
+     "serie": null,
+     "importe": 50.0
     },
     {
      "concepto": "3 últimas cifras",
-     "importe": 50,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "661"
+     "valor": "661",
+     "serie": null,
+     "importe": 50.0
     },
     {
      "concepto": "2 primeras cifras",
-     "importe": 6,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "38"
+     "valor": "38",
+     "serie": null,
+     "importe": 6.0
     },
     {
      "concepto": "2 últimas cifras",
-     "importe": 6,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "61"
+     "valor": "61",
+     "serie": null,
+     "importe": 6.0
     },
     {
-     "concepto": "Reintegro primera cifra",
-     "importe": 3,
-     "serie": null,
+     "concepto": "Primera cifra",
      "tipo": "inicio",
-     "valor": "3"
+     "valor": "3",
+     "serie": null,
+     "importe": 3.0
     },
     {
-     "concepto": "Reintegro última cifra",
-     "importe": 3,
-     "serie": null,
+     "concepto": "Última cifra",
      "tipo": "terminacion",
-     "valor": "1"
+     "valor": "1",
+     "serie": null,
+     "importe": 3.0
     }
    ],
-   "reintegro": null,
-   "titulo": "ONCE Cuponazo · viernes 30/10/2026",
-   "id": "once_2026-10-30"
+   "acumulables": false,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Número 38661, serie 088. En un mismo cupón no se acumulan premios.",
+   "fuente": "https://www.juegosonce.es/resultados-cuponazo",
+   "actualizado": "2026-10-31T10:02:44+01:00"
   },
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": true,
-   "complementario": null,
-   "completo": true,
-   "estrellas": [
-    3,
-    12
-   ],
-   "fecha": "2026-10-30",
-   "fuente": "euromillones.com.es + euro-millions.com (combinación coincidente; loteriasyapuestas.es no accesible)",
-   "joker": null,
+   "id": "euromillones_2026-10-30",
    "juego": "euromillones",
-   "millon": "GXM62123",
-   "notas": "Importes por acertante en España. 5+2: bote, sin acertantes. 5: sin acertantes en España (importe europeo por acertante).",
+   "fecha": "2026-10-30",
+   "titulo": "Sorteo 87",
    "numeros": [
     3,
     12,
@@ -114,39 +104,42 @@
     17,
     37
    ],
-   "precioDecimo": null,
+   "estrellas": [
+    3,
+    12
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "GXM62123",
    "premios": {
-    "2": 3.57,
-    "3": 8.14,
-    "4": 39.15,
+    "5+2": null,
+    "5+1": 173525.59,
     "5": 27037.19,
-    "1+2": 8.18,
-    "2+1": 5.07,
+    "4+2": 1052.68,
+    "4+1": 114.63,
+    "3+2": 52.65,
+    "4": 39.15,
     "2+2": 14.54,
     "3+1": 9.93,
-    "3+2": 52.65,
-    "4+1": 114.63,
-    "4+2": 1052.68,
-    "5+1": 173525.59,
-    "5+2": null
+    "3": 8.14,
+    "1+2": 8.18,
+    "2+1": 5.07,
+    "2": 3.57
    },
    "premiosNumericos": [],
-   "reintegro": null,
-   "titulo": "Sorteo 87 · viernes 30/10/2026",
-   "id": "euromillones_2026-10-30"
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
   },
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": true,
-   "complementario": 41,
-   "completo": true,
-   "estrellas": [],
-   "fecha": "2026-10-30",
-   "fuente": "laguinda.app + loteriabonoloto.info (coinciden; loteriasyapuestas.es no accesible)",
-   "joker": null,
+   "id": "bonoloto_2026-10-30",
    "juego": "bonoloto",
-   "millon": null,
-   "notas": "Escrutinio completo.",
+   "fecha": "2026-10-30",
+   "titulo": "",
    "numeros": [
     8,
     13,
@@ -155,32 +148,32 @@
     26,
     27
    ],
-   "precioDecimo": null,
+   "estrellas": [],
+   "complementario": 41,
+   "reintegro": 1,
+   "joker": null,
+   "millon": null,
    "premios": {
     "1": 375705.84,
     "2": 136620.31,
     "3": 711.56,
     "4": 16.79,
-    "5": 4,
+    "5": 4.0,
     "R": 0.5
    },
    "premiosNumericos": [],
-   "reintegro": 1,
-   "titulo": "Bonoloto · viernes 30/10/2026",
-   "id": "bonoloto_2026-10-30"
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
   },
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": true,
-   "complementario": 9,
-   "completo": true,
-   "estrellas": [],
-   "fecha": "2026-10-29",
-   "fuente": "laprimitiva.info + laguinda.app (coinciden; loteriasyapuestas.es no accesible)",
-   "joker": "3013180",
+   "id": "primitiva_2026-10-29",
    "juego": "primitiva",
-   "millon": null,
-   "notas": "Escrutinio completo.",
+   "fecha": "2026-10-29",
+   "titulo": "",
    "numeros": [
     2,
     18,
@@ -189,180 +182,320 @@
     31,
     44
    ],
-   "precioDecimo": null,
+   "estrellas": [],
+   "complementario": 9,
+   "reintegro": 9,
+   "joker": "3013180",
+   "millon": null,
    "premios": {
+    "especial": 22116822.05,
     "1": 453398.61,
     "2": 44114.46,
     "3": 2221.88,
     "4": 61.1,
-    "5": 8,
-    "R": 1,
-    "especial": 22116822.05
+    "5": 8.0,
+    "R": 1.0
    },
    "premiosNumericos": [],
-   "reintegro": 9,
-   "titulo": "La Primitiva · jueves 29/10/2026",
-   "id": "primitiva_2026-10-29"
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
   },
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": false,
-   "complementario": null,
-   "completo": true,
-   "estrellas": [],
-   "fecha": "2026-10-29",
-   "fuente": "https://www.juegosonce.es/resultados-cupon-diario",
-   "joker": null,
+   "id": "once_2026-10-29",
    "juego": "once",
-   "millon": null,
-   "notas": "Número 61177, serie 019. Importes por cupón; premios no acumulables (solo el mayor).",
+   "fecha": "2026-10-29",
+   "titulo": "Cupón Diario",
    "numeros": [],
-   "precioDecimo": 2,
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
    "premios": {},
    "premiosNumericos": [
     {
      "concepto": "5 cifras y serie",
-     "importe": 500000,
-     "serie": "019",
      "tipo": "exacto",
-     "valor": "61177"
+     "valor": "61177",
+     "serie": 19,
+     "importe": 500000.0
     },
     {
      "concepto": "5 cifras",
-     "importe": 35000,
-     "serie": null,
      "tipo": "exacto",
-     "valor": "61177"
+     "valor": "61177",
+     "serie": null,
+     "importe": 35000.0
     },
     {
      "concepto": "4 primeras cifras",
-     "importe": 250,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "6117"
+     "valor": "6117",
+     "serie": null,
+     "importe": 250.0
     },
     {
      "concepto": "4 últimas cifras",
-     "importe": 250,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "1177"
+     "valor": "1177",
+     "serie": null,
+     "importe": 250.0
     },
     {
      "concepto": "3 primeras cifras",
-     "importe": 25,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "611"
+     "valor": "611",
+     "serie": null,
+     "importe": 25.0
     },
     {
      "concepto": "3 últimas cifras",
-     "importe": 25,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "177"
+     "valor": "177",
+     "serie": null,
+     "importe": 25.0
     },
     {
      "concepto": "2 primeras cifras",
-     "importe": 6,
-     "serie": null,
      "tipo": "inicio",
-     "valor": "61"
+     "valor": "61",
+     "serie": null,
+     "importe": 6.0
     },
     {
      "concepto": "2 últimas cifras",
-     "importe": 6,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "77"
+     "valor": "77",
+     "serie": null,
+     "importe": 6.0
     },
     {
-     "concepto": "Reintegro primera cifra",
-     "importe": 2,
-     "serie": null,
+     "concepto": "Primera cifra",
      "tipo": "inicio",
-     "valor": "6"
+     "valor": "6",
+     "serie": null,
+     "importe": 2.0
     },
     {
-     "concepto": "Reintegro última cifra",
-     "importe": 2,
-     "serie": null,
+     "concepto": "Última cifra",
      "tipo": "terminacion",
-     "valor": "7"
+     "valor": "7",
+     "serie": null,
+     "importe": 2.0
     }
    ],
-   "reintegro": null,
-   "titulo": "ONCE Cupón Diario · jueves 29/10/2026",
-   "id": "once_2026-10-29"
+   "acumulables": false,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Número 61177, serie 019. En un mismo cupón no se acumulan premios.",
+   "fuente": "https://www.juegosonce.es/resultados-cupon-diario",
+   "actualizado": "2026-10-31T10:02:42+01:00"
   },
   {
-   "actualizado": "2026-10-30T17:45:00+01:00",
-   "acumulables": true,
-   "complementario": null,
-   "completo": false,
-   "estrellas": [],
-   "fecha": "2026-10-29",
-   "fuente": "democrata.es (comprobar con loteriasyapuestas.es)",
-   "joker": null,
+   "id": "loteria_nacional_2026-10-29",
    "juego": "loteria_nacional",
-   "millon": null,
-   "notas": "Solo primer y segundo premio y reintegros. Faltan extracciones, aproximaciones y centenas: añade la lista oficial para una comprobación completa.",
+   "fecha": "2026-10-29",
+   "titulo": "Sorteo Del Jueves",
    "numeros": [],
-   "precioDecimo": 3,
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
    "premios": {},
    "premiosNumericos": [
     {
      "concepto": "Primer premio",
-     "importe": 30000,
-     "serie": null,
      "tipo": "exacto",
-     "valor": "65942"
+     "valor": "65942",
+     "serie": null,
+     "importe": 29997.0
     },
     {
      "concepto": "Segundo premio",
-     "importe": 6000,
-     "serie": null,
      "tipo": "exacto",
-     "valor": "63502"
+     "valor": "63502",
+     "serie": null,
+     "importe": 6000.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "0753",
+     "serie": null,
+     "importe": 75.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "6712",
+     "serie": null,
+     "importe": 75.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "9126",
+     "serie": null,
+     "importe": 75.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "9196",
+     "serie": null,
+     "importe": 75.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "012",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "557",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "639",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "704",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "751",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "918",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "952",
+     "serie": null,
+     "importe": 15.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "06",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "19",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "50",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "50",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "51",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "64",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "71",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "77",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "92",
+     "serie": null,
+     "importe": 6.0
     },
     {
      "concepto": "Reintegro",
-     "importe": 3,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "2"
+     "valor": "2",
+     "serie": null,
+     "importe": 3.0
     },
     {
      "concepto": "Reintegro",
-     "importe": 3,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "3"
+     "valor": "3",
+     "serie": null,
+     "importe": 3.0
     },
     {
      "concepto": "Reintegro",
-     "importe": 3,
-     "serie": null,
      "tipo": "terminacion",
-     "valor": "8"
+     "valor": "8",
+     "serie": null,
+     "importe": 3.0
     }
    ],
-   "reintegro": null,
-   "titulo": "Lotería Nacional · jueves 29/10/2026",
-   "id": "loteria_nacional_2026-10-29"
+   "acumulables": true,
+   "precioDecimo": 3.0,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería%20Nacional/listas%20de%20premios/SM_LISTAOFICIAL.A2026.S087.pdf",
+   "actualizado": "2026-10-31T10:02:40+01:00"
   },
   {
-   "actualizado": "2026-10-31T09:45:00+01:00",
-   "acumulables": true,
-   "complementario": 9,
-   "completo": true,
-   "estrellas": [],
-   "fecha": "2026-10-29",
-   "fuente": "laguinda.app + democrata.es (loteriasyapuestas.es no accesible)",
-   "joker": null,
+   "id": "bonoloto_2026-10-29",
    "juego": "bonoloto",
-   "millon": null,
-   "notas": "Escrutinio completo. Combinación coincidente en dos fuentes; importes de una sola fuente secundaria.",
+   "fecha": "2026-10-29",
+   "titulo": "",
    "numeros": [
     11,
     13,
@@ -371,35 +504,66 @@
     42,
     48
    ],
-   "precioDecimo": null,
+   "estrellas": [],
+   "complementario": 9,
+   "reintegro": 7,
+   "joker": null,
+   "millon": null,
    "premios": {
     "1": 1198179.24,
     "2": 50591.39,
     "3": 782.34,
     "4": 21.84,
-    "5": 4,
+    "5": 4.0,
     "R": 0.5
    },
    "premiosNumericos": [],
-   "reintegro": 7,
-   "titulo": "Bonoloto · jueves 29/10/2026",
-   "id": "bonoloto_2026-10-29"
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
   },
   {
-   "actualizado": "2026-10-30T17:45:00+01:00",
-   "acumulables": true,
-   "complementario": null,
-   "completo": true,
-   "estrellas": [
-    3,
-    6
+   "id": "bonoloto_2026-10-28",
+   "juego": "bonoloto",
+   "fecha": "2026-10-28",
+   "titulo": "",
+   "numeros": [
+    16,
+    22,
+    35,
+    36,
+    43,
+    45
    ],
-   "fecha": "2026-10-27",
-   "fuente": "euro-millions.com (comprobar con loteriasyapuestas.es)",
+   "estrellas": [],
+   "complementario": 44,
+   "reintegro": 7,
    "joker": null,
+   "millon": null,
+   "premios": {
+    "1": null,
+    "2": 79696.95,
+    "3": 1091.74,
+    "4": 26.01,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "euromillones_2026-10-27",
    "juego": "euromillones",
-   "millon": "GXP83881",
-   "notas": "Importes por acertante en España. 5+2: bote, sin acertantes. 5+1: sin importe publicado en España.",
+   "fecha": "2026-10-27",
+   "titulo": "Sorteo 86",
    "numeros": [
     21,
     30,
@@ -407,26 +571,558 @@
     42,
     48
    ],
-   "precioDecimo": null,
+   "estrellas": [
+    3,
+    6
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "GXP83881",
    "premios": {
-    "2": 4.58,
-    "3": 11.45,
-    "4": 49.66,
+    "5+2": null,
+    "5+1": null,
     "5": 630456.7,
-    "1+2": 6.08,
-    "2+1": 5.77,
+    "4+2": 1957.94,
+    "4+1": 147.37,
+    "3+2": 57.91,
+    "4": 49.66,
     "2+2": 12.35,
     "3+1": 12.84,
-    "3+2": 57.91,
-    "4+1": 147.37,
-    "4+2": 1957.94,
-    "5+1": null,
-    "5+2": null
+    "3": 11.45,
+    "1+2": 6.08,
+    "2+1": 5.77,
+    "2": 4.58
    },
    "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "bonoloto_2026-10-27",
+   "juego": "bonoloto",
+   "fecha": "2026-10-27",
+   "titulo": "",
+   "numeros": [
+    6,
+    13,
+    17,
+    22,
+    24,
+    44
+   ],
+   "estrellas": [],
+   "complementario": 3,
+   "reintegro": 0,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "1": null,
+    "2": 24906.7,
+    "3": 576.54,
+    "4": 15.51,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "primitiva_2026-10-26",
+   "juego": "primitiva",
+   "fecha": "2026-10-26",
+   "titulo": "",
+   "numeros": [
+    4,
+    9,
+    33,
+    37,
+    39,
+    49
+   ],
+   "estrellas": [],
+   "complementario": 18,
+   "reintegro": 4,
+   "joker": "0637237",
+   "millon": null,
+   "premios": {
+    "especial": null,
+    "1": null,
+    "2": 132309.47,
+    "3": 2725.48,
+    "4": 62.91,
+    "5": 8.0,
+    "R": 1.0
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "bonoloto_2026-10-26",
+   "juego": "bonoloto",
+   "fecha": "2026-10-26",
+   "titulo": "",
+   "numeros": [
+    2,
+    14,
+    17,
+    31,
+    35,
+    40
+   ],
+   "estrellas": [],
+   "complementario": 22,
+   "reintegro": 5,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "1": 1064616.59,
+    "2": 147261.95,
+    "3": 846.33,
+    "4": 27.47,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "once_2026-10-25",
+   "juego": "once",
+   "fecha": "2026-10-25",
+   "titulo": "Sueldazo Fin de Semana",
+   "numeros": [],
+   "estrellas": [],
+   "complementario": null,
    "reintegro": null,
-   "titulo": "Sorteo 86 · martes 27/10/2026",
-   "id": "euromillones_2026-10-27"
+   "joker": null,
+   "millon": null,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "5 cifras",
+     "tipo": "exacto",
+     "valor": "10104",
+     "serie": null,
+     "importe": 20000.0
+    },
+    {
+     "concepto": "4 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "0104",
+     "serie": null,
+     "importe": 200.0
+    },
+    {
+     "concepto": "3 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "104",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "2 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "04",
+     "serie": null,
+     "importe": 4.0
+    },
+    {
+     "concepto": "Última cifra",
+     "tipo": "terminacion",
+     "valor": "4",
+     "serie": null,
+     "importe": 2.0
+    },
+    {
+     "concepto": "5 cifras",
+     "tipo": "exacto",
+     "valor": "10104",
+     "serie": null,
+     "importe": 400.0
+    }
+   ],
+   "acumulables": false,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Número 10104, serie 011. En un mismo cupón no se acumulan premios.",
+   "fuente": "https://www.juegosonce.es/resultados-sueldazo-fin-de-semana",
+   "actualizado": "2026-10-31T10:02:47+01:00"
+  },
+  {
+   "id": "elgordo_2026-10-25",
+   "juego": "elgordo",
+   "fecha": "2026-10-25",
+   "titulo": "",
+   "numeros": [
+    9,
+    26,
+    41,
+    43,
+    46
+   ],
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": 7,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "5+C": null,
+    "5": 175204.15,
+    "4+C": 1990.96,
+    "4": 267.37,
+    "3+C": 42.69,
+    "3": 17.92,
+    "2+C": 6.24,
+    "2": 3.0,
+    "R": 1.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "bonoloto_2026-10-25",
+   "juego": "bonoloto",
+   "fecha": "2026-10-25",
+   "titulo": "",
+   "numeros": [
+    13,
+    15,
+    22,
+    31,
+    33,
+    34
+   ],
+   "estrellas": [],
+   "complementario": 42,
+   "reintegro": 0,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "1": null,
+    "2": null,
+    "3": 2034.55,
+    "4": 16.51,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "primitiva_2026-10-24",
+   "juego": "primitiva",
+   "fecha": "2026-10-24",
+   "titulo": "",
+   "numeros": [
+    4,
+    5,
+    10,
+    31,
+    47,
+    48
+   ],
+   "estrellas": [],
+   "complementario": 37,
+   "reintegro": 4,
+   "joker": "5745931",
+   "millon": null,
+   "premios": {
+    "especial": null,
+    "1": null,
+    "2": 213646.55,
+    "3": 2432.83,
+    "4": 61.86,
+    "5": 8.0,
+    "R": 1.0
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
+  },
+  {
+   "id": "loteria_nacional_2026-10-24",
+   "juego": "loteria_nacional",
+   "fecha": "2026-10-24",
+   "titulo": "Sorteo De Lotería Nacional",
+   "numeros": [],
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "Primer premio",
+     "tipo": "exacto",
+     "valor": "00756",
+     "serie": null,
+     "importe": 59994.0
+    },
+    {
+     "concepto": "Segundo premio",
+     "tipo": "exacto",
+     "valor": "83727",
+     "serie": null,
+     "importe": 12000.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "2643",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "4703",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "7140",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "7984",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "069",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "083",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "186",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "393",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "425",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "679",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "749",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "888",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "892",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "981",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "01",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "29",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "40",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "48",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "67",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "69",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "72",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "98",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "98",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "1",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "6",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "7",
+     "serie": null,
+     "importe": 6.0
+    }
+   ],
+   "acumulables": true,
+   "precioDecimo": 6.0,
+   "completo": false,
+   "notas": "Puede haber premios (aproximaciones, centenas, terminaciones) que no figuran aquí: consulta la lista oficial.",
+   "fuente": "https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería%20Nacional/listas%20de%20premios/SM_LISTAOFICIAL.A2026.S086.pdf",
+   "actualizado": "2026-10-31T10:02:40+01:00"
+  },
+  {
+   "id": "bonoloto_2026-10-24",
+   "juego": "bonoloto",
+   "fecha": "2026-10-24",
+   "titulo": "",
+   "numeros": [
+    1,
+    3,
+    16,
+    23,
+    24,
+    48
+   ],
+   "estrellas": [],
+   "complementario": 4,
+   "reintegro": 9,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "1": null,
+    "2": 42883.14,
+    "3": 814.24,
+    "4": 20.61,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T10:02:39+01:00"
   }
  ]
 }
