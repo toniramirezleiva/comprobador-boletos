@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-31T10:02:47+01:00",
+ "actualizado": "2026-10-31T10:05:44+01:00",
  "sorteos": [
   {
    "id": "once_2026-10-30",
@@ -719,6 +719,13 @@
    "premios": {},
    "premiosNumericos": [
     {
+     "concepto": "5 cifras y serie (300.000 € más 60.000 € durante 20 años)",
+     "tipo": "exacto",
+     "valor": "10104",
+     "serie": 11,
+     "importe": 300000.0
+    },
+    {
      "concepto": "5 cifras",
      "tipo": "exacto",
      "valor": "10104",
@@ -754,9 +761,58 @@
      "importe": 2.0
     },
     {
-     "concepto": "5 cifras",
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
      "tipo": "exacto",
-     "valor": "10104",
+     "valor": "54442",
+     "serie": 11,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "56716",
+     "serie": 5,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "63320",
+     "serie": 3,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "81511",
+     "serie": 13,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "54442",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "56716",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "63320",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "81511",
      "serie": null,
      "importe": 400.0
     }
@@ -764,9 +820,9 @@
    "acumulables": false,
    "precioDecimo": null,
    "completo": true,
-   "notas": "Número 10104, serie 011. En un mismo cupón no se acumulan premios.",
+   "notas": "Número 10104, serie 011. Números adicionales: 54442 serie 011, 56716 serie 005, 63320 serie 003, 81511 serie 013. En un mismo cupón no se acumulan premios.",
    "fuente": "https://www.juegosonce.es/resultados-sueldazo-fin-de-semana",
-   "actualizado": "2026-10-31T10:02:47+01:00"
+   "actualizado": "2026-10-31T10:05:44+01:00"
   },
   {
    "id": "elgordo_2026-10-25",
