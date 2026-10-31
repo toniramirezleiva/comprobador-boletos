@@ -84,7 +84,7 @@ textarea{min-height:90px;resize:vertical}
 .queue{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
 .qi{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--ground);aspect-ratio:3/4;max-width:100%}
 .qi img{width:100%;height:100%;object-fit:cover;display:block}
-.qi .qs{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font:600 11px var(--f-mono);background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);display:flex;gap:6px;align-items:center}
+.qi .qs{overflow-wrap:anywhere;position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font:600 11px var(--f-mono);background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);display:flex;gap:6px;align-items:center}
 .qi .qx{position:absolute;top:4px;right:4px;padding:2px 7px;font-size:12px;border-radius:999px}
 .qi.err .qs{color:var(--bad)} .qi.ok .qs{color:var(--ok)}
 .status{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
@@ -336,6 +336,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
+    <span class="mono">Versión 2026-10-31 · 12:00</span>
     <span>Los importes salen de los datos de sorteo guardados en la app. Para cobrar, la única lista válida es la oficial de Loterías y Apuestas del Estado o de la ONCE.</span>
     <span>Gravamen: los premios de más de 40.000 € tributan un 20 % sobre lo que excede de esa cantidad (estimación orientativa).</span>
   </footer>
@@ -910,7 +911,7 @@ function ocrBoleto(texto, hoy) {
   else dudas.push("Se han leído " + b.apuestas.length + (b.apuestas.length > 1 ? " apuestas" : " apuesta") + ": comprueba que no falta ninguna.");
   if ((m = T.match(/(?:REINTEGRO|REINT\.?|\bR\s*[:.=])\s*[:.=]?\s*(\d)\b/) || T.match(/^\s*R\s+(\d)\s*$/m))) b.reintegro = +m[1];
   if (juego === "elgordo" && (m = T.match(/(?:N[º°O.]?\s*)?CLAVE\D{0,6}(\d)\b/))) b.reintegro = +m[1];
-  if (juego === "primitiva" && (m = T.match(/J[O0]KER\D{0,12}((?:\d\s?){7})/))) b.joker = m[1].replace(/\s/g, "");
+  if (juego === "primitiva" && !/J[O0]KER\s*[:.]?\s*N[O0]\b/.test(T) && (m = T.match(/J[O0]KER\s*[:.]?\s*((?:\d\s?){7})(?!\d)/))) b.joker = m[1].replace(/\s/g, "");
   if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b(?:\s*(?:A|AL|-)\s*(?:[A-Z0-9]{3})?\s?(\d{5})\b)?/))) b.millon = m[1] + m[2] + (m[3] && m[3] !== m[2] ? "-" + m[1] + m[3] : "");
   if (juego !== "euromillones" && b.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
   return { boletos: [b] };
@@ -931,8 +932,10 @@ function ocrCombinar(textos, hoy) {
   let esperadas = null;
   for (const x of res) { const m = x.t.match(/\b(\d{1,2})\s*APUESTA/); if (m && +m[1] >= 1 && +m[1] <= 12) { esperadas = +m[1]; break; } }
   // cada línea leída en varias pasadas forma un grupo de variantes; gana la de dos cifras y más votada
+  // todas las lecturas aportan apuestas, leídas ya con el juego decidido (las de solo cifras no leen el nombre)
+  const lecturas = res.map((x) => ({ apuestas: ocrApuestas(x.t, juego) }));
   const cands = [];
-  for (const b of delJuego) for (const a of b.apuestas || []) {
+  for (const b of lecturas) for (const a of b.apuestas || []) {
     const k = a.numeros.join(",") + "|" + a.estrellas.join(",");
     let c = cands.find((x) => x.k === k);
     if (!c) { c = { k, a, n: 0 }; cands.push(c); }
@@ -944,7 +947,7 @@ function ocrCombinar(textos, hoy) {
   let elegidos = grupos.map((g, i) => ({ i, total: g.reduce((t, c) => t + c.n, 0), mejor: g.slice().sort((x, y) => (y.a.pad ? 1 : 0) - (x.a.pad ? 1 : 0) || y.n - x.n)[0], dudoso: g.length > 1 }));
   if (esperadas) elegidos = elegidos.sort((x, y) => y.total - x.total).slice(0, esperadas);
   // orden del resguardo: el de la lectura que más apuestas ha encontrado
-  const ref = delJuego.slice().sort((x, y) => (y.apuestas || []).length - (x.apuestas || []).length)[0];
+  const ref = lecturas.slice().sort((x, y) => (y.apuestas || []).length - (x.apuestas || []).length)[0];
   const pos = (e) => { const i = (ref.apuestas || []).findIndex((a) => parecidas({ a }, e.mejor)); return i < 0 ? 100 + e.i : i; };
   elegidos.sort((x, y) => pos(x) - pos(y));
   out.apuestas = elegidos.map((e) => ({ numeros: e.mejor.a.numeros, estrellas: e.mejor.a.estrellas }));
@@ -973,32 +976,59 @@ function ocrCombinar(textos, hoy) {
 /*OCR-END*/
 let ocrWorker = null;
 function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No se pudo descargar " + src)); document.head.append(sc); }); }
+// Decodifica la foto de forma compatible con todos los móviles:
+// createImageBitmap falla con algunas fotos de Android ("The source image could not be decoded")
+async function abrirImagen(file) {
+  try { return await createImageBitmap(file, { imageOrientation: "from-image" }); } catch (_) {}
+  try { return await createImageBitmap(file); } catch (_) {}
+  const cargar = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("No se puede abrir la imagen")); im.src = src; });
+  let url = null;
+  try { url = URL.createObjectURL(file); const im = await cargar(url); return { width: im.naturalWidth, height: im.naturalHeight, _img: im }; }
+  catch (_) {}
+  finally { /* la URL se libera al dibujar */ }
+  const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error("No se puede leer el archivo")); r.readAsDataURL(file); });
+  try { const im = await cargar(dataUrl); return { width: im.naturalWidth, height: im.naturalHeight, _img: im }; }
+  catch (_) {
+    const tipo = (file.type || file.name || "").toLowerCase();
+    throw new Error(/heic|heif/.test(tipo) ? "La foto está en formato HEIC, que el navegador no puede abrir. Cambia la cámara a JPG o haz una captura de pantalla de la foto." : "El navegador no puede abrir esta imagen. Prueba a hacer una captura de pantalla de la foto y súbela.");
+  }
+}
+const fuenteImagen = (bmp) => bmp._img || bmp;
 async function prepararOCR(file, modo, giro) {
-  const bmp = await createImageBitmap(file);
+  const bmp = await abrirImagen(file);
   const lado = Math.max(bmp.width, bmp.height);
-  const s = Math.min(2.5, Math.max(1, 1800 / lado)) * Math.min(1, 2600 / lado) || 1;
+  const s = lado < 1400 ? Math.min(2, 1600 / lado) : lado <= 2700 ? 1 : 2600 / lado; // sin reescalar si no hace falta: el reescalado empeora la lectura
   const w = Math.round(bmp.width * s), h = Math.round(bmp.height * s);
   const c = document.createElement("canvas");
   const rot = giro === 90 || giro === 270;
   c.width = rot ? h : w; c.height = rot ? w : h;
   const g = c.getContext("2d");
-  g.translate(c.width / 2, c.height / 2); g.rotate((giro || 0) * Math.PI / 180); g.drawImage(bmp, -w / 2, -h / 2, w, h); g.setTransform(1, 0, 0, 1, 0, 0);
+  g.imageSmoothingEnabled = true; g.imageSmoothingQuality = "high";
+  // reducción por pasos (a la mitad cada vez): conserva mejor las cifras que una reducción de golpe
+  let fuente = fuenteImagen(bmp), fw = bmp.width, fh = bmp.height;
+  while (fw / 2 >= w * 1.1) {
+    const t = document.createElement("canvas"); t.width = Math.round(fw / 2); t.height = Math.round(fh / 2);
+    const tg = t.getContext("2d"); tg.imageSmoothingEnabled = true; tg.imageSmoothingQuality = "high"; tg.drawImage(fuente, 0, 0, t.width, t.height);
+    fuente = t; fw = t.width; fh = t.height;
+  }
+  g.translate(c.width / 2, c.height / 2); g.rotate((giro || 0) * Math.PI / 180); g.drawImage(fuente, -w / 2, -h / 2, w, h); g.setTransform(1, 0, 0, 1, 0, 0);
   const im = g.getImageData(0, 0, c.width, c.height), d = im.data, n = d.length / 4;
   const y = new Uint8ClampedArray(n);
   let min = 255, max = 0;
   for (let i = 0; i < n; i++) { const v = 0.8 * d[i * 4] + 0.2 * (0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 0.701; y[i] = v; if (v < min) min = v; if (v > max) max = v; } // casi solo canal rojo: lo impreso en rojo desaparece
   const k = 255 / Math.max(1, max - min);
   for (let i = 0; i < n; i++) y[i] = (y[i] - min) * k;
-  if (modo === "bin") {
+  const umbral = /^bin(\d+)$/.test(modo) ? +modo.slice(3) : 12;
+  if (/^bin/.test(modo)) {
     // umbral adaptativo (media local) para papel térmico con sombras
     const W = c.width, H = c.height, R = Math.max(8, Math.round(Math.min(W, H) / 40));
-    const integ = new Float64Array((W + 1) * (H + 1));
+    const integ = new Uint32Array((W + 1) * (H + 1));
     for (let yy = 0; yy < H; yy++) { let fila = 0; for (let xx = 0; xx < W; xx++) { fila += y[yy * W + xx]; integ[(yy + 1) * (W + 1) + xx + 1] = integ[yy * (W + 1) + xx + 1] + fila; } }
     for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) {
       const x0 = Math.max(0, xx - R), x1 = Math.min(W, xx + R + 1), y0 = Math.max(0, yy - R), y1 = Math.min(H, yy + R + 1);
       const sum = integ[y1 * (W + 1) + x1] - integ[y0 * (W + 1) + x1] - integ[y1 * (W + 1) + x0] + integ[y0 * (W + 1) + x0];
       const media = sum / ((x1 - x0) * (y1 - y0));
-      y[yy * W + xx] = y[yy * W + xx] < media - 12 ? 0 : 255;
+      y[yy * W + xx] = y[yy * W + xx] < media - umbral ? 0 : 255;
     }
   }
   for (let i = 0; i < n; i++) { d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = y[i]; }
@@ -1011,30 +1041,47 @@ function puntuacionOCR(res) {
   return 10 + (b.apuestas || []).length * 10 + (b.numero ? 10 : 0) + (b.fechas || []).length * 3 + (b.reintegro != null ? 2 : 0) + (b.joker ? 2 : 0) - (b.dudas || []).length;
 }
 async function leerConOCR(file, progreso) {
-  if (!window.Tesseract) await cargarScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");
-  if (!ocrWorker) {
-    progreso("Preparando lector…");
-    ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
+  const enWeb = /^https?:$/.test(location.protocol);
+  const base = enWeb ? new URL("vendor/", location.href).href : "https://cdn.jsdelivr.net/npm/";
+  if (!window.Tesseract) {
+    try { await cargarScript(enWeb ? base + "tesseract.min.js" : base + "tesseract.js@5.1.1/dist/tesseract.min.js"); }
+    catch (e) { await cargarScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"); }
   }
-  const textos = [];
+  if (!ocrWorker) {
+    progreso("Descargando el lector (solo la primera vez)…");
+    const rutas = enWeb ? { workerPath: base + "worker.min.js", corePath: base, langPath: base + "lang", gzip: true } : {};
+    try {
+      ocrWorker = await Tesseract.createWorker("spa", 1, Object.assign({ logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } }, rutas));
+    } catch (e) {
+      if (!enWeb) throw e;
+      ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
+    }
+  }
+  const textos = [], fallos = [];
   const pasar = async (lista, total, desde) => {
     for (let i = 0; i < lista.length; i++) {
-      const [modoImg, giro, psm] = lista[i];
+      const [modoImg, giro, psm, blanca] = lista[i];
       ocrWorker._paso = "Lectura " + (desde + i + 1) + "/" + total;
       progreso(ocrWorker._paso);
-      const img = await prepararOCR(file, modoImg, giro);
-      await ocrWorker.setParameters({ tessedit_pageseg_mode: psm, tessedit_char_whitelist: "" });
-      const { data } = await ocrWorker.recognize(img);
-      textos.push(data.text);
+      try {
+        const img = await prepararOCR(file, modoImg, giro);
+        await ocrWorker.setParameters({ tessedit_pageseg_mode: psm, tessedit_char_whitelist: blanca || "" });
+        const { data } = await ocrWorker.recognize(img);
+        textos.push(data.text);
+      } catch (e) {
+        fallos.push((e && (e.message || e)) + "");
+        if (fallos.length >= 3 && !textos.length) throw new Error("El lector no ha podido procesar la foto: " + fallos[0]);
+      }
     }
   };
   // cuatro lecturas distintas de la misma foto; se combinan por votos
-  await pasar([["bin", 0, "6"], ["bin", 0, "4"], ["gris", 0, "3"], ["bin", 0, "11"]], 4, 0);
+  // cinco lecturas distintas (elegidas con fotos reales de resguardos); se combinan por votos
+  await pasar([["bin", 0, "11"], ["gris", 0, "4"], ["bin6", 0, "6"], ["bin20", 0, "6"], ["gris", 0, "6", "0123456789.+*: "]], 5, 0);
   let mejor = ocrCombinar(textos, hoyISO());
   const vacia = (r) => !r.boletos.length || !((r.boletos[0].apuestas || []).length || r.boletos[0].numero);
   if (vacia(mejor)) {
     // quizá la foto está de lado
-    await pasar([["bin", 90, "6"], ["bin", 270, "6"]], 6, 4);
+    await pasar([["bin", 90, "6"], ["bin", 270, "6"]], 7, 5);
     mejor = ocrCombinar(textos, hoyISO());
   }
   const b = mejor.boletos[0];
@@ -1417,16 +1464,16 @@ async function prepararImagen(file) {
   const lim = sampleImgs;
   const okType = lim ? lim.mediaTypes.includes(file.type) : /jpe?g|png|webp|gif/.test(file.type);
   if (okType && file.size <= (lim ? lim.maxInputBytes : 8e6)) return file;
-  const bmp = await createImageBitmap(file); const s = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
+  const bmp = await abrirImagen(file); const s = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
   const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
-  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  c.getContext("2d").drawImage(fuenteImagen(bmp), 0, 0, c.width, c.height);
   return await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("No se pudo convertir la imagen"))), "image/jpeg", 0.9));
 }
 async function miniatura(file) {
   try {
-    const bmp = await createImageBitmap(file); const s = Math.min(1, (modo === "local" ? 1000 : 160) / Math.max(bmp.width, bmp.height));
+    const bmp = await abrirImagen(file); const s = Math.min(1, (modo === "local" ? 1000 : 160) / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(bmp.width * s)); c.height = Math.max(1, Math.round(bmp.height * s));
-    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", modo === "local" ? 0.6 : 0.7);
+    c.getContext("2d").drawImage(fuenteImagen(bmp), 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", modo === "local" ? 0.6 : 0.7);
   } catch (_) { return null; }
 }
 
@@ -1499,7 +1546,7 @@ $("btnLeer").onclick = async () => {
         q.estado = "hecho"; q.msg = nuevos.length + (nuevos.length > 1 ? " boletos" : " boleto");
       } catch (e) {
         if (e && e.code === "cancelled") { q.estado = "espera"; q.msg = "En espera"; break; }
-        q.estado = "error"; q.msg = "Error";
+        q.estado = "error"; q.msg = "Error: " + String((e && (e.message || e.code)) || e).slice(0, 80);
         manejarError(e, modo === "local" ? "Leer foto (lector gratuito)" : "Leer foto con Claude", SAMPLE_SOLUCION[e && e.code] || (modo === "local" ? "Comprueba la conexión (la primera vez descarga el lector) o escribe el boleto a mano." : "Vuelve a intentarlo o escribe el boleto a mano."));
         if (e && (e.code === "not_granted" || e.code === "sampling_disabled" || e.code === "rate_limited" || e.code === "images_unavailable" || /^(no_key|api_40[0134]|network)$/.test(e.code || ""))) break;
       }
