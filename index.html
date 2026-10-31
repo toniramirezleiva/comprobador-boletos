@@ -1,10 +1,10 @@
 <!doctype html>
-<html lang="es">
+<html lang="ca">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Comprobador de Boletos</title>
-<meta name="description" content="Comprueba gratis tus boletos de Euromillones, Primitiva, Bonoloto, El Gordo, Lotería Nacional y ONCE a partir de una foto.">
+<title>Comprovador de butlletes</title>
+<meta name="description" content="Comprova gratis les teves butlletes d'Euromilions, Primitiva, Bonoloto, El Gordo, Loteria Nacional i ONCE a partir d'una foto.">
 <style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
@@ -152,8 +152,8 @@ button.peligro{background:var(--bad);border-color:var(--bad);color:var(--paper)}
 .tk-thumb{width:40px;height:40px;border-radius:5px;object-fit:cover;border:1px solid var(--line);flex:none}
 .tk-vis{padding:16px 14px;background:var(--gsoft)}
 .tk-more>summary{cursor:pointer;padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--muted);list-style:none;border-top:1px solid var(--line);display:flex;justify-content:space-between}
-.tk-more>summary::after{content:"Ver detalle ▾";font-weight:500}
-.tk-more[open]>summary::after{content:"Ocultar ▴"}
+.tk-more>summary::after{content:"Veure el detall ▾";font-weight:500}
+.tk-more[open]>summary::after{content:"Amagar ▴"}
 .tk-more>summary::-webkit-details-marker{display:none}
 .tk-body{padding:0 14px 16px;display:flex;flex-direction:column;gap:14px}
 .g-euromillones{--g:var(--em);--gsoft:var(--em-soft)}
@@ -280,44 +280,44 @@ a{color:var(--accent)}
 
 <div class="wrap">
   <header class="stack" style="gap:6px">
-    <div class="games" id="gamesBar"><span class="g-euromillones" data-j="euromillones">Euromillones</span><span class="g-primitiva" data-j="primitiva">Primitiva</span><span class="g-bonoloto" data-j="bonoloto">Bonoloto</span><span class="g-elgordo" data-j="elgordo">El Gordo</span><span class="g-loteria_nacional" data-j="loteria_nacional">Lotería Nacional</span><span class="g-once" data-j="once">ONCE</span></div>
-    <h1>Comprobador de boletos</h1>
-    <p class="lead">Sube una o varias fotos de tus boletos, décimos o cupones, aunque sean de juegos y días distintos. La app los lee, los guarda y te dice cuáles tienen premio.</p>
+    <div class="games" id="gamesBar"><span class="g-euromillones" data-j="euromillones">Euromilions</span><span class="g-primitiva" data-j="primitiva">Primitiva</span><span class="g-bonoloto" data-j="bonoloto">Bonoloto</span><span class="g-elgordo" data-j="elgordo">El Gordo</span><span class="g-loteria_nacional" data-j="loteria_nacional">Loteria Nacional</span><span class="g-once" data-j="once">ONCE</span></div>
+    <h1>Comprovador de butlletes</h1>
+    <p class="lead">Puja una o diverses fotos de les teves butlletes, dècims o cupons, encara que siguin de jocs i dies diferents. L'app les llegeix, les desa i et diu quines tenen premi.</p>
   </header>
 
   <div id="aviso" hidden></div>
 
   <section class="panel" aria-labelledby="h-fotos">
-    <h2 id="h-fotos">Añadir boletos</h2>
+    <h2 id="h-fotos">Afegir butlletes</h2>
     <div class="drop" id="drop">
-      <p class="sub" id="dropTxt">Haz fotos con el móvil o sube varias imágenes a la vez. También puedes pegarlas (Ctrl+V). En una misma foto puede haber varios boletos.</p>
+      <p class="sub" id="dropTxt">Fes fotos amb el mòbil o puja diverses imatges alhora. També les pots enganxar (Ctrl+V). En una mateixa foto hi pot haver diverses butlletes.</p>
       <div class="row">
-        <label class="btn primary" for="fCam">Hacer foto</label>
+        <label class="btn primary" for="fCam">Fer foto</label>
         <input class="hidden-input" type="file" id="fCam" accept="image/*" capture="environment">
-        <label class="btn" for="fUp">Subir fotos</label>
+        <label class="btn" for="fUp">Pujar fotos</label>
         <input class="hidden-input" type="file" id="fUp" accept="image/*" multiple>
-        <button id="btnManual">Escribir uno a mano</button>
+        <button id="btnManual">Escriure-la a mà</button>
       </div>
       <div class="queue" id="queue" hidden></div>
       <div class="row" id="qActions" hidden>
-        <button class="primary" id="btnLeer">Leer fotos</button>
-        <button id="btnStop" hidden>Detener</button>
+        <button class="primary" id="btnLeer">Llegir fotos</button>
+        <button id="btnStop" hidden>Aturar</button>
         <span class="status" id="stLeer"></span>
       </div>
     </div>
   </section>
 
   <section class="panel" id="localPanel" aria-labelledby="h-local" hidden>
-    <h2 id="h-local">Versión web gratuita</h2>
-    <p class="sub">Esta versión funciona sin cuenta y sin coste. Las fotos se leen en tu propio móvil con un reconocimiento de texto gratuito (la primera vez descarga unos 5 MB): revisa siempre los números que propone. Los resultados oficiales se cargan solos en cuanto se publican, mientras tengas la app abierta. Tus boletos se guardan solo en este navegador.</p>
-    <div class="row"><button class="small" id="btnNotif">Activar avisos del navegador</button><button class="small" id="btnRecargar">Comprobar resultados ahora</button></div>
+    <h2 id="h-local">Versió web gratuïta</h2>
+    <p class="sub">Aquesta versió funciona sense compte i sense cost. Les fotos es llegeixen al teu mòbil amb un reconeixement de text gratuït (la primera vegada descarrega uns 10 MB): revisa sempre els números que proposa. Els resultats oficials es carreguen sols tan bon punt es publiquen, mentre tinguis l'app oberta. Les butlletes només es desen en aquest navegador.</p>
+    <div class="row"><button class="small" id="btnNotif">Activar avisos del navegador</button><button class="small" id="btnRecargar">Comprovar resultats ara</button></div>
     <p class="sub" id="stKey"></p>
     <p class="note" id="localWarn" hidden></p>
   </section>
 
   <section class="stack" aria-labelledby="h-mis">
     <div class="row" style="justify-content:space-between">
-      <h2 id="h-mis">Mis boletos</h2>
+      <h2 id="h-mis">Les meves butlletes</h2>
       <span class="sub" id="saveState"></span>
     </div>
     <div class="summary" id="summary"></div>
@@ -326,67 +326,67 @@ a{color:var(--accent)}
   </section>
 
   <details class="box" id="addRes">
-    <summary>Añadir los resultados de un sorteo</summary>
+    <summary> Afegir els resultats d'un sorteig</summary>
     <div class="in">
-      <p class="sub">Si a un boleto le faltan resultados, sube una captura de la página oficial (con la tabla de premios) o pega el texto. Claude lo convierte en datos y la app lo guarda. La tarea programada también los añade sola cuando se publican.</p>
+      <p class="sub">Si a una butlleta li falten resultats, puja una captura de la pàgina oficial (amb la taula de premis) o enganxa'n el text. Claude ho converteix en dades i l'app ho desa. La tasca programada també els afegeix sola quan es publiquen.</p>
       <div class="row">
-        <label class="btn" for="fRes">Subir captura</label>
+        <label class="btn" for="fRes">Pujar captura</label>
         <input class="hidden-input" type="file" id="fRes" accept="image/*">
-        <span class="sub" id="fResName">Ninguna captura</span>
+        <span class="sub" id="fResName">Cap captura</span>
       </div>
-      <label class="fld" for="txtRes"><span>Texto de resultados</span>
-        <textarea id="txtRes" class="mono" placeholder="Ej.: Euromillones martes 27/10/2026 · 21 30 32 42 48 · estrellas 3 6 · 4+2: 1.957,94 € …"></textarea>
+      <label class="fld" for="txtRes"><span>Text dels resultats</span>
+        <textarea id="txtRes" class="mono" placeholder="Ex.: Euromilions dimarts 27/10/2026 · 21 30 32 42 48 · estrelles 3 6 · 4+2: 1.957,94 € …"></textarea>
       </label>
-      <div class="row"><button class="primary" id="btnRes">Leer resultados</button><span class="status" id="stRes"></span></div>
+      <div class="row"><button class="primary" id="btnRes">Llegir resultats</button><span class="status" id="stRes"></span></div>
       <div id="resPreview"></div>
-      <p class="sub">Webs oficiales: <a href="https://www.loteriasyapuestas.es/es/resultados" target="_blank" rel="noopener">loteriasyapuestas.es</a> · <a href="https://www.juegosonce.es/resultados-cupon-diario" target="_blank" rel="noopener">juegosonce.es</a></p>
+      <p class="sub">Webs oficials: <a href="https://www.loteriasyapuestas.es/es/resultados" target="_blank" rel="noopener">loteriasyapuestas.es</a> · <a href="https://www.juegosonce.es/resultados-cupon-diario" target="_blank" rel="noopener">juegosonce.es</a></p>
     </div>
   </details>
 
   <details class="box" id="savedBox">
-    <summary>Sorteos guardados <span class="tag" id="savedCount">…</span></summary>
-    <div class="in"><div class="saved" id="savedList"><p class="sub">Cargando…</p></div></div>
+    <summary>Sortejos desats <span class="tag" id="savedCount">…</span></summary>
+    <div class="in"><div class="saved" id="savedList"><p class="sub">Carregant…</p></div></div>
   </details>
 
   <details class="box">
-    <summary>Prompt para usar en un chat con Claude</summary>
+    <summary>Prompt per fer servir en un xat amb Claude</summary>
     <div class="in">
-      <p class="sub">Si prefieres no usar la app, adjunta las fotos en un chat con Claude que tenga búsqueda web y pega este prompt.</p>
+      <p class="sub">Si prefereixes no fer servir l'app, adjunta les fotos en un xat amb Claude que tingui cerca web i enganxa-hi aquest prompt.</p>
       <pre class="log" id="chatPrompt"></pre>
-      <div class="row"><button class="small" id="copyPrompt">Copiar prompt</button></div>
+      <div class="row"><button class="small" id="copyPrompt">Copiar el prompt</button></div>
     </div>
   </details>
 
   <details class="box" id="logBox">
-    <summary>Registro de errores <span class="tag" id="logCount">0</span></summary>
+    <summary>Registre d'errors <span class="tag" id="logCount">0</span></summary>
     <div class="in">
-      <pre class="log" id="logPre">Sin errores.</pre>
-      <div class="row"><button class="small" id="copyLog">Copiar registro (Markdown)</button><button class="small" id="clearLog">Vaciar</button></div>
+      <pre class="log" id="logPre">Sense errors.</pre>
+      <div class="row"><button class="small" id="copyLog">Copiar el registre (Markdown)</button><button class="small" id="clearLog">Buidar</button></div>
     </div>
   </details>
 
   <footer>
-    <span class="mono">Versión 2026-10-31 · 12:30</span>
-    <span>Los importes salen de los datos de sorteo guardados en la app. Para cobrar, la única lista válida es la oficial de Loterías y Apuestas del Estado o de la ONCE.</span>
-    <span>Gravamen: los premios de más de 40.000 € tributan un 20 % sobre lo que excede de esa cantidad (estimación orientativa).</span>
+    <span class="mono">Versió 2026-10-31 · 13:00</span>
+    <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
+    <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
 </div>
 
 <script>
 /*ENGINE-START*/
 const JUEGOS = {
-  euromillones:     { nombre: "Euromillones",       tipo: "comb", n: 5, max: 50, est: 2, maxEst: 12 },
+  euromillones:     { nombre: "Euromilions",       tipo: "comb", n: 5, max: 50, est: 2, maxEst: 12 },
   primitiva:        { nombre: "La Primitiva",       tipo: "comb", n: 6, max: 49 },
   bonoloto:         { nombre: "Bonoloto",           tipo: "comb", n: 6, max: 49 },
   elgordo:          { nombre: "El Gordo de la Primitiva", tipo: "comb", n: 5, max: 54 },
-  loteria_nacional: { nombre: "Lotería Nacional",   tipo: "num" },
-  once:             { nombre: "Cupón ONCE",         tipo: "num" },
+  loteria_nacional: { nombre: "Loteria Nacional",   tipo: "num" },
+  once:             { nombre: "Cupó de l'ONCE",         tipo: "num" },
 };
 const CAT_EM = ["5+2","5+1","5","4+2","4+1","3+2","4","2+2","3+1","3","1+2","2+1","2"];
 const CAT_LABEL = {
-  primitiva: { especial: "Especial (6 + reintegro)", "1": "1ª (6 aciertos)", "2": "2ª (5 + complementario)", "3": "3ª (5 aciertos)", "4": "4ª (4 aciertos)", "5": "5ª (3 aciertos)", R: "Reintegro" },
-  bonoloto:  { "1": "1ª (6 aciertos)", "2": "2ª (5 + complementario)", "3": "3ª (5 aciertos)", "4": "4ª (4 aciertos)", "5": "5ª (3 aciertos)", R: "Reintegro" },
-  elgordo:   { "5+C": "1ª (5 + clave)", "5": "2ª (5)", "4+C": "3ª (4 + clave)", "4": "4ª (4)", "3+C": "5ª (3 + clave)", "3": "6ª (3)", "2+C": "7ª (2 + clave)", "2": "8ª (2)", R: "Reintegro (clave)" },
+  primitiva: { especial: "Especial (6 + reintegrament)", "1": "1a (6 encerts)", "2": "2a (5 + complementari)", "3": "3a (5 encerts)", "4": "4a (4 encerts)", "5": "5a (3 encerts)", R: "Reintegrament" },
+  bonoloto:  { "1": "1a (6 encerts)", "2": "2a (5 + complementari)", "3": "3a (5 encerts)", "4": "4a (4 encerts)", "5": "5a (3 encerts)", R: "Reintegrament" },
+  elgordo:   { "5+C": "1a (5 + clau)", "5": "2a (5)", "4+C": "3a (4 + clau)", "4": "4a (4)", "3+C": "5a (3 + clau)", "3": "6a (3)", "2+C": "7a (2 + clau)", "2": "8a (2)", R: "Reintegrament (clau)" },
 };
 const JOKER_PREMIOS = { 7: 1000000, 6: 10000, 5: 1000, 4: 300, 3: 50, 2: 5, 1: 1 };
 
@@ -417,11 +417,11 @@ function evaluar(ticket, sorteo) {
     const ticketR = toInt(ticket.reintegro);
     (ticket.apuestas || []).forEach((ap, idx) => {
       const nums = uniqInts(ap.numeros), ests = uniqInts(ap.estrellas);
-      const etiqueta = "Apuesta " + (idx + 1);
-      if (nums.length < J.n) { avisos.push(etiqueta + ": tiene " + nums.length + " números y hacen falta " + J.n + "."); return; }
+      const etiqueta = "Aposta " + (idx + 1);
+      if (nums.length < J.n) { avisos.push(etiqueta + ": tiene " + nums.length + " números i en calen " + J.n + "."); return; }
       const combN = combos(nums, J.n);
       const combE = juego === "euromillones" ? (ests.length >= 2 ? combos(ests, 2) : null) : [[]];
-      if (!combE) { avisos.push(etiqueta + ": faltan las 2 estrellas."); return; }
+      if (!combE) { avisos.push(etiqueta + ": falten les 2 estrelles."); return; }
       const multiple = combN.length * combE.length > 1;
       const tally = {};
       const add = (cat, n) => { tally[cat] = (tally[cat] || 0) + n; };
@@ -448,12 +448,12 @@ function evaluar(ticket, sorteo) {
         }
       }
       const cats = Object.keys(tally);
-      if (!cats.length) push({ texto: etiqueta + (multiple ? " (múltiple, " + combN.length * combE.length + " combinaciones)" : ""), cat: "Sin premio", importe: 0, nums, ests, sinPremio: true });
+      if (!cats.length) push({ texto: etiqueta + (multiple ? " (múltiple, " + combN.length * combE.length + " combinacions)" : ""), cat: "Sense premi", importe: 0, nums, ests, sinPremio: true });
       const order = juego === "euromillones" ? CAT_EM : Object.keys(CAT_LABEL[juego]);
       cats.sort((a, b) => order.indexOf(a) - order.indexOf(b)).forEach((c) => {
         const unit = imp(c), n = tally[c];
-        const label = juego === "euromillones" ? (c.includes("+") ? c.split("+")[0] + " aciertos + " + c.split("+")[1] + (c.endsWith("+1") ? " estrella" : " estrellas") : c + " aciertos") : CAT_LABEL[juego][c];
-        push({ texto: etiqueta + (n > 1 ? " · " + n + " combinaciones" : ""), cat: label, importe: unit === null ? null : unit * n, unitario: unit, veces: n, pendiente: unit === null, nums, ests });
+        const label = juego === "euromillones" ? (c.includes("+") ? c.split("+")[0] + " encerts + " + c.split("+")[1] + (c.endsWith("+1") ? " estrella" : " estrelles") : c + " encerts") : CAT_LABEL[juego][c];
+        push({ texto: etiqueta + (n > 1 ? " · " + n + " combinacions" : ""), cat: label, importe: unit === null ? null : unit * n, unitario: unit, veces: n, pendiente: unit === null, nums, ests });
       });
     });
     if (ticket.joker && sorteo.joker && juego === "primitiva") {
@@ -461,8 +461,8 @@ function evaluar(ticket, sorteo) {
       if (a.length === 7 && b.length === 7) {
         let best = 0;
         for (let k = 7; k >= 1; k--) { if (a.slice(0, k) === b.slice(0, k) || a.slice(-k) === b.slice(-k)) { best = k; break; } }
-        push({ texto: "Joker " + a, cat: best ? (best === 7 ? "Joker (7 cifras)" : "Joker (" + best + " cifra" + (best > 1 ? "s" : "") + " por delante o por detrás)") : "Joker sin premio", importe: best ? JOKER_PREMIOS[best] : 0, sinPremio: !best });
-      } else avisos.push("El número Joker debe tener 7 cifras.");
+        push({ texto: "Joker " + a, cat: best ? (best === 7 ? "Joker (7 xifres)" : "Joker (" + best + " xifra" + (best > 1 ? "s" : "") + " pel davant o pel darrere)") : "Joker sense premi", importe: best ? JOKER_PREMIOS[best] : 0, sinPremio: !best });
+      } else avisos.push("El número del Joker ha de tenir 7 xifres.");
     }
     if (ticket.millon && sorteo.millon && juego === "euromillones") {
       const a = String(ticket.millon).replace(/\s/g, "").toUpperCase(), b = String(sorteo.millon).replace(/\s/g, "").toUpperCase();
@@ -475,11 +475,11 @@ function evaluar(ticket, sorteo) {
         for (let k = ini; k <= Math.min(fin, ini + 200); k++) codigos.add(r[1] + String(k).padStart(5, "0"));
       }
       const gana = codigos.has(b);
-      push({ texto: "El Millón " + a, cat: gana ? "El Millón" : "El Millón sin premio", importe: gana ? 1000000 : 0, sinPremio: !gana });
+      push({ texto: "El Millón " + a, cat: gana ? "El Millón" : "El Millón sense premi", importe: gana ? 1000000 : 0, sinPremio: !gana });
     }
   } else {
     const num = String(ticket.numero || "").replace(/\D/g, "");
-    if (num.length !== 5) { avisos.push("El número del décimo o cupón debe tener 5 cifras."); return { lineas, avisos }; }
+    if (num.length !== 5) { avisos.push("El número del dècim o del cupó ha de tenir 5 xifres."); return { lineas, avisos }; }
     const serie = toInt(ticket.serie);
     const mult = juego === "loteria_nacional" ? Math.max(1, toInt(ticket.decimos) || 1) : 1;
     const pad = (n) => String(((n % 100000) + 100000) % 100000).padStart(5, "0");
@@ -503,15 +503,15 @@ function evaluar(ticket, sorteo) {
     if (!sorteo.acumulables && hits.length > 1) {
       const known = hits.filter((h) => h.importe !== null && h.importe !== undefined);
       elegidos = [known.sort((a, b) => b.importe - a.importe)[0] || hits[0]];
-      avisos.push("En este juego solo se cobra el premio mayor; se muestran los demás coincidentes como informativos.");
-    } else if (hits.length > 1) avisos.push("Este número coincide con varios premios y se han sumado. La compatibilidad entre premios la fija el programa oficial de cada sorteo; confírmalo en la lista oficial.");
-    if (!hits.length) push({ texto: "Número " + num + (serie !== null ? " · serie " + serie : ""), cat: "Sin premio", importe: 0, sinPremio: true, numero: num });
+      avisos.push("En aquest joc només es cobra el premi més alt; els altres coincidents es mostren com a informatius.");
+    } else if (hits.length > 1) avisos.push("Aquest número coincideix amb diversos premis i s'han sumat. La compatibilitat entre premis la fixa el programa oficial de cada sorteig; confirma-ho a la llista oficial.");
+    if (!hits.length) push({ texto: "Número " + num + (serie !== null ? " · serie " + serie : ""), cat: "Sense premi", importe: 0, sinPremio: true, numero: num });
     for (const p of hits) {
       const used = elegidos.includes(p);
       const u = p.importe === null || p.importe === undefined || p.importe === "" ? null : Number(p.importe);
-      push({ texto: "Número " + num + (mult > 1 ? " · " + mult + " décimos" : ""), cat: p.concepto + (used ? "" : " (no acumulable)"), importe: used ? (u === null ? null : u * mult) : 0, unitario: u, veces: mult, pendiente: used && u === null, numero: num, valor: String(p.valor), tipoPremio: p.tipo, informativo: !used });
+      push({ texto: "Número " + num + (mult > 1 ? " · " + mult + " dècims" : ""), cat: (typeof trConcepte === "function" ? trConcepte(p.concepto) : p.concepto) + (used ? "" : " (no acumulable)"), importe: used ? (u === null ? null : u * mult) : 0, unitario: u, veces: mult, pendiente: used && u === null, numero: num, valor: String(p.valor), tipoPremio: p.tipo, informativo: !used });
     }
-    if (sorteo.completo === false) avisos.push("La lista de premios guardada de este sorteo está incompleta. Puede haber premios menores (terminaciones, aproximaciones, centenas) que no aparecen; añade la lista oficial para una comprobación completa.");
+    if (sorteo.completo === false) avisos.push("La llista de premis desada d'aquest sorteig és incompleta. Hi pot haver premis menors (terminacions, aproximacions, centenes) que no hi surten; consulta la llista oficial.");
   }
   return { lineas, avisos };
 }
@@ -542,9 +542,9 @@ function el(tag, attrs = {}, ...kids) {
   for (const k of kids.flat(Infinity)) if (k !== null && k !== undefined && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
   return e;
 }
-const eur = (x) => new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(x);
-const fechaLarga = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); } catch (_) { return iso; } };
-const fechaCorta = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); } catch (_) { return iso; } };
+const eur = (x) => new Intl.NumberFormat("ca-ES", { style: "currency", currency: "EUR" }).format(x);
+const fechaLarga = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("ca-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); } catch (_) { return iso; } };
+const fechaCorta = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("ca-ES", { weekday: "short", day: "numeric", month: "short" }); } catch (_) { return iso; } };
 const hoyISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
 const nuevoId = () => "b_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
 const clone = (o) => JSON.parse(JSON.stringify(o));
@@ -564,7 +564,7 @@ const estrellas = (nums, win, sm) => el("div", { class: "stars" }, nums.map((n) 
 const LOG_KEY = "comprobador.log";
 let logEntries = [];
 try { logEntries = JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch (_) { logEntries = []; }
-function renderLog() { $("logCount").textContent = logEntries.length; $("logPre").textContent = logEntries.length ? logEntries.join("\n") : "Sin errores."; }
+function renderLog() { $("logCount").textContent = logEntries.length; $("logPre").textContent = logEntries.length ? logEntries.join("\n") : "Sense errors."; }
 function manejarError(error, tarea, solucion) {
   const m = error && (error.message || error.code) ? (error.message || error.code) + (error.code && error.message ? " [" + error.code + "]" : "") : String(error);
   const mensaje = "Error: " + m;
@@ -575,37 +575,37 @@ function manejarError(error, tarea, solucion) {
   const box = $("aviso");
   box.replaceChildren(el("div", { class: "alert", role: "alert" },
     el("div", { class: "msg" }, el("b", { text: "S'ha detectat un error · " + tarea }), el("br"), mensaje, el("br"), el("span", { class: "sub", text: solucion || "" })),
-    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Cerrar")));
+    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Tancar")));
   box.hidden = false; console.log(registro); return registro;
 }
 function copiar(texto, btn) {
-  const done = () => { const o = btn.textContent; btn.textContent = "Copiado"; setTimeout(() => (btn.textContent = o), 1400); };
+  const done = () => { const o = btn.textContent; btn.textContent = "Copiat"; setTimeout(() => (btn.textContent = o), 1400); };
   const fb = () => { const t = el("textarea"); t.value = texto; document.body.append(t); t.select(); try { document.execCommand("copy"); done(); } catch (_) {} t.remove(); };
   try { navigator.clipboard.writeText(texto).then(done, fb); } catch (_) { fb(); }
 }
-$("copyLog").onclick = (e) => copiar(logEntries.join("\n") || "Sin errores.", e.currentTarget);
+$("copyLog").onclick = (e) => copiar(logEntries.join("\n") || "Sense errors.", e.currentTarget);
 $("clearLog").onclick = () => { logEntries = []; try { localStorage.removeItem(LOG_KEY); } catch (_) {} renderLog(); };
 renderLog();
 const SAMPLE_SOLUCION = {
-  not_granted: "Permite que la página use Claude (menú Permisos del artefacto) y vuelve a pulsar el botón.",
-  sampling_disabled: "Tu cuenta u organización no tiene Claude disponible aquí. Escribe el boleto a mano.",
-  rate_limited: "Has hecho muchas consultas seguidas. Espera un poco y vuelve a intentarlo.",
-  image_rejected: "La imagen no es válida o es muy grande. Prueba con otra foto (JPG o PNG).",
-  images_unavailable: "Esta vista no puede enviar imágenes a Claude. Abre el artefacto en claude.ai o escribe el boleto a mano.",
-  invalid_json: "Claude no devolvió datos legibles. Vuelve a intentarlo con una foto más nítida.",
-  refused: "Claude no ha podido procesar esta imagen. Prueba con otra foto.",
-  session_expired: "Vuelve a iniciar sesión en Claude.",
-  upstream_error: "Fallo temporal del servicio. Vuelve a intentarlo.",
-  empty_completion: "No se obtuvo respuesta. Prueba con una foto más nítida.",
-  no_key: "Pon tu clave de la API de Claude en «Uso fuera de Claude», o abre la app desde su enlace de claude.ai.",
-  api_401: "La clave API no es válida. Revísala en console.anthropic.com y vuelve a guardarla.",
-  api_403: "La clave API no tiene permiso para esto (por ejemplo, la búsqueda web). Actívalo en console.anthropic.com.",
-  api_400: "La API rechazó la petición. Revisa el nombre del modelo en «Uso fuera de Claude».",
-  api_404: "El modelo indicado no existe. Revisa el nombre del modelo en «Uso fuera de Claude».",
-  api_429: "Has superado el límite de la API. Espera unos minutos.",
-  api_529: "La API está saturada. Se volverá a intentar en unos minutos.",
-  network: "No hay conexión con api.anthropic.com. Revisa la conexión a internet.",
-  no_web: "Dentro de Claude, los resultados los añade la tarea programada o los puedes añadir con una captura.",
+  not_granted: "Permet que la pàgina faci servir Claude (menú Permisos de l'artefacte) i torna a prémer el botó.",
+  sampling_disabled: "El teu compte o organització no té Claude disponible aquí. Escriu la butlleta a mà.",
+  rate_limited: "Has fet moltes consultes seguides. Espera una mica i torna-ho a provar.",
+  image_rejected: "La imatge no és vàlida o és massa gran. Prova amb una altra foto (JPG o PNG).",
+  images_unavailable: "Aquesta vista no pot enviar imatges a Claude. Obre l'artefacte a claude.ai o escriu la butlleta a mà.",
+  invalid_json: "Claude no ha retornat dades llegibles. Torna-ho a provar amb una foto més nítida.",
+  refused: "Claude no ha pogut processar aquesta imatge. Prova amb una altra foto.",
+  session_expired: "Torna a iniciar la sessió a Claude.",
+  upstream_error: "Error temporal del servei. Torna-ho a provar.",
+  empty_completion: "No s'ha obtingut resposta. Prova amb una foto més nítida.",
+  no_key: "Cal una clau de l'API de Claude, o obre l'app des del seu enllaç de claude.ai.",
+  api_401: "La clau API no és vàlida. Revisa-la a console.anthropic.com i torna-la a desar.",
+  api_403: "La clau API no té permís per a això (per exemple, la cerca web). Activa-ho a console.anthropic.com.",
+  api_400: "L'API ha rebutjat la petició. Revisa el nom del model.",
+  api_404: "El model indicat no existeix. Revisa el nom del model.",
+  api_429: "Has superat el límit de l'API. Espera uns minuts.",
+  api_529: "L'API està saturada. Es tornarà a provar d'aquí a uns minuts.",
+  network: "No hi ha connexió amb api.anthropic.com. Revisa la connexió a internet.",
+  no_web: "Dins de Claude, els resultats els afegeix la tasca programada o els pots afegir amb una captura.",
 };
 
 // ---------- Estado ----------
@@ -641,11 +641,11 @@ function parseJSONsuelto(text) {
 }
 async function iaJSON(prompt, opts = {}) {
   if (modo === "claude") {
-    if (opts.web) throw { code: "no_web", message: "La búsqueda web no está disponible dentro de Claude" };
+    if (opts.web) throw { code: "no_web", message: "La cerca web no està disponible dins de Claude" };
     const o = { signal: opts.signal, cache: false }; if (opts.images) o.images = opts.images;
     return sample.json(prompt, o);
   }
-  if (!apiKey) throw { code: "no_key", message: "Falta la clave de la API de Claude" };
+  if (!apiKey) throw { code: "no_key", message: "Falta la clau de l'API de Claude" };
   const content = [];
   for (const b of opts.images || []) content.push({ type: "image", source: { type: "base64", media_type: /^image\/(jpeg|png|webp|gif)$/.test(b.type) ? b.type : "image/jpeg", data: await b64(b) } });
   content.push({ type: "text", text: prompt + "\n\nResponde únicamente con el JSON pedido, sin ningún otro texto." });
@@ -656,7 +656,7 @@ async function iaJSON(prompt, opts = {}) {
     res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", signal: opts.signal,
       headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
       body: JSON.stringify(body) });
-  } catch (e) { if (e && e.name === "AbortError") throw { code: "cancelled" }; throw { code: "network", message: "No se pudo conectar con api.anthropic.com (" + (e && e.message) + ")" }; }
+  } catch (e) { if (e && e.name === "AbortError") throw { code: "cancelled" }; throw { code: "network", message: "No s'ha pogut connectar amb api.anthropic.com (" + (e && e.message) + ")" }; }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) throw { code: "api_" + res.status, message: (data.error && data.error.message) || "HTTP " + res.status };
   const textos = (data.content || []).filter((c) => c.type === "text").map((c) => c.text);
@@ -669,13 +669,13 @@ function persistirLocal() {
   if (modo !== "local") return;
   const ok1 = lsSet("cb.tickets", tickets.map((t) => Object.assign({}, t)));
   const ok2 = lsSet("cb.sorteos", sorteosLocal);
-  setSaveState(ok1 && ok2 ? "Guardado en este navegador" : "Este navegador no permite guardar: se perderá al cerrar");
+  setSaveState(ok1 && ok2 ? "Desat en aquest navegador" : "Aquest navegador no permet desar: es perdrà en tancar");
 }
 function upsertSorteoLocal(s) { sorteosLocal = sorteosLocal.filter((x) => x.id !== s.id).concat(s); persistirLocal(); }
 function mostrarAviso(titulo, texto) {
   const box = $("aviso");
   box.replaceChildren(el("div", { class: "alert okk", role: "status" }, el("div", { class: "msg" }, el("b", { text: titulo }), el("br"), texto),
-    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Cerrar")));
+    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Tancar")));
   box.hidden = false;
   try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (_) {}
   try { if (window.Notification && Notification.permission === "granted") new Notification(titulo, { body: texto }); } catch (_) {}
@@ -685,12 +685,12 @@ function avisarSorteo(s, antes) {
   if (!afect.length) return;
   const partes = afect.map((t, i) => {
     const r = evaluar(t, s), T = totales(r.lineas.filter((l) => !l.informativo));
-    const nom = afect.length > 1 ? "Boleto " + (i + 1) + ": " : "";
-    return nom + (T.bruto > 0 ? "premiado con " + eur(T.bruto) + (T.pend ? " (y otra categoría con importe pendiente)" : "") : T.pend ? "premiado, importe pendiente del escrutinio" : "sin premio");
+    const nom = afect.length > 1 ? "Butlleta " + (i + 1) + ": " : "";
+    return nom + (T.bruto > 0 ? "premiada amb " + eur(T.bruto) + (T.pend ? " (i una altra categoria amb import pendent)" : "") : T.pend ? "premiada, import pendent de l'escrutini" : "sense premi");
   });
-  const fase = s.completo ? "" : " (combinación publicada; falta el escrutinio)";
+  const fase = s.completo ? "" : " (combinació publicada; falta l'escrutini)";
   if (antes && antes.completo === s.completo) return;
-  mostrarAviso("Resultado publicado · " + JUEGOS[s.juego].nombre + " " + fechaCorta(s.fecha) + fase, partes.join(" · "));
+  mostrarAviso("Resultat publicat · " + JUEGOS[s.juego].nombre + " " + fechaCorta(s.fecha) + fase, partes.join(" · "));
 }
 const PUB_MIN = { once: 3, bonoloto: 25, euromillones: 30, primitiva: 45, elgordo: 45, loteria_nacional: 15 };
 const buscando = new Set(), ultimoIntento = new Map();
@@ -712,20 +712,20 @@ async function sondear(manual) {
     if (!manual && Date.now() - (ultimoIntento.get(k) || 0) < espera) continue;
     buscando.add(k); ultimoIntento.set(k, Date.now());
     const nom = JUEGOS[p.juego].nombre + " del " + fechaCorta(p.fecha);
-    $("stAuto").replaceChildren(el("span", { class: "spin" }), "Buscando resultados de " + nom + "…");
+    $("stAuto").replaceChildren(el("span", { class: "spin" }), "Cercant els resultats de " + nom + "…");
     try {
       const r = await iaJSON(promptBuscar(p.juego, p.fecha), { web: true });
-      if (r && r.publicado === false) { $("stAuto").textContent = nom + ": aún no publicado. Se volverá a mirar en " + (espera / 60000) + " minutos mientras la app esté abierta."; }
+      if (r && r.publicado === false) { $("stAuto").textContent = nom + ": encara no s'ha publicat. Es tornarà a mirar d'aquí a " + (espera / 60000) + " minuts mentre l'app estigui oberta."; }
       else if (r && r.juego === p.juego && r.fecha === p.fecha) {
         const antes = buscarSorteo(p.juego, p.fecha);
-        const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Búsqueda web");
+        const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Cerca web");
         if (antes) for (const [kk, vv] of Object.entries(antes.premios || {})) if (vv != null && s.premios[kk] == null) s.premios[kk] = vv;
         upsertSorteoLocal(s); renderSaved(); renderTodoFull(); avisarSorteo(s, antes);
-        $("stAuto").textContent = "Resultados de " + nom + " actualizados" + (s.completo ? "." : "; falta el escrutinio y se seguirá buscando.");
-      } else throw { code: "invalid_json", message: "La búsqueda no devolvió los datos de este sorteo" };
+        $("stAuto").textContent = "Resultats de " + nom + " actualitzats" + (s.completo ? "." : "; falta l'escrutini i es continuarà cercant.");
+      } else throw { code: "invalid_json", message: "La cerca no ha retornat les dades d'aquest sorteig" };
     } catch (e) {
       $("stAuto").textContent = "";
-      manejarError(e, "Buscar resultados de " + nom, SAMPLE_SOLUCION[e && e.code] || "Se volverá a intentar en unos minutos.");
+      manejarError(e, "Cercar els resultats de " + nom, SAMPLE_SOLUCION[e && e.code] || "Es tornarà a provar d'aquí a uns minuts.");
       if (e && /^(no_key|api_401|api_403|api_404|api_400)$/.test(e.code || "")) break;
     } finally { buscando.delete(k); }
   }
@@ -739,9 +739,9 @@ function iniciarLocal() {
   sampleImgs = { mediaTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"], maxInputBytes: 3.5e6 };
   dbReady = true; ticketsReady = true;
   $("localPanel").hidden = false; $("addRes").hidden = true;
-  $("dropTxt").textContent = "Haz fotos o sube varias imágenes. Se leen en el propio móvil, sin coste; después revisa los números que proponga.";
-  if (!lsOK) { $("localWarn").hidden = false; $("localWarn").textContent = "Este navegador no deja guardar datos de este archivo (pasa al abrirlo desde Descargas en el móvil). Lo que añadas se perderá al cerrar. Para conservarlo, abre la app desde su enlace de claude.ai o publícala en una web."; }
-  setSaveState(lsOK ? "Guardado en este navegador" : "Sin guardado permanente");
+  $("dropTxt").textContent = "Fes fotos o puja diverses imatges. Es llegeixen al mateix mòbil, sense cost; després revisa els números que proposi.";
+  if (!lsOK) { $("localWarn").hidden = false; $("localWarn").textContent = "Aquest navegador no deixa desar dades d'aquest fitxer (passa en obrir-lo des de Baixades al mòbil). El que afegeixis es perdrà en tancar. Per conservar-ho, obre l'app des de la seva adreça web."; }
+  setSaveState(lsOK ? "Desat en aquest navegador" : "Sense desament permanent");
   renderTodoFull(); renderSaved(); renderQueue();
   cargarResultadosWeb(true); setInterval(() => cargarResultadosWeb(false), 30000);
 }
@@ -754,7 +754,7 @@ async function cargarResultadosWeb(forzar) {
   const intervalo = pend.length ? 2 * 60000 : 15 * 60000;
   if (!forzar && Date.now() - ultimaCarga < intervalo) return;
   cargando = true; ultimaCarga = Date.now();
-  if (forzar || pend.length) $("stAuto").replaceChildren(el("span", { class: "spin" }), "Consultando resultados oficiales…");
+  if (forzar || pend.length) $("stAuto").replaceChildren(el("span", { class: "spin" }), "Consultant els resultats oficials…");
   let datos = null, err = null;
   for (const u of RES_URLS) {
     try { const r = await fetch(u + "?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status + " en " + u); datos = await r.json(); break; }
@@ -763,14 +763,14 @@ async function cargarResultadosWeb(forzar) {
   cargando = false;
   if (!datos) {
     $("stAuto").textContent = "";
-    if (forzar) manejarError(err || new Error("Sin datos"), "Cargar resultados oficiales", "Comprueba la conexión a internet. Si sigue fallando, puede que el servicio de resultados aún no esté activo.");
+    if (forzar) manejarError(err || new Error("Sense dades"), "Carregar els resultats oficials", "Comprova la connexió a internet. Si continua fallant, potser el servei de resultats encara no està actiu.");
     return;
   }
   const lista = Array.isArray(datos) ? datos : datos.sorteos || [];
   let cambios = 0;
   for (const r of lista) {
     if (!r || !JUEGOS[r.juego] || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.fecha || ""))) continue;
-    const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Resultados oficiales");
+    const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Resultats oficials");
     s.actualizado = r.actualizado || s.actualizado;
     const antes = buscarSorteo(s.juego, s.fecha);
     if (antes && antes.completo === s.completo && JSON.stringify(antes.numeros) === JSON.stringify(s.numeros) && JSON.stringify(antes.premios) === JSON.stringify(s.premios) && JSON.stringify(antes.premiosNumericos) === JSON.stringify(s.premiosNumericos)) continue;
@@ -778,9 +778,9 @@ async function cargarResultadosWeb(forzar) {
     avisarSorteo(s, antes);
   }
   if (cambios) { persistirLocal(); renderSaved(); renderTodoFull(); }
-  const hh = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const hh = new Date().toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
   const quedan = pendientesBusqueda().filter((p) => Date.now() - p.ini < 12 * 3600e3).length;
-  $("stAuto").textContent = "Resultados consultados a las " + hh + (datos.actualizado ? " (publicados " + new Date(datos.actualizado).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ")" : "") + (quedan ? ". Esperando " + quedan + " sorteo(s): se vuelve a mirar cada 2 minutos." : ".");
+  $("stAuto").textContent = "Resultats consultats a les " + hh + (datos.actualizado ? " (publicats el " + new Date(datos.actualizado).toLocaleString("ca-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ")" : "") + (quedan ? ". Esperant " + quedan + " sorteig(s): es torna a mirar cada 2 minuts." : ".");
 }
 // ---------- Lectura gratuita de fotos (OCR en el navegador) ----------
 /*OCR-START*/
@@ -908,14 +908,14 @@ function ocrJuegoEstructura(T) {
 }
 function ocrBoleto(texto, hoy) {
   const T = ocrNormaliza(texto);
-  const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
+  const dudas = ["Llegit amb reconeixement de text gratuït: comprova els números amb la butlleta abans de fiar-te del resultat."];
   let juego = ocrJuegoTexto(T);
   if (juego === "elgordo" && !ocrApuestas(T, "elgordo").length && ocrApuestas(T, "primitiva").length) juego = "primitiva";
   if (!juego) {
     juego = ocrJuegoEstructura(T);
-    if (juego) dudas.push("No se ha leído el nombre del juego: revisa que sea " + { primitiva: "La Primitiva (o Bonoloto)", euromillones: "Euromillones", elgordo: "El Gordo", loteria_nacional: "Lotería Nacional", once: "un cupón de la ONCE" }[juego] + ".");
+    if (juego) dudas.push("No s'ha llegit el nom del joc: revisa que sigui " + { primitiva: "La Primitiva (o Bonoloto)", euromillones: "Euromilions", elgordo: "El Gordo", loteria_nacional: "Loteria Nacional", once: "un cupó de l'ONCE" }[juego] + ".");
   }
-  if (!juego) return { boletos: [], motivo: "No se ha reconocido ni el juego ni los números en la foto.", texto: T };
+  if (!juego) return { boletos: [], motivo: "No s'ha reconegut ni el joc ni els números a la foto.", texto: T };
   const b = { juego, fechas: [], apuestas: [], reintegro: null, joker: null, millon: null, numero: null, serie: null, fraccion: null, dudas };
   let fechas = ocrFechas(T, hoy);
   const dias = OCR_DIAS_SORTEO[juego];
@@ -923,27 +923,27 @@ function ocrBoleto(texto, hoy) {
   if (validas.length) fechas = validas;
   if (fechas.length > 1 && (juego === "loteria_nacional" || juego === "once")) fechas = [fechas[fechas.length - 1]];
   b.fechas = fechas;
-  if (!fechas.length) dudas.push("No se ha leído la fecha del sorteo: escríbela.");
+  if (!fechas.length) dudas.push("No s'ha llegit la data del sorteig: escriu-la.");
   let m;
   if (juego === "loteria_nacional" || juego === "once") {
     const sinFechas = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g, " ");
     const cands = (sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || []).filter((c) => !/^20\d\d\d$/.test(c) || true);
     const freq = {}; for (const c of cands) freq[c] = (freq[c] || 0) + 1;
     const best = Object.keys(freq).sort((a, c) => freq[c] - freq[a])[0];
-    if (best) b.numero = best; else dudas.push("No se ha leído el número de 5 cifras: escríbelo.");
+    if (best) b.numero = best; else dudas.push("No s'ha llegit el número de 5 xifres: escriu-lo.");
     if ((m = T.match(/SERIE\D{0,6}(\d{1,3})/))) b.serie = +m[1];
     if ((m = T.match(/FRACC?ION\D{0,6}(\d{1,2})/))) b.fraccion = +m[1];
-    if (b.serie === null) dudas.push("Revisa la serie.");
+    if (b.serie === null) dudas.push("Revisa la sèrie.");
     return { boletos: [b] };
   }
   b.apuestas = ocrApuestas(T, juego);
-  if (!b.apuestas.length) dudas.push("No se han podido leer las apuestas: escríbelas.");
-  else dudas.push("Se han leído " + b.apuestas.length + (b.apuestas.length > 1 ? " apuestas" : " apuesta") + ": comprueba que no falta ninguna.");
+  if (!b.apuestas.length) dudas.push("No s'han pogut llegir les apostes: escriu-les.");
+  else dudas.push("S'han llegit " + b.apuestas.length + (b.apuestas.length > 1 ? " apostes" : " aposta") + ": comprova que no en falti cap.");
   if ((m = T.match(/(?:REINTEGRO|REINT\.?|\bR\s*[:.=])\s*[:.=]?\s*(\d)\b/) || T.match(/^\s*R\s+(\d)\s*$/m))) b.reintegro = +m[1];
   if (juego === "elgordo" && (m = T.match(/(?:N[º°O.]?\s*)?CLAVE\D{0,6}(\d)\b/))) b.reintegro = +m[1];
   if (juego === "primitiva" && !/J[O0]KER\s*[:.]?\s*N[O0]\b/.test(T) && (m = T.match(/J[O0]KER\s*[:.]?\s*((?:\d\s?){7})(?!\d)/))) b.joker = m[1].replace(/\s/g, "");
   if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b(?:\s*(?:A|AL|-)\s*(?:[A-Z0-9]{3})?\s?(\d{5})\b)?/))) b.millon = m[1] + m[2] + (m[3] && m[3] !== m[2] ? "-" + m[1] + m[3] : "");
-  if (juego !== "euromillones" && b.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
+  if (juego !== "euromillones" && b.reintegro === null) dudas.push("No s'ha llegit el reintegrament: escriu-lo.");
   return { boletos: [b] };
 }
 // Combina varias lecturas de la misma foto: votos por apuesta y por dato
@@ -953,7 +953,7 @@ function ocrCombinar(textos, hoy) {
   const voto = (vals) => { const c = new Map(); for (const v of vals) if (v !== null && v !== undefined && v !== "") c.set(JSON.stringify(v), (c.get(JSON.stringify(v)) || 0) + 1); let best = null, n = 0; for (const [k, v] of c) if (v > n) { best = JSON.parse(k); n = v; } return best; };
   const bs = res.map((x) => x.r.boletos[0]);
   // juego: el leído en el texto pesa más que el deducido
-  const juego = voto(bs.filter((b) => !b.dudas.some((d) => /nombre del juego/.test(d))).map((b) => b.juego)) || voto(bs.map((b) => b.juego));
+  const juego = voto(bs.filter((b) => !b.dudas.some((d) => /nom del joc/.test(d))).map((b) => b.juego)) || voto(bs.map((b) => b.juego));
   const delJuego = bs.filter((b) => b.juego === juego);
   const out = Object.assign({}, delJuego[0], { juego });
   out.fechas = voto(delJuego.map((b) => (b.fechas && b.fechas.length ? b.fechas : null))) || [];
@@ -984,43 +984,43 @@ function ocrCombinar(textos, hoy) {
   const dudosas = elegidos.filter((e) => e.dudoso).map((e) => elegidos.indexOf(e) + 1);
   // datos en los que las lecturas no coinciden
   const discrepan = [];
-  for (const [k, nom] of [["reintegro", "el reintegro"], ["joker", "el Joker"], ["millon", "el código de El Millón"], ["numero", "el número"], ["serie", "la serie"]]) {
+  for (const [k, nom] of [["reintegro", "el reintegrament"], ["joker", "el Joker"], ["millon", "el codi d'El Millón"], ["numero", "el número"], ["serie", "la sèrie"]]) {
     const vals = new Set(delJuego.map((b) => b[k]).filter((v) => v !== null && v !== undefined && v !== ""));
     if (vals.size > 1) discrepan.push(nom);
   }
-  const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
+  const dudas = ["Llegit amb reconeixement de text gratuït: comprova els números amb la butlleta abans de fiar-te del resultat."];
   if (juego !== "loteria_nacional" && juego !== "once") {
-    if (!out.apuestas.length) dudas.push("No se han podido leer las apuestas: escríbelas.");
-    else if (esperadas && out.apuestas.length < esperadas) dudas.push("El resguardo indica " + esperadas + " apuestas y solo se han leído " + out.apuestas.length + ": añade las que falten.");
-    else dudas.push("Se han leído " + out.apuestas.length + (out.apuestas.length > 1 ? " apuestas" : " apuesta") + (esperadas ? " (las que indica el resguardo)" : "") + ": compruébalas.");
-    if (juego !== "euromillones" && out.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
-  } else if (!out.numero) dudas.push("No se ha leído el número de 5 cifras: escríbelo.");
-  if (!out.fechas.length) dudas.push("No se ha leído la fecha del sorteo: escríbela.");
-  if (delJuego.some((b) => b.dudas.some((d) => /nombre del juego/.test(d))) && !bs.some((b) => b.juego === juego && !b.dudas.some((d) => /nombre del juego/.test(d)))) dudas.push(delJuego[0].dudas.find((d) => /nombre del juego/.test(d)));
-  if (dudosas.length) dudas.push("Revisa con atención la apuesta " + dudosas.join(", ") + ": las lecturas no coinciden del todo.");
-  if (discrepan.length) dudas.push("Revisa " + discrepan.join(", ") + ": las lecturas no coinciden.");
+    if (!out.apuestas.length) dudas.push("No s'han pogut llegir les apostes: escriu-les.");
+    else if (esperadas && out.apuestas.length < esperadas) dudas.push("El resguard indica " + esperadas + " apostes i només se n'han llegit " + out.apuestas.length + ": afegeix les que faltin.");
+    else dudas.push("S'han llegit " + out.apuestas.length + (out.apuestas.length > 1 ? " apostes" : " aposta") + (esperadas ? " (les que indica el resguard)" : "") + ": comprova-les.");
+    if (juego !== "euromillones" && out.reintegro === null) dudas.push("No s'ha llegit el reintegrament: escriu-lo.");
+  } else if (!out.numero) dudas.push("No s'ha llegit el número de 5 xifres: escriu-lo.");
+  if (!out.fechas.length) dudas.push("No s'ha llegit la data del sorteig: escriu-la.");
+  if (delJuego.some((b) => b.dudas.some((d) => /nom del joc/.test(d))) && !bs.some((b) => b.juego === juego && !b.dudas.some((d) => /nom del joc/.test(d)))) dudas.push(delJuego[0].dudas.find((d) => /nom del joc/.test(d)));
+  if (dudosas.length) dudas.push("Revisa amb atenció l'aposta " + dudosas.join(", ") + ": les lectures no coincideixen del tot.");
+  if (discrepan.length) dudas.push("Revisa " + discrepan.join(", ") + ": les lectures no coincideixen.");
   out.dudas = dudas;
   out.esperadas = esperadas;
   return { boletos: [out] };
 }
 /*OCR-END*/
 let ocrWorker = null;
-function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No se pudo descargar " + src)); document.head.append(sc); }); }
+function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No s'ha pogut baixar " + src)); document.head.append(sc); }); }
 // Decodifica la foto de forma compatible con todos los móviles:
 // createImageBitmap falla con algunas fotos de Android ("The source image could not be decoded")
 async function abrirImagen(file) {
   try { return await createImageBitmap(file, { imageOrientation: "from-image" }); } catch (_) {}
   try { return await createImageBitmap(file); } catch (_) {}
-  const cargar = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("No se puede abrir la imagen")); im.src = src; });
+  const cargar = (src) => new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = () => rej(new Error("No es pot obrir la imatge")); im.src = src; });
   let url = null;
   try { url = URL.createObjectURL(file); const im = await cargar(url); return { width: im.naturalWidth, height: im.naturalHeight, _img: im }; }
   catch (_) {}
   finally { /* la URL se libera al dibujar */ }
-  const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error("No se puede leer el archivo")); r.readAsDataURL(file); });
+  const dataUrl = await new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result); r.onerror = () => rej(new Error("No es pot llegir el fitxer")); r.readAsDataURL(file); });
   try { const im = await cargar(dataUrl); return { width: im.naturalWidth, height: im.naturalHeight, _img: im }; }
   catch (_) {
     const tipo = (file.type || file.name || "").toLowerCase();
-    throw new Error(/heic|heif/.test(tipo) ? "La foto está en formato HEIC, que el navegador no puede abrir. Cambia la cámara a JPG o haz una captura de pantalla de la foto." : "El navegador no puede abrir esta imagen. Prueba a hacer una captura de pantalla de la foto y súbela.");
+    throw new Error(/heic|heif/.test(tipo) ? "La foto és en format HEIC, que el navegador no pot obrir. Canvia la càmera a JPG o fes una captura de pantalla de la foto." : "El navegador no pot obrir aquesta imatge. Prova de fer una captura de pantalla de la foto i puja-la.");
   }
 }
 const fuenteImagen = (bmp) => bmp._img || bmp;
@@ -1078,7 +1078,7 @@ async function leerConOCR(file, progreso) {
     catch (e) { await cargarScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js"); }
   }
   if (!ocrWorker) {
-    progreso("Descargando el lector (solo la primera vez)…");
+    progreso("Baixant el lector (només la primera vegada)…");
     const rutas = enWeb ? { workerPath: base + "worker.min.js", corePath: base, langPath: base + "lang", gzip: true } : {};
     try {
       ocrWorker = await Tesseract.createWorker("spa", 1, Object.assign({ logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } }, rutas));
@@ -1100,7 +1100,7 @@ async function leerConOCR(file, progreso) {
         textos.push(data.text);
       } catch (e) {
         fallos.push((e && (e.message || e)) + "");
-        if (fallos.length >= 3 && !textos.length) throw new Error("El lector no ha podido procesar la foto: " + fallos[0]);
+        if (fallos.length >= 3 && !textos.length) throw new Error("El lector no ha pogut processar la foto: " + fallos[0]);
       }
     }
   };
@@ -1116,12 +1116,12 @@ async function leerConOCR(file, progreso) {
   }
   const b = mejor.boletos[0];
   if (b && (b.juego === "loteria_nacional" || b.juego === "once") && !b.numero) {
-    ocrWorker._paso = "Buscando el número";
+    ocrWorker._paso = "Cercant el número";
     const img = await prepararOCR(file, "gris", 0);
     await ocrWorker.setParameters({ tessedit_pageseg_mode: "11", tessedit_char_whitelist: "0123456789" });
     const r2 = await ocrWorker.recognize(img);
     const lineas = r2.data.text.split("\n").map((x) => x.trim()).filter((x) => /^\d{5}$/.test(x) && !/20\d\d$/.test(x));
-    if (lineas.length) { b.numero = lineas[0]; b.dudas = b.dudas.filter((x) => !/5 cifras/.test(x)); }
+    if (lineas.length) { b.numero = lineas[0]; b.dudas = b.dudas.filter((x) => !/5 xifres/.test(x)); }
   }
   mejor.textoLeido = textos.join("\n----\n").slice(0, 4000);
   return mejor;
@@ -1129,8 +1129,8 @@ async function leerConOCR(file, progreso) {
 
 $("btnRecargar").onclick = () => cargarResultadosWeb(true);
 $("btnNotif").onclick = async () => {
-  try { const p = await Notification.requestPermission(); $("stKey").textContent = p === "granted" ? "Avisos del navegador activados (con la app abierta)." : "El navegador no ha permitido los avisos."; }
-  catch (_) { $("stKey").textContent = "Este navegador no admite avisos desde esta página."; }
+  try { const p = await Notification.requestPermission(); $("stKey").textContent = p === "granted" ? "Avisos del navegador activats (amb l'app oberta)." : "El navegador no ha permès els avisos."; }
+  catch (_) { $("stKey").textContent = "Aquest navegador no admet avisos des d'aquesta pàgina."; }
 };
 
 // ---------- Sorteos ----------
@@ -1142,15 +1142,15 @@ function horaSorteo(j, f) {
 }
 function cuando(f) {
   const d = new Date(f + "T12:00:00"), hoy = new Date(hoyISO() + "T12:00:00"), dias = Math.round((d - hoy) / 864e5);
-  const dm = d.toLocaleDateString("es-ES", { day: "numeric", month: "long" }), wd = d.toLocaleDateString("es-ES", { weekday: "long" });
-  if (dias === 0) return "hoy, " + wd + " " + dm;
-  if (dias === 1) return "mañana, " + wd + " " + dm;
-  if (dias > 1 && dias < 7) return "el próximo " + wd + " " + dm;
+  const dm = d.toLocaleDateString("ca-ES", { day: "numeric", month: "long" }), wd = d.toLocaleDateString("ca-ES", { weekday: "long" });
+  if (dias === 0) return "avui, " + wd + " " + dm;
+  if (dias === 1) return "demà, " + wd + " " + dm;
+  if (dias > 1 && dias < 7) return "el proper " + wd + " " + dm;
   return "el " + wd + " " + dm + (d.getFullYear() !== hoy.getFullYear() ? " de " + d.getFullYear() : "");
 }
 function publicacionTxt(j, f) {
   const sab = new Date(f + "T12:00:00").getDay() === 6;
-  return { once: "hacia las 21:30", bonoloto: "hacia las 22:00", euromillones: "entre las 22:00 y las 23:30", primitiva: "entre las 22:30 y las 23:30", elgordo: "normalmente a la mañana siguiente", loteria_nacional: sab ? "entre las 14:00 y las 15:00" : "entre las 22:00 y las 23:00" }[j] || "poco después del sorteo";
+  return { once: "cap a les 21:30", bonoloto: "cap a les 22:00", euromillones: "entre les 22:00 i les 23:30", primitiva: "entre les 22:30 i les 23:30", elgordo: "normalment l'endemà al matí", loteria_nacional: sab ? "entre les 14:00 i les 15:00" : "entre les 22:00 i les 23:00" }[j] || "poc després del sorteig";
 }
 const yaCelebrado = (j, f) => { const h = horaSorteo(j, f); return new Date() >= new Date(f + "T" + h + ":00"); };
 
@@ -1167,13 +1167,13 @@ function estadoBoleto(t) {
   const T = totales(lineas);
   const parcial = det.some((x) => x.s.completo === false);
   let estado, texto;
-  if (!fechas.length) { estado = "faltan"; texto = "Falta la fecha"; }
-  else if (T.bruto > 0) { estado = "premiado"; texto = "Premiado · " + eur(T.bruto) + (T.pend ? " + pendiente" : ""); }
-  else if (T.pend) { estado = "premiado_pend"; texto = "Premiado · importe pendiente"; }
-  else if (faltan.length) { estado = "faltan"; texto = "Faltan resultados"; }
-  else if (futuros.length) { estado = "proximo"; texto = "Sorteo pendiente"; }
-  else if (parcial) { estado = "parcial"; texto = "Sin premio (datos parciales)"; }
-  else { estado = "nada"; texto = "Sin premio"; }
+  if (!fechas.length) { estado = "faltan"; texto = "Falta la data"; }
+  else if (T.bruto > 0) { estado = "premiado"; texto = "Premiada · " + eur(T.bruto) + (T.pend ? " + pendent" : ""); }
+  else if (T.pend) { estado = "premiado_pend"; texto = "Premiada · import pendent"; }
+  else if (faltan.length) { estado = "faltan"; texto = "Falten resultats"; }
+  else if (futuros.length) { estado = "proximo"; texto = "Sorteig pendent"; }
+  else if (parcial) { estado = "parcial"; texto = "Sense premi (dades parcials)"; }
+  else { estado = "nada"; texto = "Sense premi"; }
   return { estado, texto, det, faltan, futuros, T };
 }
 
@@ -1198,26 +1198,26 @@ function vistaBoleto(t, info) {
   const W = s1 ? uniqInts(s1.numeros) : null, WE = s1 ? uniqInts(s1.estrellas) : null;
   if (t.juego === "loteria_nacional") {
     return el("div", { class: "decimo" },
-      el("div", { class: "dt" }, el("span", { text: "Lotería Nacional" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sin fecha" })),
+      el("div", { class: "dt" }, el("span", { text: "Loteria Nacional" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
       el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
       el("div", { class: "row", style: "gap:14px;justify-content:flex-end" },
-        el("div", { class: "meta" }, el("span", { text: "Serie" }), el("b", { text: t.serie != null ? t.serie + "ª" : "—" })),
-        el("div", { class: "meta" }, el("span", { text: "Fracción" }), el("b", { text: t.fraccion != null ? t.fraccion + "ª" : "—" })),
-        el("div", { class: "seal", text: (t.decimos || 1) + (t.decimos > 1 ? " déc." : " décimo") })));
+        el("div", { class: "meta" }, el("span", { text: "Sèrie" }), el("b", { text: t.serie != null ? t.serie + "ª" : "—" })),
+        el("div", { class: "meta" }, el("span", { text: "Fracció" }), el("b", { text: t.fraccion != null ? t.fraccion + "ª" : "—" })),
+        el("div", { class: "seal", text: (t.decimos || 1) + (t.decimos > 1 ? " dèc." : " dècim") })));
   }
   if (t.juego === "once") {
     return el("div", { class: "cupon" },
-      el("div", { class: "stub", text: "Cupón" }),
+      el("div", { class: "stub", text: "Cupó" }),
       el("div", { class: "cb" },
-        el("div", { class: "top" }, el("span", { text: "Sorteo" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sin fecha" })),
+        el("div", { class: "top" }, el("span", { text: "Sorteig" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
         el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
-        el("div", { class: "ser" }, el("span", { class: "sub", text: "Serie" }), el("b", { text: t.serie != null ? String(t.serie).padStart(3, "0") : "—" }), el("div", { class: "bars", style: "flex:1;min-width:80px" }))));
+        el("div", { class: "ser" }, el("span", { class: "sub", text: "Sèrie" }), el("b", { text: t.serie != null ? String(t.serie).padStart(3, "0") : "—" }), el("div", { class: "bars", style: "flex:1;min-width:80px" }))));
   }
   const aps = (t.apuestas || []).map((a, i) => el("div", { class: "apl" },
     el("span", { class: "ix", text: String(i + 1) }), bolas(uniqInts(a.numeros), W), t.juego === "euromillones" ? estrellas(uniqInts(a.estrellas), WE) : null));
   const ex = [];
   if (t.juego === "euromillones" && t.millon) ex.push(el("span", { class: "badge" + (s1 && s1.millon && s1.millon === t.millon ? " hit" : "") }, el("small", { text: "El Millón" }), t.millon));
-  if (t.juego !== "euromillones" && t.reintegro != null) ex.push(el("span", { class: "badge" + (s1 && s1.reintegro === t.reintegro ? " hit" : "") }, el("small", { text: t.juego === "elgordo" ? "Clave" : "Reintegro" }), String(t.reintegro)));
+  if (t.juego !== "euromillones" && t.reintegro != null) ex.push(el("span", { class: "badge" + (s1 && s1.reintegro === t.reintegro ? " hit" : "") }, el("small", { text: t.juego === "elgordo" ? "Clau" : "Reintegrament" }), String(t.reintegro)));
   if (t.juego === "primitiva" && t.joker) {
     const wj = s1 && s1.joker ? String(s1.joker) : null; const tj = String(t.joker).padStart(7, "0");
     let pre = 0, suf = 0; if (wj) { while (pre < 7 && tj[pre] === wj[pre]) pre++; while (suf < 7 && tj[6 - suf] === wj[6 - suf]) suf++; }
@@ -1233,23 +1233,23 @@ function vistaResultados(t, info) {
   for (const { s, r } of info.det) {
     const W = uniqInts(s.numeros), WE = uniqInts(s.estrellas);
     const ganadora = JUEGOS[s.juego].tipo === "comb"
-      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Ganadora" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
+      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Guanyadora" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
           s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: (s.juego === "elgordo" ? "Clave " : "R ") + s.reintegro }) : null)
-      : el("div", { class: "wn" }, (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 3).map((p) => el("span", { class: "chip", text: p.concepto + ": " + String(p.valor).padStart(5, "0") })));
+      : el("div", { class: "wn" }, (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 3).map((p) => el("span", { class: "chip", text: trConcepte(p.concepto) + ": " + String(p.valor).padStart(5, "0") })));
     const lines = r.lineas.map((l) => el("div", { class: "line" },
       el("div", { class: "what" }, el("span", { style: "font-weight:600", text: l.cat }), el("span", { class: "sub", text: l.texto })),
-      l.pendiente ? el("span", { class: "amt pend", text: "Importe pendiente" }) : l.importe > 0 ? el("span", { class: "amt win", text: eur(l.importe) }) : el("span", { class: "amt none", text: l.informativo ? "—" : "0,00 €" })));
+      l.pendiente ? el("span", { class: "amt pend", text: "Import pendent" }) : l.importe > 0 ? el("span", { class: "amt win", text: eur(l.importe) }) : el("span", { class: "amt none", text: l.informativo ? "—" : "0,00 €" })));
     out.push(el("div", { class: "res-draw" },
-      el("div", { class: "rh" }, el("h3", { text: fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Datos parciales" }) : el("span", { class: "tag ok", text: "Escrutinio" })),
+      el("div", { class: "rh" }, el("h3", { text: fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Dades parcials" }) : el("span", { class: "tag ok", text: "Escrutini" })),
       ganadora, lines, r.avisos.length ? el("div", { class: "note", text: r.avisos.join(" ") }) : null,
-      s.fuente ? el("p", { class: "sub", text: "Fuente: " + s.fuente }) : null));
+      s.fuente ? el("p", { class: "sub", text: "Font: " + s.fuente }) : null));
   }
   if (info.faltan.length) out.push(modo === "local"
-    ? el("div", { class: "note", text: "Aún no hay resultados oficiales del " + info.faltan.map(fechaLarga).join(", ") + ". Con la app abierta se cargan solos en cuanto se publican." })
-    : el("div", { class: "note" }, "No hay resultados guardados del " + info.faltan.map(fechaLarga).join(", ") + ". La tarea programada los añadirá cuando se publiquen, o puedes ",
-      el("button", { class: "small", onclick: () => { $("addRes").open = true; $("addRes").scrollIntoView({ behavior: "smooth" }); } }, "añadirlos ahora")));
-  if (info.futuros.length) out.push(el("div", { class: "note", text: "Sorteo aún no celebrado: " + info.futuros.map(fechaLarga).join(", ") + "." }));
-  if (info.T.bruto > 0) out.push(el("dl", { class: "totals" }, el("dt", { text: "Premio bruto" }), el("dd", { text: eur(info.T.bruto) }), el("dt", { text: "Gravamen estimado" }), el("dd", { text: "−" + eur(info.T.grav) }), el("dt", { text: "Neto estimado" }), el("dd", { text: eur(info.T.neto) })));
+    ? el("div", { class: "note", text: "Encara no hi ha resultats oficials del " + info.faltan.map(fechaLarga).join(", ") + ". Amb l'app oberta es carreguen sols tan bon punt es publiquen." })
+    : el("div", { class: "note" }, "No hi ha resultats desats del " + info.faltan.map(fechaLarga).join(", ") + ". La tasca programada els afegirà quan es publiquin, o pots ",
+      el("button", { class: "small", onclick: () => { $("addRes").open = true; $("addRes").scrollIntoView({ behavior: "smooth" }); } }, "afegir-los ara")));
+  if (info.futuros.length) out.push(el("div", { class: "note", text: "Sorteig encara no celebrat: " + info.futuros.map(fechaLarga).join(", ") + "." }));
+  if (info.T.bruto > 0) out.push(el("dl", { class: "totals" }, el("dt", { text: "Premi brut" }), el("dd", { text: eur(info.T.bruto) }), el("dt", { text: "Gravamen estimat" }), el("dd", { text: "−" + eur(info.T.grav) }), el("dt", { text: "Net estimat" }), el("dd", { text: eur(info.T.neto) })));
   return out;
 }
 
@@ -1260,90 +1260,95 @@ function formBoleto(t) {
   const J = JUEGOS[t.juego];
   const ch = (fn, rebuild) => (e) => { fn(e.target.value); cambiado(t, rebuild); };
   const f = [el("div", { class: "grid2" },
-    el("label", { class: "fld", for: "j-" + t.id }, el("span", { text: "Juego" }), el("select", { id: "j-" + t.id, onchange: ch((v) => { t.juego = v; }, true) }, Object.entries(JUEGOS).map(([k, v]) => el("option", { value: k, selected: k === t.juego ? "selected" : null }, v.nombre)))),
-    el("label", { class: "fld", for: "f-" + t.id }, el("span", { text: "Fecha(s) AAAA-MM-DD" }), el("input", { id: "f-" + t.id, class: "mono", value: (t.fechas || []).join(", "), oninput: ch((v) => { t.fechas = [...new Set(v.match(/\d{4}-\d{2}-\d{2}/g) || [])].sort(); }) })))];
+    el("label", { class: "fld", for: "j-" + t.id }, el("span", { text: "Joc" }), el("select", { id: "j-" + t.id, onchange: ch((v) => { t.juego = v; }, true) }, Object.entries(JUEGOS).map(([k, v]) => el("option", { value: k, selected: k === t.juego ? "selected" : null }, v.nombre)))),
+    el("label", { class: "fld", for: "f-" + t.id }, el("span", { text: "Data(es) AAAA-MM-DD" }), el("input", { id: "f-" + t.id, class: "mono", value: (t.fechas || []).join(", "), oninput: ch((v) => { t.fechas = [...new Set(v.match(/\d{4}-\d{2}-\d{2}/g) || [])].sort(); }) })))];
   if (J.tipo === "comb") {
     const aps = (t.apuestas && t.apuestas.length ? t.apuestas : (t.apuestas = [{ numeros: [], estrellas: [] }]));
-    f.push(el("span", { class: "lbl", text: "Apuestas" + (t.juego === "euromillones" ? " (números | estrellas)" : "") }));
+    f.push(el("span", { class: "lbl", text: "Apostes" + (t.juego === "euromillones" ? " (números | estrelles)" : "") }));
     aps.forEach((a, i) => f.push(el("div", { class: "apuesta-row" },
       el("span", { class: "mono sub", style: "width:18px", text: String(i + 1) }),
-      el("input", { id: "a-" + t.id + "-" + i, class: "mono", "aria-label": "Apuesta " + (i + 1), value: fmtAp(a, t.juego), oninput: ch((v) => { t.apuestas[i] = parseAp(v, t.juego); }) }),
-      el("button", { class: "small", onclick: () => { t.apuestas.splice(i, 1); cambiado(t, true); } }, "Quitar"))));
-    f.push(el("div", { class: "row" }, el("button", { class: "small", onclick: () => { t.apuestas.push({ numeros: [], estrellas: [] }); cambiado(t, true); } }, "Añadir apuesta")));
+      el("input", { id: "a-" + t.id + "-" + i, class: "mono", "aria-label": "Aposta " + (i + 1), value: fmtAp(a, t.juego), oninput: ch((v) => { t.apuestas[i] = parseAp(v, t.juego); }) }),
+      el("button", { class: "small", onclick: () => { t.apuestas.splice(i, 1); cambiado(t, true); } }, "Treure"))));
+    f.push(el("div", { class: "row" }, el("button", { class: "small", onclick: () => { t.apuestas.push({ numeros: [], estrellas: [] }); cambiado(t, true); } }, "Afegir aposta")));
     const g = el("div", { class: "grid2" });
-    if (t.juego !== "euromillones") g.append(el("label", { class: "fld", for: "r-" + t.id }, el("span", { text: t.juego === "elgordo" ? "Número clave" : "Reintegro" }), el("input", { id: "r-" + t.id, class: "mono", inputmode: "numeric", value: t.reintegro ?? "", oninput: ch((v) => { t.reintegro = toInt(v); }) })));
-    if (t.juego === "primitiva") g.append(el("label", { class: "fld", for: "k-" + t.id }, el("span", { text: "Joker (7 cifras)" }), el("input", { id: "k-" + t.id, class: "mono", inputmode: "numeric", value: t.joker ?? "", oninput: ch((v) => { t.joker = v.replace(/\D/g, "") || null; }) })));
-    if (t.juego === "euromillones") g.append(el("label", { class: "fld", for: "m-" + t.id }, el("span", { text: "Código El Millón" }), el("input", { id: "m-" + t.id, class: "mono", value: t.millon ?? "", oninput: ch((v) => { t.millon = v.replace(/\s/g, "").toUpperCase() || null; }) })));
+    if (t.juego !== "euromillones") g.append(el("label", { class: "fld", for: "r-" + t.id }, el("span", { text: t.juego === "elgordo" ? "Número clau" : "Reintegrament" }), el("input", { id: "r-" + t.id, class: "mono", inputmode: "numeric", value: t.reintegro ?? "", oninput: ch((v) => { t.reintegro = toInt(v); }) })));
+    if (t.juego === "primitiva") g.append(el("label", { class: "fld", for: "k-" + t.id }, el("span", { text: "Joker (7 xifres)" }), el("input", { id: "k-" + t.id, class: "mono", inputmode: "numeric", value: t.joker ?? "", oninput: ch((v) => { t.joker = v.replace(/\D/g, "") || null; }) })));
+    if (t.juego === "euromillones") g.append(el("label", { class: "fld", for: "m-" + t.id }, el("span", { text: "Codi d'El Millón" }), el("input", { id: "m-" + t.id, class: "mono", value: t.millon ?? "", oninput: ch((v) => { t.millon = v.replace(/\s/g, "").toUpperCase() || null; }) })));
     f.push(g);
   } else {
     f.push(el("div", { class: "grid2" },
-      el("label", { class: "fld", for: "n-" + t.id }, el("span", { text: "Número (5 cifras)" }), el("input", { id: "n-" + t.id, class: "mono", inputmode: "numeric", maxlength: "5", value: t.numero || "", oninput: ch((v) => { t.numero = v.replace(/\D/g, ""); }) })),
-      el("label", { class: "fld", for: "s-" + t.id }, el("span", { text: "Serie" }), el("input", { id: "s-" + t.id, class: "mono", inputmode: "numeric", value: t.serie ?? "", oninput: ch((v) => { t.serie = toInt(v); }) })),
-      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "fr-" + t.id }, el("span", { text: "Fracción" }), el("input", { id: "fr-" + t.id, class: "mono", inputmode: "numeric", value: t.fraccion ?? "", oninput: ch((v) => { t.fraccion = toInt(v); }) })) : null,
-      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "d-" + t.id }, el("span", { text: "Décimos" }), el("input", { id: "d-" + t.id, type: "number", min: "1", max: "100", value: t.decimos || 1, oninput: ch((v) => { t.decimos = Math.max(1, toInt(v) || 1); }) })) : null));
+      el("label", { class: "fld", for: "n-" + t.id }, el("span", { text: "Número (5 xifres)" }), el("input", { id: "n-" + t.id, class: "mono", inputmode: "numeric", maxlength: "5", value: t.numero || "", oninput: ch((v) => { t.numero = v.replace(/\D/g, ""); }) })),
+      el("label", { class: "fld", for: "s-" + t.id }, el("span", { text: "Sèrie" }), el("input", { id: "s-" + t.id, class: "mono", inputmode: "numeric", value: t.serie ?? "", oninput: ch((v) => { t.serie = toInt(v); }) })),
+      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "fr-" + t.id }, el("span", { text: "Fracció" }), el("input", { id: "fr-" + t.id, class: "mono", inputmode: "numeric", value: t.fraccion ?? "", oninput: ch((v) => { t.fraccion = toInt(v); }) })) : null,
+      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "d-" + t.id }, el("span", { text: "Dècims" }), el("input", { id: "d-" + t.id, type: "number", min: "1", max: "100", value: t.decimos || 1, oninput: ch((v) => { t.decimos = Math.max(1, toInt(v) || 1); }) })) : null));
   }
-  return el("div", { class: "stack", style: "border-top:1px dashed var(--line);padding-top:12px" }, el("h3", { text: "Editar datos" }), f);
+  return el("div", { class: "stack", style: "border-top:1px dashed var(--line);padding-top:12px" }, el("h3", { text: "Editar les dades" }), f);
 }
 
 // ---------- Estado visible de cada sorteo del boleto ----------
 function vistaEstado(t, info) {
   const fechas = t.fechas || [];
-  if (!fechas.length) return [el("div", { class: "est espera" }, el("b", { text: "Falta la fecha del sorteo" }), el("span", { class: "sub", text: "Ábrelo en «Detalle» y añade la fecha." }))];
+  if (!fechas.length) return [el("div", { class: "est espera" }, el("b", { text: "Falta la data del sorteig" }), el("span", { class: "sub", text: "Obre «Detall» i afegeix-hi la data." }))];
   return fechas.map((f) => {
     const hora = horaSorteo(t.juego, f);
     const d = info.det.find((x) => x.s.fecha === f);
     if (!d) {
       if (!yaCelebrado(t.juego, f)) {
         const esHoy = f === hoyISO();
-        return el("div", { class: "est prox" }, el("b", { text: "El sorteo se celebrará " + cuando(f) + " a las " + hora + "." }),
-          el("span", { class: "sub", text: (modo === "local" ? "Con la app abierta, cargará el resultado oficial en cuanto se publique y te avisará." : "Cuando salga el resultado, la tarea programada lo comprobará y te avisará.") + " Suele publicarse " + publicacionTxt(t.juego, f) + "." }));
+        return el("div", { class: "est prox" }, el("b", { text: "El sorteig se celebrarà " + cuando(f) + " a les " + hora + "." }),
+          el("span", { class: "sub", text: (modo === "local" ? "Amb l'app oberta, carregarà el resultat oficial tan bon punt es publiqui i t'avisarà." : "Quan surti el resultat, la tasca programada el comprovarà i t'avisarà.") + " Se sol publicar " + publicacionTxt(t.juego, f) + "." }));
       }
-      return el("div", { class: "est espera" }, el("b", { text: "Sorteo celebrado el " + fechaLarga(f) + " a las " + hora + "." }),
-        el("span", { class: "sub", text: "Resultados pendientes. Suelen publicarse " + publicacionTxt(t.juego, f) + "." }),
-        modo === "local" && !t.ejemplo ? el("div", { class: "row" }, el("button", { class: "small", onclick: () => cargarResultadosWeb(true) }, "Comprobar ahora")) : null);
+      return el("div", { class: "est espera" }, el("b", { text: "Sorteig celebrat el " + fechaLarga(f) + " a les " + hora + "." }),
+        el("span", { class: "sub", text: "Resultats pendents. Se solen publicar " + publicacionTxt(t.juego, f) + "." }),
+        modo === "local" && !t.ejemplo ? el("div", { class: "row" }, el("button", { class: "small", onclick: () => cargarResultadosWeb(true) }, "Comprovar ara")) : null);
     }
     const s = d.s, lin = d.r.lineas.filter((l) => !l.informativo);
     const wins = lin.filter((l) => l.importe > 0 || l.pendiente);
     const T = totales(lin);
     const W = uniqInts(s.numeros), WE = uniqInts(s.estrellas);
     const comb = JUEGOS[s.juego].tipo === "comb"
-      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultado" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
+      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultat" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
           s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: (s.juego === "elgordo" ? "Clave " : "R ") + s.reintegro }) : null)
-      : el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultado" }), (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 2).map((p) => el("span", { class: "chip", text: p.concepto + ": " + String(p.valor).padStart(5, "0") + (p.serie != null ? " · serie " + p.serie : "") })));
+      : el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultat" }), (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 2).map((p) => el("span", { class: "chip", text: trConcepte(p.concepto) + ": " + String(p.valor).padStart(5, "0") + (p.serie != null ? " · serie " + p.serie : "") })));
     const cls = T.bruto > 0 || wins.length ? "ok" : "nada";
-    const amt = T.bruto > 0 ? eur(T.bruto) + (T.pend ? " + pendiente" : "") : wins.length ? "Importe pendiente" : "Sin premio";
+    const amt = T.bruto > 0 ? eur(T.bruto) + (T.pend ? " + pendent" : "") : wins.length ? "Import pendent" : "Sense premi";
     return el("div", { class: "est " + cls },
-      el("div", { class: "est-h" }, el("b", { text: "Sorteo del " + fechaLarga(f) }), el("span", { class: "est-amt", text: amt })),
+      el("div", { class: "est-h" }, el("b", { text: "Sorteig del " + fechaLarga(f) }), el("span", { class: "est-amt", text: amt })),
       comb,
-      wins.length ? el("ul", {}, wins.map((l) => el("li", {}, l.texto + " · " + l.cat + " — ", el("span", { class: "v", text: l.pendiente ? "importe pendiente" : eur(l.importe) }))))
-        : el("span", { class: "sub", text: "Tu boleto no tiene aciertos con premio en este sorteo." + (s.completo === false ? " (Lista de premios incompleta: puede haber premios menores.)" : "") }),
-      T.bruto > 40000 ? el("span", { class: "sub", text: "Neto estimado tras el gravamen: " + eur(T.neto) + "." }) : null);
+      wins.length ? el("ul", {}, wins.map((l) => el("li", {}, l.texto + " · " + l.cat + " — ", el("span", { class: "v", text: l.pendiente ? "import pendent" : eur(l.importe) }))))
+        : el("span", { class: "sub", text: "La teva butlleta no té encerts amb premi en aquest sorteig." + (s.completo === false ? " (Llista de premis incompleta: hi pot haver premis menors.)" : "") }),
+      T.bruto > 40000 ? el("span", { class: "sub", text: "Net estimat després del gravamen: " + eur(T.neto) + "." }) : null);
   });
 }
 
 // ---------- Render de la lista ----------
+function trConcepte(c) {
+  return String(c || "").replace(/^Primer premio/, "Primer premi").replace(/^Segundo premio/, "Segon premi").replace(/^Tercer premio/, "Tercer premi").replace(/^Cuarto premio/, "Quart premi").replace(/^Quinto premio/, "Cinquè premi").replace(/^Premio especial/, "Premi especial")
+    .replace(/^Extracción de (\d) cifras/, "Extracció de $1 xifres").replace(/^Reintegro/, "Reintegrament").replace(/cifras y serie/, "xifres i sèrie").replace(/(\d) primeras cifras/, "$1 primeres xifres").replace(/(\d) últimas cifras/, "$1 últimes xifres")
+    .replace(/^Primera cifra/, "Primera xifra").replace(/^Última cifra/, "Última xifra").replace(/(\d) cifras/, "$1 xifres").replace(/número adicional/, "número addicional").replace(/ más /, " més ").replace(/durante (\d+) años/, "durant $1 anys").replace(/al año/, "l'any").replace(/\(no acumulable\)/, "(no acumulable)");
+}
 function panelRevision(t) {
   const J = JUEGOS[t.juego];
   const dd = (k, v) => [el("dt", { text: k }), el("dd", { class: "mono", text: v })];
-  const filas = [...dd("Juego", J.nombre), ...dd("Sorteo", (t.fechas || []).length ? t.fechas.map(fechaLarga).join(" · ") : "sin fecha")];
+  const filas = [...dd("Joc", J.nombre), ...dd("Sorteig", (t.fechas || []).length ? t.fechas.map(fechaLarga).join(" · ") : "sense data")];
   if (J.tipo === "comb") {
-    (t.apuestas || []).forEach((a, i) => filas.push(...dd("Apuesta " + (i + 1), uniqInts(a.numeros).map((n) => String(n).padStart(2, "0")).join(" ") + (t.juego === "euromillones" ? "  +  " + uniqInts(a.estrellas).map((n) => String(n).padStart(2, "0")).join(" ") : ""))));
-    if (!(t.apuestas || []).length) filas.push(...dd("Apuestas", "ninguna leída"));
-    if (t.juego !== "euromillones") filas.push(...dd(t.juego === "elgordo" ? "Clave" : "Reintegro", t.reintegro != null ? String(t.reintegro) : "—"));
+    (t.apuestas || []).forEach((a, i) => filas.push(...dd("Aposta " + (i + 1), uniqInts(a.numeros).map((n) => String(n).padStart(2, "0")).join(" ") + (t.juego === "euromillones" ? "  +  " + uniqInts(a.estrellas).map((n) => String(n).padStart(2, "0")).join(" ") : ""))));
+    if (!(t.apuestas || []).length) filas.push(...dd("Apostes", "cap de llegida"));
+    if (t.juego !== "euromillones") filas.push(...dd(t.juego === "elgordo" ? "Clau" : "Reintegrament", t.reintegro != null ? String(t.reintegro) : "—"));
     if (t.juego === "primitiva") filas.push(...dd("Joker", t.joker || "no"));
     if (t.juego === "euromillones") filas.push(...dd("El Millón", t.millon ? t.millon.replace("-", " a ") : "—"));
   } else {
-    filas.push(...dd("Número", t.numero || "—"), ...dd("Serie", t.serie != null ? String(t.serie) : "—"));
-    if (t.juego === "loteria_nacional") filas.push(...dd("Fracción", t.fraccion != null ? String(t.fraccion) : "—"));
+    filas.push(...dd("Número", t.numero || "—"), ...dd("Sèrie", t.serie != null ? String(t.serie) : "—"));
+    if (t.juego === "loteria_nacional") filas.push(...dd("Fracció", t.fraccion != null ? String(t.fraccion) : "—"));
   }
   return el("div", { class: "tk-revisar" },
-    el("p", { class: "rv-tit" }, el("b", { text: "Comprueba la lectura" }), " — compara la foto con los valores leídos."),
+    el("p", { class: "rv-tit" }, el("b", { text: "Comprova la lectura" }), " — compara la foto amb els valors llegits."),
     el("div", { class: "rv-grid" },
-      t.thumb ? el("img", { class: "rv-foto", src: t.thumb, alt: "Foto del boleto" }) : el("p", { class: "sub", text: "Sin foto." }),
+      t.thumb ? el("img", { class: "rv-foto", src: t.thumb, alt: "Foto de la butlleta" }) : el("p", { class: "sub", text: "Sense foto." }),
       el("div", { class: "rv-datos" }, el("dl", {}, filas),
         (t.dudas || []).length ? el("ul", { class: "rv-dudas" }, t.dudas.map((d) => el("li", { text: d }))) : null)),
     el("div", { class: "row" },
-      el("button", { class: "primary", onclick: () => { t.revisar = false; t.dudas = []; cambiado(t, true); } }, "Los datos son correctos"),
+      el("button", { class: "primary", onclick: () => { t.revisar = false; t.dudas = []; cambiado(t, true); } }, "Les dades són correctes"),
       el("button", { onclick: (e) => { const art = e.currentTarget.closest(".tk"); const d = art.querySelector(".tk-more"); d.open = true; openIds.add(t.id); const f = art.querySelector(".tk-body input, .tk-body select"); if (f) { f.scrollIntoView({ behavior: "smooth", block: "center" }); f.focus(); } } }, "Corregir")));
 }
 
@@ -1355,23 +1360,23 @@ function construirTarjeta(t) {
   const pill = el("span", { class: "pill " + info.estado, text: info.texto });
   const res = el("div", { class: "stack" }, vistaResultados(t, info));
   const more = el("details", { class: "tk-more", ontoggle: (e) => { if (e.target.open) openIds.add(t.id); else openIds.delete(t.id); } },
-    el("summary", { text: t.ejemplo ? "Ejemplo" : (t.apuestas && t.apuestas.length > 1 ? t.apuestas.length + " apuestas" : "Detalle") }),
+    el("summary", { text: t.ejemplo ? "Exemple" : (t.apuestas && t.apuestas.length > 1 ? t.apuestas.length + " apostes" : "Detall") }),
     el("div", { class: "tk-body" }, res, t.ejemplo ? el("p", { class: "sub", text: "Boleto de ejemplo para ver cómo funciona. Desaparece cuando añadas el primero tuyo." }) : formBoleto(t),
-      t.ejemplo ? null : el("div", { class: "row", style: "justify-content:flex-end" }, el("button", { class: "small ghost", onclick: () => borrar(t) }, "Eliminar boleto"))));
+      t.ejemplo ? null : el("div", { class: "row", style: "justify-content:flex-end" }, el("button", { class: "small ghost", onclick: () => borrar(t) }, "Eliminar la butlleta"))));
   if (openIds.has(t.id)) more.open = true;
   const art = el("article", { class: "tk g-" + t.juego, "aria-label": JUEGOS[t.juego].nombre },
     el("div", { class: "tk-head" },
-      t.thumb ? el("button", { class: "tk-thumb-btn", "aria-label": "Ver la foto del boleto", onclick: (e) => { const f = e.currentTarget.closest(".tk").querySelector(".tk-foto"); if (f) f.hidden = !f.hidden; } }, el("img", { class: "tk-thumb", src: t.thumb, alt: "" })) : null,
+      t.thumb ? el("button", { class: "tk-thumb-btn", "aria-label": "Veure la foto de la butlleta", onclick: (e) => { const f = e.currentTarget.closest(".tk").querySelector(".tk-foto"); if (f) f.hidden = !f.hidden; } }, el("img", { class: "tk-thumb", src: t.thumb, alt: "" })) : null,
       el("span", { class: "gm", text: JUEGOS[t.juego].nombre }),
       el("div", { class: "dates" }, (t.fechas || []).map((f) => el("span", { class: "chip", text: fechaCorta(f) }))),
-      t.ejemplo ? el("span", { class: "tag ex", text: "Ejemplo" }) : null, pill,
-      t.ejemplo ? null : el("button", { class: "small borrar", "aria-label": "Eliminar este boleto", onclick: (e) => {
+      t.ejemplo ? el("span", { class: "tag ex", text: "Exemple" }) : null, pill,
+      t.ejemplo ? null : el("button", { class: "small borrar", "aria-label": "Eliminar aquesta butlleta", onclick: (e) => {
         const btn = e.currentTarget;
         if (btn.dataset.confirmar) { borrar(t); return; }
-        btn.dataset.confirmar = "1"; btn.textContent = "¿Eliminar? Toca otra vez"; btn.classList.add("peligro");
+        btn.dataset.confirmar = "1"; btn.textContent = "Eliminar? Toca un altre cop"; btn.classList.add("peligro");
         setTimeout(() => { if (btn.isConnected) { delete btn.dataset.confirmar; btn.textContent = "Eliminar"; btn.classList.remove("peligro"); } }, 4000);
       } }, "Eliminar")),
-    t.revisar && !t.ejemplo ? panelRevision(t) : (t.thumb ? el("div", { class: "tk-foto", hidden: "hidden" }, el("img", { src: t.thumb, alt: "Foto del boleto" })) : null),
+    t.revisar && !t.ejemplo ? panelRevision(t) : (t.thumb ? el("div", { class: "tk-foto", hidden: "hidden" }, el("img", { src: t.thumb, alt: "Foto de la butlleta" })) : null),
     vis, est, more);
   if (t.ejemplo) art.classList.add("is-ej");
   return { art, vis, est, pill, res, info };
@@ -1405,14 +1410,14 @@ function resumenGrupo(lista) {
     total += info.T.bruto;
     for (const { s, r } of info.det) {
       for (const l of r.lineas.filter((l) => !l.informativo && (l.importe > 0 || l.pendiente))) {
-        items.push(el("li", {}, el("span", { text: fechaCorta(s.fecha) + " · " + l.texto + " · " + l.cat }), el("span", { class: "v", text: l.pendiente ? "importe pendiente" : eur(l.importe) })));
+        items.push(el("li", {}, el("span", { text: fechaCorta(s.fecha) + " · " + l.texto + " · " + l.cat }), el("span", { class: "v", text: l.pendiente ? "import pendent" : eur(l.importe) })));
       }
     }
-    for (const f of info.futuros) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Pendiente: sorteo " + cuando(f) + " a las " + horaSorteo(t.juego, f) }))); }
-    for (const f of info.faltan) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Esperando resultado del " + fechaCorta(f) }))); }
+    for (const f of info.futuros) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Pendent: sorteig " + cuando(f) + " a les " + horaSorteo(t.juego, f) }))); }
+    for (const f of info.faltan) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Esperant el resultat del " + fechaCorta(f) }))); }
   }
   const sinPremio = !items.some((li) => li.querySelector(".v")) && !pend;
-  if (sinPremio) items.push(el("li", { class: "nada" }, el("span", { text: "Sin premio" })));
+  if (sinPremio) items.push(el("li", { class: "nada" }, el("span", { text: "Sense premi" })));
   return { items, total };
 }
 function renderTodo() {
@@ -1431,18 +1436,18 @@ function renderTodo() {
     const { items, total } = resumenGrupo(del);
     const det = el("details", { class: "grupo g-" + j, ontoggle: (e) => { if (e.target.open) gruposAbiertos.add(j); else gruposAbiertos.delete(j); guardarGrupos(); } },
       el("summary", {},
-        el("div", { class: "grupo-h" }, el("span", { class: "gm", text: JUEGOS[j].nombre }), el("span", { class: "cnt", text: del.length + (del.length > 1 ? " boletos" : " boleto") }),
+        el("div", { class: "grupo-h" }, el("span", { class: "gm", text: JUEGOS[j].nombre }), el("span", { class: "cnt", text: del.length + (del.length > 1 ? " butlletes" : " butlleta") }),
           el("span", { class: "tot" + (total > 0 ? " win" : ""), text: total > 0 ? eur(total) : "" }),
-          el("span", { class: "flecha" }, el("span", { class: "flecha-t", text: "Ver ▾" }), el("span", { class: "flecha-o", text: "Plegar ▴" }))),
+          el("span", { class: "flecha" }, el("span", { class: "flecha-t", text: "Veure ▾" }), el("span", { class: "flecha-o", text: "Plegar ▴" }))),
         el("ul", { class: "grupo-res" }, items)),
       el("div", { class: "grupo-body" }, arts));
     if (grupoAbierto(j, del)) det.open = true;
     nodes.push(det);
   }
-  if (!L.length && !(ticketsReady || !db)) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Cargando tus boletos…"));
+  if (!L.length && !(ticketsReady || !db)) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Carregant les teves butlletes…"));
   else if (!L.length) nodes.push(el("div", { class: "vacio" },
-    el("b", { text: "Todavía no has añadido ningún boleto." }),
-    el("span", { text: "Pulsa «Hacer foto» o «Subir fotos» arriba y después «Leer fotos». Si el sorteo ya se ha celebrado, verás aquí mismo el resultado y si tiene premio; si no, cuándo se sortea." })));
+    el("b", { text: "Encara no has afegit cap butlleta." }),
+    el("span", { text: "Prem «Fer foto» o «Pujar fotos» a dalt i després «Llegir fotos». Si el sorteig ja s'ha celebrat, veuràs aquí mateix el resultat i si té premi; si no, quan se sorteja." })));
   box.replaceChildren(...nodes);
   renderResumen(L);
 }
@@ -1456,10 +1461,10 @@ function renderResumen(L) {
   document.querySelectorAll("#gamesBar span").forEach((s) => s.classList.toggle("on", usados.has(s.dataset.j)));
   $("summary").hidden = !L.length;
   $("summary").replaceChildren(
-    el("div", {}, el("span", { class: "sub", text: ej ? "Boletos de ejemplo" : "Boletos" }), el("b", { text: String(L.length) })),
-    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Premiados" }), el("b", { text: String(prem) })),
-    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Total ganado (bruto)" }), el("b", { text: eur(total) })),
-    el("div", {}, el("span", { class: "sub", text: "Pendientes de resultado" }), el("b", { text: String(pend) })));
+    el("div", {}, el("span", { class: "sub", text: ej ? "Butlletes d'exemple" : "Butlletes" }), el("b", { text: String(L.length) })),
+    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Premiades" }), el("b", { text: String(prem) })),
+    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Total guanyat (brut)" }), el("b", { text: eur(total) })),
+    el("div", {}, el("span", { class: "sub", text: "Pendents de resultat" }), el("b", { text: String(pend) })));
 }
 
 // ---------- Guardado ----------
@@ -1481,20 +1486,20 @@ function docBoleto(t) {
 }
 async function guardar(t) {
   if (modo === "local") { persistirLocal(); return; }
-  if (!db || !uid) { setSaveState("Guardado solo en esta sesión"); return; }
-  try { setSaveState("Guardando…"); await db.collection("data/users/" + uid).doc(t.id).set(docBoleto(t)); setSaveState("Guardado"); }
-  catch (e) { setSaveState("No guardado"); manejarError(e, "Guardar boleto", e && e.code === "quota_exceeded" ? "Hay demasiados boletos guardados: elimina los antiguos." : "Recarga la página e inténtalo de nuevo."); }
+  if (!db || !uid) { setSaveState("Desat només en aquesta sessió"); return; }
+  try { setSaveState("Desant…"); await db.collection("data/users/" + uid).doc(t.id).set(docBoleto(t)); setSaveState("Desat"); }
+  catch (e) { setSaveState("No desat"); manejarError(e, "Desar la butlleta", e && e.code === "quota_exceeded" ? "Hi ha massa butlletes desades: elimina les antigues." : "Recarrega la pàgina i torna-ho a provar."); }
 }
 async function borrar(t) {
   tickets = tickets.filter((x) => x.id !== t.id); cards.delete(t.id); renderTodo();
   if (modo === "local") { persistirLocal(); return; }
-  if (db && uid) { try { await db.collection("data/users/" + uid).doc(t.id).delete(); } catch (e) { manejarError(e, "Eliminar boleto", "Recarga la página e inténtalo de nuevo."); } }
+  if (db && uid) { try { await db.collection("data/users/" + uid).doc(t.id).delete(); } catch (e) { manejarError(e, "Eliminar la butlleta", "Recarrega la pàgina i torna-ho a provar."); } }
 }
 function anadirBoletos(arr) {
   for (const t of arr) { tickets.unshift(t); openIds.add(t.id); guardar(t); }
   renderTodo();
   const ya = arr.map((t) => ({ t, i: estadoBoleto(t) })).filter((x) => x.i.det.length);
-  if (ya.length) mostrarAviso("Ya hay resultados de " + ya.length + (ya.length > 1 ? " boletos" : " boleto"), ya.map((x) => JUEGOS[x.t.juego].nombre + " " + (x.t.fechas || []).map(fechaCorta).join(", ") + ": " + (x.i.T.bruto > 0 ? "premiado con " + eur(x.i.T.bruto) : x.i.T.pend ? "premiado, importe pendiente" : "sin premio")).join(" · "));
+  if (ya.length) mostrarAviso("Ja hi ha resultats de " + ya.length + (ya.length > 1 ? " butlletes" : " butlleta"), ya.map((x) => JUEGOS[x.t.juego].nombre + " " + (x.t.fechas || []).map(fechaCorta).join(", ") + ": " + (x.i.T.bruto > 0 ? "premiada amb " + eur(x.i.T.bruto) : x.i.T.pend ? "premiado, importe pendiente" : "sense premi")).join(" · "));
   if (modo === "local") setTimeout(() => cargarResultadosWeb(true), 500);
 }
 
@@ -1502,7 +1507,7 @@ function anadirBoletos(arr) {
 function anadirFotos(files) {
   for (const f of files) {
     if (!f) continue;
-    if (!/^image\//.test(f.type)) { manejarError(new Error("Archivo no válido: " + (f.name || f.type)), "Añadir fotos", "Elige fotos en JPG, PNG o WebP."); continue; }
+    if (!/^image\//.test(f.type)) { manejarError(new Error("Fitxer no vàlid: " + (f.name || f.type)), "Afegir fotos", "Tria fotos en JPG, PNG o WebP."); continue; }
     let url = ""; try { url = URL.createObjectURL(f); } catch (_) {}
     queue.push({ id: nuevoId(), file: f, url, estado: "espera", msg: "En espera" });
   }
@@ -1511,11 +1516,11 @@ function anadirFotos(files) {
 function renderQueue() {
   $("queue").hidden = !queue.length; $("qActions").hidden = !queue.length;
   $("queue").replaceChildren(...queue.map((q) => el("div", { class: "qi " + (q.estado === "error" ? "err" : q.estado === "hecho" ? "ok" : "") },
-    q.url ? el("img", { src: q.url, alt: "Foto de boleto" }) : null,
-    q.estado === "leyendo" ? null : el("button", { class: "small qx", "aria-label": "Quitar foto", onclick: () => { queue = queue.filter((x) => x !== q); renderQueue(); } }, "×"),
+    q.url ? el("img", { src: q.url, alt: "Foto de la butlleta" }) : null,
+    q.estado === "leyendo" ? null : el("button", { class: "small qx", "aria-label": "Treure la foto", onclick: () => { queue = queue.filter((x) => x !== q); renderQueue(); } }, "×"),
     el("div", { class: "qs" }, q.estado === "leyendo" ? el("span", { class: "spin" }) : null, q.msg))));
   const n = queue.filter((q) => q.estado === "espera" || q.estado === "error").length;
-  $("btnLeer").textContent = n ? "Leer " + n + (n === 1 ? " foto" : " fotos") : "Leído";
+  $("btnLeer").textContent = n ? "Llegir " + n + (n === 1 ? " foto" : " fotos") : "Llegit";
   $("btnLeer").disabled = !n || !!ctlLeer;
 }
 $("fCam").onchange = (e) => { anadirFotos([...e.target.files]); e.target.value = ""; };
@@ -1526,7 +1531,7 @@ drop.addEventListener("dragleave", () => drop.classList.remove("over"));
 drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); anadirFotos([...e.dataTransfer.files]); });
 document.addEventListener("paste", (e) => {
   const fs = [...(e.clipboardData?.files || [])].filter((x) => /^image\//.test(x.type)); if (!fs.length) return;
-  if ($("addRes").open) { resFile = fs[0]; $("fResName").textContent = "Captura pegada"; } else anadirFotos(fs);
+  if ($("addRes").open) { resFile = fs[0]; $("fResName").textContent = "Captura enganxada"; } else anadirFotos(fs);
 });
 $("btnManual").onclick = () => {
   const t = { id: nuevoId(), juego: "euromillones", fechas: [], apuestas: [{ numeros: [], estrellas: [] }], creado: new Date().toISOString() };
@@ -1541,7 +1546,7 @@ async function prepararImagen(file) {
   const bmp = await abrirImagen(file); const s = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
   const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
   c.getContext("2d").drawImage(fuenteImagen(bmp), 0, 0, c.width, c.height);
-  return await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("No se pudo convertir la imagen"))), "image/jpeg", 0.9));
+  return await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("No s'ha pogut convertir la imatge"))), "image/jpeg", 0.9));
 }
 async function miniatura(file) {
   try {
@@ -1553,7 +1558,7 @@ async function miniatura(file) {
 
 function promptBoleto() {
   return `Eres un lector experto de boletos de juegos de azar de España. Hoy es ${hoyISO()}.
-La imagen adjunta es una foto que puede contener UNO O VARIOS resguardos, décimos o cupones. Extrae cada uno por separado y EXACTAMENTE como aparece impreso. No inventes nada: si un dato no se lee, pon null y explícalo en "dudas".
+La imagen adjunta es una foto que puede contener UNO O VARIOS resguardos, décimos o cupones. Extrae cada uno por separado y EXACTAMENTE como aparece impreso. No inventes nada: si un dato no se lee, pon null y explícalo en "dudas" (escribe las dudas en catalán).
 
 Juegos posibles ("juego"):
 - "euromillones": cada apuesta 5 números (1-50) y 2 estrellas (1-12). Puede llevar código de El Millón (3 letras + 5 cifras) y valer para varios sorteos (martes y viernes, varias semanas).
@@ -1585,7 +1590,7 @@ function normalizarTicket(r, thumb) {
 }
 $("btnLeer").onclick = async () => {
   if (modo === "claude" && !sample) {
-    manejarError(new Error(capsListas ? "Claude no está disponible en esta vista (sample = null)" : "La app aún está conectando con Claude"), "Leer fotos", capsListas ? "Abre la app en claude.ai (navegador o app de Claude) con tu sesión iniciada y recarga la página. Mientras tanto puedes usar “Escribir uno a mano”." : "Espera unos segundos y vuelve a pulsar “Leer fotos”.");
+    manejarError(new Error(capsListas ? "Claude no està disponible en aquesta vista (sample = null)" : "L'app encara s'està connectant amb Claude"), "Llegir fotos", capsListas ? "Obre l'app a claude.ai (navegador o app de Claude) amb la sessió iniciada i recarrega la pàgina. Mentrestant pots fer servir «Escriure-la a mà»." : "Espera uns segons i torna a prémer «Llegir fotos».");
     return;
   }
   ctlLeer = new AbortController(); $("btnStop").hidden = false; renderQueue();
@@ -1594,8 +1599,8 @@ $("btnLeer").onclick = async () => {
     for (const q of queue) {
       if (q.estado !== "espera" && q.estado !== "error") continue;
       if (ctlLeer.signal.aborted) break;
-      q.estado = "leyendo"; q.msg = "Leyendo…"; renderQueue();
-      $("stLeer").textContent = modo === "local" && !apiKey ? "Leyendo fotos en el móvil… cada una tarda unos segundos." : "Leyendo fotos… cada una tarda unos 20-40 s.";
+      q.estado = "leyendo"; q.msg = "Llegint…"; renderQueue();
+      $("stLeer").textContent = modo === "local" && !apiKey ? "Llegint les fotos al mòbil… cadascuna triga uns segons." : "Llegint les fotos… cadascuna triga uns 20-40 s.";
       try {
         let r;
         if (modo === "local" && !apiKey) {
@@ -1608,27 +1613,27 @@ $("btnLeer").onclick = async () => {
         const bs = (r && Array.isArray(r.boletos) ? r.boletos : []).filter((b) => b && JUEGOS[b.juego]);
         if (!bs.length && modo === "local") {
           const th0 = await miniatura(q.file);
-          const t0 = normalizarTicket({ juego: "primitiva", fechas: [], apuestas: [{ numeros: [], estrellas: [] }], dudas: ["No se ha podido leer la foto: elige el juego y escribe los números mirando la foto (arriba a la izquierda). También puedes repetir la foto más cerca, recta y con buena luz."] }, th0);
+          const t0 = normalizarTicket({ juego: "primitiva", fechas: [], apuestas: [{ numeros: [], estrellas: [] }], dudas: ["No s'ha pogut llegir la foto: tria el joc i escriu els números mirant la foto. També pots repetir la foto més a prop, recta i amb bona llum."] }, th0);
           t0.textoLeido = r && r.textoLeido ? r.textoLeido : "";
           anadirBoletos([t0]); leidos++;
-          q.estado = "hecho"; q.msg = "Completar a mano"; renderQueue(); continue;
+          q.estado = "hecho"; q.msg = "Completar a mà"; renderQueue(); continue;
         }
-        if (!bs.length) { q.estado = "error"; q.msg = "No reconocido"; manejarError(new Error("No se reconoce ningún boleto" + (r && r.motivo ? ": " + r.motivo : "")), "Leer foto " + (q.file.name || ""), "Haz otra foto más cerca, con luz y sin reflejos, o escríbelo a mano."); continue; }
+        if (!bs.length) { q.estado = "error"; q.msg = "No reconeguda"; manejarError(new Error("No es reconeix cap butlleta" + (r && r.motivo ? ": " + r.motivo : "")), "Llegir la foto " + (q.file.name || ""), "Fes una altra foto més a prop, amb llum i sense reflexos, o escriu-la a mà."); continue; }
         const th = await miniatura(q.file);
         const nuevos = bs.map((b) => normalizarTicket(b, th));
         anadirBoletos(nuevos); leidos += nuevos.length;
-        q.estado = "hecho"; q.msg = nuevos.length + (nuevos.length > 1 ? " boletos" : " boleto");
+        q.estado = "hecho"; q.msg = nuevos.length + (nuevos.length > 1 ? " butlletes" : " butlleta");
       } catch (e) {
         if (e && e.code === "cancelled") { q.estado = "espera"; q.msg = "En espera"; break; }
         q.estado = "error"; q.msg = "Error: " + String((e && (e.message || e.code)) || e).slice(0, 80);
-        manejarError(e, modo === "local" ? "Leer foto (lector gratuito)" : "Leer foto con Claude", SAMPLE_SOLUCION[e && e.code] || (modo === "local" ? "Comprueba la conexión (la primera vez descarga el lector) o escribe el boleto a mano." : "Vuelve a intentarlo o escribe el boleto a mano."));
+        manejarError(e, modo === "local" ? "Llegir la foto (lector gratuït)" : "Llegir la foto amb Claude", SAMPLE_SOLUCION[e && e.code] || (modo === "local" ? "Comprova la connexió (la primera vegada baixa el lector) o escriu la butlleta a mà." : "Torna-ho a provar o escriu la butlleta a mà."));
         if (e && (e.code === "not_granted" || e.code === "sampling_disabled" || e.code === "rate_limited" || e.code === "images_unavailable" || /^(no_key|api_40[0134]|network)$/.test(e.code || ""))) break;
       }
       renderQueue();
     }
   } finally {
     ctlLeer = null; $("btnStop").hidden = true;
-    $("stLeer").textContent = leidos ? leidos + " boleto(s) añadidos. Revisa que los datos coinciden con el papel." : "";
+    $("stLeer").textContent = leidos ? leidos + " butlleta(es) afegides. Revisa que les dades coincideixin amb el paper." : "";
     renderQueue();
     setTimeout(() => { queue = queue.filter((q) => q.estado !== "hecho"); renderQueue(); }, 4000);
   }
@@ -1636,7 +1641,7 @@ $("btnLeer").onclick = async () => {
 $("btnStop").onclick = () => ctlLeer && ctlLeer.abort();
 
 // ---------- Añadir resultados ----------
-$("fRes").onchange = (e) => { resFile = e.target.files[0] || null; $("fResName").textContent = resFile ? resFile.name : "Ninguna captura"; };
+$("fRes").onchange = (e) => { resFile = e.target.files[0] || null; $("fResName").textContent = resFile ? resFile.name : "Cap captura"; };
 function promptResultados(texto) {
   return `Convierte unos resultados oficiales de un sorteo de juegos de azar de España en datos. Hoy es ${hoyISO()}.
 ${resFile ? "La imagen adjunta es una captura de los resultados." : ""}${texto ? "\nTexto aportado por el usuario:\n<<<\n" + texto.slice(0, 20000) + "\n>>>" : ""}
@@ -1669,7 +1674,7 @@ function normalizarSorteo(r, fuente) {
     id: r.juego + "_" + r.fecha, juego: r.juego, fecha: r.fecha, titulo: r.titulo || "",
     numeros: uniqInts(r.numeros), estrellas: uniqInts(r.estrellas), complementario: toInt(r.complementario), reintegro: toInt(r.reintegro),
     joker: r.joker ? String(r.joker).replace(/\D/g, "") : null, millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
-    premios, premiosNumericos: (r.premiosNumericos || []).map((p) => ({ concepto: String(p.concepto || "Premio"), tipo: String(p.tipo || "exacto"), valor: String(p.valor || "").replace(/\D/g, ""), serie: toInt(p.serie), importe: num(p.importe) })),
+    premios, premiosNumericos: (r.premiosNumericos || []).map((p) => ({ concepto: String(p.concepto || "Premi"), tipo: String(p.tipo || "exacto"), valor: String(p.valor || "").replace(/\D/g, ""), serie: toInt(p.serie), importe: num(p.importe) })),
     acumulables: r.juego === "once" ? false : r.acumulables !== false, precioDecimo: num(r.precioDecimo),
     completo: r.completo !== false, notas: String(r.notas || ""), fuente, actualizado: new Date().toISOString(),
   };
@@ -1677,32 +1682,32 @@ function normalizarSorteo(r, fuente) {
 function renderSorteoMini(s) {
   const J = JUEGOS[s.juego];
   return el("div", { class: "res-draw g-" + s.juego },
-    el("div", { class: "rh" }, el("h3", { text: J.nombre + " · " + fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Datos parciales" }) : el("span", { class: "tag ok", text: "Escrutinio" })),
+    el("div", { class: "rh" }, el("h3", { text: J.nombre + " · " + fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Dades parcials" }) : el("span", { class: "tag ok", text: "Escrutini" })),
     J.tipo === "comb" ? el("div", { class: "wn" }, bolas(uniqInts(s.numeros), uniqInts(s.numeros), true), s.juego === "euromillones" ? estrellas(uniqInts(s.estrellas), uniqInts(s.estrellas), true) : null,
       s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: "R " + s.reintegro }) : null)
-      : el("div", { class: "wn" }, (s.premiosNumericos || []).slice(0, 6).map((p) => el("span", { class: "chip", text: p.concepto + ": " + p.valor + (p.importe != null ? " · " + eur(p.importe) : "") }))),
+      : el("div", { class: "wn" }, (s.premiosNumericos || []).slice(0, 6).map((p) => el("span", { class: "chip", text: trConcepte(p.concepto) + ": " + p.valor + (p.importe != null ? " · " + eur(p.importe) : "") }))),
     s.notas ? el("p", { class: "sub", text: s.notas }) : null);
 }
 $("btnRes").onclick = async () => {
   const texto = $("txtRes").value.trim();
-  if (!texto && !resFile) { manejarError(new Error("No hay captura ni texto"), "Leer resultados", "Sube una captura de la página de resultados o pega el texto."); return; }
-  if (!iaDisponible()) { manejarError(new Error(modo === "local" ? "Falta la clave de la API de Claude" : "Claude no está disponible en esta vista"), "Leer resultados", modo === "local" ? SAMPLE_SOLUCION.no_key : "Abre el artefacto en claude.ai con tu sesión iniciada."); return; }
-  const st = $("stRes"); st.replaceChildren(el("span", { class: "spin" }), "Leyendo resultados…"); $("btnRes").disabled = true;
+  if (!texto && !resFile) { manejarError(new Error("No hi ha captura ni text"), "Llegir resultats", "Puja una captura de la pàgina de resultats o enganxa'n el text."); return; }
+  if (!iaDisponible()) { manejarError(new Error(modo === "local" ? "Falta la clau de l'API de Claude" : "Claude no està disponible en aquesta vista"), "Llegir resultats", modo === "local" ? SAMPLE_SOLUCION.no_key : "Obre l'artefacte a claude.ai amb la sessió iniciada."); return; }
+  const st = $("stRes"); st.replaceChildren(el("span", { class: "spin" }), "Llegint els resultats…"); $("btnRes").disabled = true;
   try {
     const opts = {}; if (resFile) opts.images = [await prepararImagen(resFile)];
     const r = await iaJSON(promptResultados(texto), opts);
     if (!r || !r.juego || !JUEGOS[r.juego] || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.fecha || ""))) {
-      st.textContent = "No se reconocieron resultados.";
-      manejarError(new Error("No se reconocen resultados" + (r && r.notas ? ": " + r.notas : "")), "Leer resultados", "Usa la página oficial del sorteo concreto, con la fecha y la tabla de premios visibles."); return;
+      st.textContent = "No s'han reconegut resultats.";
+      manejarError(new Error("No es reconeixen resultats" + (r && r.notas ? ": " + r.notas : "")), "Llegir resultats", "Fes servir la pàgina oficial del sorteig concret, amb la data i la taula de premis visibles."); return;
     }
-    resParsed = normalizarSorteo(r, resFile ? "Captura aportada por el usuario" : "Texto aportado por el usuario");
-    st.replaceChildren(el("span", { class: "tag ok", text: "Leído" }), " Revisa que coincide con la fuente oficial.");
+    resParsed = normalizarSorteo(r, resFile ? "Captura aportada per l'usuari" : "Text aportat per l'usuari");
+    st.replaceChildren(el("span", { class: "tag ok", text: "Llegit" }), " Revisa que coincideixi amb la font oficial.");
     $("resPreview").replaceChildren(renderSorteoMini(resParsed), el("div", { class: "row" },
-      db || modo === "local" ? el("button", { class: "primary", id: "btnGuardar", onclick: guardarSorteo }, "Guardar en la app") : null,
-      el("button", { onclick: () => { sorteosLocal = sorteosLocal.filter((x) => x.id !== resParsed.id).concat(resParsed); $("resPreview").replaceChildren(el("p", { class: "sub", text: "Usado para esta sesión." })); renderSaved(); renderTodoFull(); } }, db ? "Usar solo ahora" : "Usar")));
+      db || modo === "local" ? el("button", { class: "primary", id: "btnGuardar", onclick: guardarSorteo }, "Desar a l'app") : null,
+      el("button", { onclick: () => { sorteosLocal = sorteosLocal.filter((x) => x.id !== resParsed.id).concat(resParsed); $("resPreview").replaceChildren(el("p", { class: "sub", text: "Fet servir per a aquesta sessió." })); renderSaved(); renderTodoFull(); } }, db ? "Fer-lo servir només ara" : "Fer-lo servir")));
   } catch (e) {
-    st.textContent = "No se pudieron leer los resultados.";
-    manejarError(e, "Leer resultados con Claude", SAMPLE_SOLUCION[e && e.code] || "Vuelve a intentarlo con otra captura o con el texto.");
+    st.textContent = "No s'han pogut llegir els resultats.";
+    manejarError(e, "Llegir els resultats amb Claude", SAMPLE_SOLUCION[e && e.code] || "Torna-ho a provar amb una altra captura o amb el text.");
   } finally { $("btnRes").disabled = false; }
 };
 async function guardarSorteo() {
@@ -1710,25 +1715,25 @@ async function guardarSorteo() {
   try {
     if (modo === "local") upsertSorteoLocal(resParsed); else { const { id, ...data } = resParsed; await db.doc("sorteos/" + id).set(data); }
     if (modo === "local") { renderSaved(); renderTodoFull(); }
-    $("resPreview").replaceChildren(el("p", { class: "sub" }, el("span", { class: "tag ok", text: "Guardado" }), " Ya se usa para comprobar tus boletos."));
-    $("txtRes").value = ""; resFile = null; $("fResName").textContent = "Ninguna captura";
-  } catch (e) { if (b) b.disabled = false; manejarError(e, "Guardar sorteo", e && e.code === "quota_exceeded" ? "La base de datos está llena: borra sorteos antiguos." : "Puede que no tengas permiso para escribir aquí. Usa “Usar solo ahora”."); }
+    $("resPreview").replaceChildren(el("p", { class: "sub" }, el("span", { class: "tag ok", text: "Desat" }), " Ja es fa servir per comprovar les teves butlletes."));
+    $("txtRes").value = ""; resFile = null; $("fResName").textContent = "Cap captura";
+  } catch (e) { if (b) b.disabled = false; manejarError(e, "Desar el sorteig", e && e.code === "quota_exceeded" ? "La base de dades és plena: esborra sortejos antics." : "Potser no tens permís per escriure aquí. Fes servir «Fer-lo servir només ara»."); }
 }
 function renderSaved() {
   const L = todosSorteos(); $("savedCount").textContent = L.length;
   $("savedList").replaceChildren(...(L.length ? L.map((s) => el("div", { class: "it" },
     el("span", {}, el("b", { text: JUEGOS[s.juego]?.nombre || s.juego }), " · ", el("span", { class: "mono", text: s.fecha }), s.completo === false ? el("span", { class: "tag ex", style: "margin-left:8px", text: "Parcial" }) : null)))
-    : [el("p", { class: "sub", text: dbReady ? "Todavía no hay sorteos guardados." : "Cargando…" })]));
+    : [el("p", { class: "sub", text: dbReady ? "Encara no hi ha sortejos desats." : "Carregant…" })]));
 }
 function renderTodoFull() { cards.clear(); renderTodo(); }
 
 // ---------- Prompt para chat ----------
-$("chatPrompt").textContent = `Te adjunto fotos de boletos de juegos de azar de España (Euromillones, La Primitiva, Bonoloto, El Gordo, Lotería Nacional o cupón de la ONCE). Puede haber varios boletos, de juegos y fechas distintos.
+$("chatPrompt").textContent = `T'adjunto fotos de butlletes de jocs d'atzar d'Espanya (Euromilions, La Primitiva, Bonoloto, El Gordo, Loteria Nacional o cupó de l'ONCE). Hi pot haver diverses butlletes, de jocs i dates diferents. Respon en català.
 
-1. Lee cada boleto y dime: juego, fecha(s) de sorteo, todas las apuestas (números y estrellas), reintegro o clave, Joker, código de El Millón, o número, serie y fracción del décimo o cupón. Avisa si algo no se lee bien.
-2. Busca en la web los resultados oficiales de cada sorteo (loteriasyapuestas.es o juegosonce.es), con la combinación ganadora y la tabla de premios por categoría.
-3. Compara apuesta por apuesta y dime qué categoría acierta cada una y el importe. En las múltiples, desglosa las combinaciones. En Lotería Nacional revisa terminaciones, reintegros, aproximaciones y centenas.
-4. Termina con una tabla por boleto, el total bruto, el gravamen estimado (20 % sobre lo que pase de 40.000 € por premio) y el neto, e indica la fuente de cada resultado.`;
+1. Llegeix cada butlleta i digues-me: joc, data o dates del sorteig, totes les apostes (números i estrelles), reintegrament o clau, Joker, codi d'El Millón, o número, sèrie i fracció del dècim o cupó. Avisa'm si alguna cosa no es llegeix bé.
+2. Cerca a internet els resultats oficials de cada sorteig (loteriasyapuestas.es o juegosonce.es), amb la combinació guanyadora i la taula de premis per categoria.
+3. Compara aposta per aposta i digues-me quina categoria encerta cadascuna i l'import. En les múltiples, desglossa les combinacions. A la Loteria Nacional revisa terminacions, reintegraments, aproximacions i centenes.
+4. Acaba amb una taula per butlleta, el total brut, el gravamen estimat (20 % sobre el que passi de 40.000 € per premi) i el net, i indica la font de cada resultat.`;
 $("copyPrompt").onclick = (e) => copiar($("chatPrompt").textContent, e.currentTarget);
 
 // ---------- Arranque ----------
@@ -1740,14 +1745,14 @@ renderTodo(); renderSaved(); renderQueue();
   sample = s; db = d;
   if (sample) { try { sampleImgs = (await sample.limits()).images || null; } catch (_) { sampleImgs = null; } }
   capsListas = true;
-  if (!sample) $("dropTxt").textContent = "Esta vista no puede conectar con Claude para leer fotos. Puedes escribir los boletos a mano.";
+  if (!sample) $("dropTxt").textContent = "Aquesta vista no pot connectar amb Claude per llegir fotos. Pots escriure les butlletes a mà.";
   renderQueue();
   if (u) { try { uid = await u.id(); } catch (_) { uid = null; } }
-  if (!db) { dbReady = true; ticketsReady = true; setSaveState("Sin guardado en esta vista"); renderTodoFull(); renderSaved(); return; }
+  if (!db) { dbReady = true; ticketsReady = true; setSaveState("Sense desament en aquesta vista"); renderTodoFull(); renderSaved(); return; }
   db.collection("sorteos").onSnapshot((snap) => {
     sorteosDB = snap.docs.map((x) => Object.assign({ id: x.id }, x.data())); dbReady = true; renderSaved(); renderTodo();
-  }, (err) => { dbReady = true; renderSaved(); manejarError(err, "Cargar sorteos guardados", "Recarga la página. Si sigue fallando, añade los resultados con una captura."); });
-  if (!uid) { ticketsReady = true; setSaveState("Inicia sesión para guardar tus boletos"); renderTodoFull(); return; }
+  }, (err) => { dbReady = true; renderSaved(); manejarError(err, "Carregar els sortejos desats", "Recarrega la pàgina. Si continua fallant, afegeix els resultats amb una captura."); });
+  if (!uid) { ticketsReady = true; setSaveState("Inicia la sessió per desar les teves butlletes"); renderTodoFull(); return; }
   db.collection("data/users/" + uid).onSnapshot((snap) => {
     const remotos = snap.docs.map((x) => Object.assign({ id: x.id }, x.data())).filter((t) => t.juego && JUEGOS[t.juego]);
     const pendientes = tickets.filter((t) => !remotos.some((r) => r.id === t.id) && saveTimers.has(t.id));
@@ -1756,7 +1761,7 @@ renderTodo(); renderSaved(); renderQueue();
     tickets = remotos.map((r) => { const loc = tickets.find((t) => t.id === r.id); const c = loc && cards.get(loc.id); return c && act && c.art.contains(act) ? loc : r; }).concat(pendientes)
       .sort((a, b) => String(b.creado || "").localeCompare(String(a.creado || "")));
     ticketsReady = true; renderTodo();
-  }, (err) => { ticketsReady = true; renderTodo(); manejarError(err, "Cargar tus boletos", "Recarga la página."); });
+  }, (err) => { ticketsReady = true; renderTodo(); manejarError(err, "Carregar les teves butlletes", "Recarrega la pàgina."); });
 })();
 </script>
 

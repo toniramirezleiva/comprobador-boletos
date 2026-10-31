@@ -1,6 +1,6 @@
-# Comprobador de boletos
+# Comprovador de butlletes
 
-App web gratuita para comprobar boletos de Euromillones, La Primitiva, Bonoloto, El Gordo de la Primitiva, Lotería Nacional y cupones de la ONCE a partir de una foto.
+App web gratuïta per comprovar butlletes d'Euromilions, La Primitiva, Bonoloto, El Gordo de la Primitiva, Loteria Nacional i cupons de l'ONCE a partir d'una foto. L'aplicació és en català.
 
 - **Usarla:** https://toniramirezleiva.github.io/comprobador-boletos/
 - Las fotos se leen en el propio dispositivo (reconocimiento de texto gratuito, Tesseract.js). Revisa siempre los números propuestos.
