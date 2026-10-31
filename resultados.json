@@ -1,0 +1,139 @@
+{
+ "actualizado": "2026-10-31T05:20:00+01:00",
+ "sorteos": [
+  {
+   "actualizado": "2026-10-30T17:45:00+01:00",
+   "acumulables": true,
+   "complementario": null,
+   "completo": true,
+   "estrellas": [
+    3,
+    6
+   ],
+   "fecha": "2026-10-27",
+   "fuente": "euro-millions.com (comprobar con loteriasyapuestas.es)",
+   "joker": null,
+   "juego": "euromillones",
+   "millon": "GXP83881",
+   "notas": "Importes por acertante en España. 5+2: bote, sin acertantes. 5+1: sin importe publicado en España.",
+   "numeros": [
+    21,
+    30,
+    32,
+    42,
+    48
+   ],
+   "precioDecimo": null,
+   "premios": {
+    "2": 4.58,
+    "3": 11.45,
+    "4": 49.66,
+    "5": 630456.7,
+    "1+2": 6.08,
+    "2+1": 5.77,
+    "2+2": 12.35,
+    "3+1": 12.84,
+    "3+2": 57.91,
+    "4+1": 147.37,
+    "4+2": 1957.94,
+    "5+1": null,
+    "5+2": null
+   },
+   "premiosNumericos": [],
+   "reintegro": null,
+   "titulo": "Sorteo 86 · martes 27/10/2026",
+   "id": "euromillones_2026-10-27"
+  },
+  {
+   "actualizado": "2026-10-30T17:45:00+01:00",
+   "acumulables": true,
+   "complementario": null,
+   "completo": false,
+   "estrellas": [],
+   "fecha": "2026-10-29",
+   "fuente": "democrata.es (comprobar con loteriasyapuestas.es)",
+   "joker": null,
+   "juego": "loteria_nacional",
+   "millon": null,
+   "notas": "Solo primer y segundo premio y reintegros. Faltan extracciones, aproximaciones y centenas: añade la lista oficial para una comprobación completa.",
+   "numeros": [],
+   "precioDecimo": 3,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "Primer premio",
+     "importe": 30000,
+     "serie": null,
+     "tipo": "exacto",
+     "valor": "65942"
+    },
+    {
+     "concepto": "Segundo premio",
+     "importe": 6000,
+     "serie": null,
+     "tipo": "exacto",
+     "valor": "63502"
+    },
+    {
+     "concepto": "Reintegro",
+     "importe": 3,
+     "serie": null,
+     "tipo": "terminacion",
+     "valor": "2"
+    },
+    {
+     "concepto": "Reintegro",
+     "importe": 3,
+     "serie": null,
+     "tipo": "terminacion",
+     "valor": "3"
+    },
+    {
+     "concepto": "Reintegro",
+     "importe": 3,
+     "serie": null,
+     "tipo": "terminacion",
+     "valor": "8"
+    }
+   ],
+   "reintegro": null,
+   "titulo": "Lotería Nacional · jueves 29/10/2026",
+   "id": "loteria_nacional_2026-10-29"
+  },
+  {
+   "actualizado": "2026-10-30T17:45:00+01:00",
+   "acumulables": true,
+   "complementario": 9,
+   "completo": false,
+   "estrellas": [],
+   "fecha": "2026-10-29",
+   "fuente": "laguinda.app (comprobar con loteriasyapuestas.es)",
+   "joker": "3013180",
+   "juego": "primitiva",
+   "millon": null,
+   "notas": "Escrutinio aún no publicado al guardar: solo constan los importes fijos de 5ª categoría (8 €) y reintegro (1 €). Añade la tabla oficial cuando salga.",
+   "numeros": [
+    2,
+    18,
+    19,
+    28,
+    31,
+    44
+   ],
+   "precioDecimo": null,
+   "premios": {
+    "1": null,
+    "2": null,
+    "3": null,
+    "4": null,
+    "5": 8,
+    "R": 1,
+    "especial": null
+   },
+   "premiosNumericos": [],
+   "reintegro": 9,
+   "titulo": "La Primitiva · jueves 29/10/2026",
+   "id": "primitiva_2026-10-29"
+  }
+ ]
+}

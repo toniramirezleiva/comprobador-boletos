@@ -1,0 +1,1407 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Comprobador de Boletos</title>
+<meta name="description" content="Comprueba gratis tus boletos de Euromillones, Primitiva, Bonoloto, El Gordo, Lotería Nacional y ONCE a partir de una foto.">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@100..125,500..900&family=Public+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Playfair+Display:wght@700;900&display=swap">
+<style>
+/* Layout: columna de "resguardos" — cada boleto se dibuja con la forma de su juego (apuesta con bolas/estrellas, décimo, cupón) sobre un fondo neutro azulado */
+:root{
+  --ground:#E8ECF1; --paper:#FFFFFF; --ink:#17202A; --muted:#5A6878; --line:#CDD5DE;
+  --accent:#0F6B57; --accent-ink:#FFFFFF; --accent-soft:#DCEFE8;
+  --ok:#0E7A52; --ok-soft:#DAF2E6; --warn:#985A00; --warn-soft:#FFF0D6; --bad:#B42318; --bad-soft:#FDE7E5;
+  --em:#1D4E9E; --em-soft:#E3ECFA; --star:#E9A800; --star-ink:#3A2A00;
+  --pri:#16794C; --pri-soft:#E1F3EA; --bon:#0B7A86; --bon-soft:#DEF2F4; --gor:#B3261E; --gor-soft:#FBE6E4;
+  --lot:#7A4E1D; --lot-paper:#FBF6EC; --lot-line:#E3D3B6;
+  --onc:#B98900; --onc-paper:#FFFBEA; --onc-line:#EADCA0;
+  --f-display:"Archivo","Arial Narrow",system-ui,sans-serif;
+  --f-body:"Public Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --f-num:"Playfair Display",Georgia,"Times New Roman",serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --ground:#0E1318; --paper:#161D25; --ink:#E6ECF2; --muted:#93A1B0; --line:#2B3642;
+  --accent:#3FBF9B; --accent-ink:#06231B; --accent-soft:#143A30;
+  --ok:#4CC995; --ok-soft:#12352A; --warn:#F0B24A; --warn-soft:#3A2A0E; --bad:#FF7B6E; --bad-soft:#3D1714;
+  --em:#7FA8F0; --em-soft:#18273F; --star:#F2BE2E; --star-ink:#2A1E00;
+  --pri:#5BCB95; --pri-soft:#14322A; --bon:#4FC3CF; --bon-soft:#123238; --gor:#FF8A80; --gor-soft:#3A1816;
+  --lot:#E2B680; --lot-paper:#241E15; --lot-line:#4A3D28;
+  --onc:#F0C847; --onc-paper:#24210F; --onc-line:#4A4220; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --ground:#0E1318; --paper:#161D25; --ink:#E6ECF2; --muted:#93A1B0; --line:#2B3642;
+  --accent:#3FBF9B; --accent-ink:#06231B; --accent-soft:#143A30;
+  --ok:#4CC995; --ok-soft:#12352A; --warn:#F0B24A; --warn-soft:#3A2A0E; --bad:#FF7B6E; --bad-soft:#3D1714;
+  --em:#7FA8F0; --em-soft:#18273F; --star:#F2BE2E; --star-ink:#2A1E00;
+  --pri:#5BCB95; --pri-soft:#14322A; --bon:#4FC3CF; --bon-soft:#123238; --gor:#FF8A80; --gor-soft:#3A1816;
+  --lot:#E2B680; --lot-paper:#241E15; --lot-line:#4A3D28;
+  --onc:#F0C847; --onc-paper:#24210F; --onc-line:#4A4220; color-scheme:dark}
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--ground);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px}
+.wrap{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.eyebrow{font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+h1{font-family:var(--f-display);font-stretch:125%;font-weight:850;font-size:clamp(28px,6vw,42px);line-height:1.04;margin:0;text-wrap:balance}
+h2{font-family:var(--f-display);font-stretch:112%;font-weight:750;font-size:19px;margin:0}
+h3{font-size:14px;margin:0;font-weight:700}
+.lead{color:var(--muted);margin:0;max-width:62ch}
+.sub{color:var(--muted);font-size:13.5px;margin:0}
+.mono{font-family:var(--f-mono)}
+.row{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.stack{display:flex;flex-direction:column;gap:12px}
+.panel{background:var(--paper);border:1px solid var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.grid2>*{min-width:0}
+
+button,.btn{font:600 14px var(--f-body);border-radius:6px;border:1px solid var(--line);background:var(--paper);color:var(--ink);padding:10px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;text-decoration:none;line-height:1.2}
+button:hover,.btn:hover{border-color:var(--ink)}
+button.primary,.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+button.small{padding:6px 10px;font-size:13px}
+button.ghost{background:transparent;border-color:transparent;color:var(--muted)}
+button.ghost:hover{color:var(--bad);border-color:transparent}
+button:disabled{opacity:.55;cursor:not-allowed}
+:is(button,.btn,input,select,textarea,summary):focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.fld{display:flex;flex-direction:column;gap:4px}
+.lbl,label.fld>span{font-size:12px;font-weight:600;color:var(--muted);letter-spacing:.03em;text-transform:uppercase}
+input,select,textarea{font:500 15px var(--f-body);color:var(--ink);background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:9px 10px;width:100%;min-width:0}
+input.mono,textarea.mono{font-family:var(--f-mono)}
+textarea{min-height:90px;resize:vertical}
+.hidden-input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+
+/* Subida */
+.drop{border:1.5px dashed var(--line);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.queue{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:10px}
+.qi{position:relative;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:var(--ground);aspect-ratio:3/4;max-width:100%}
+.qi img{width:100%;height:100%;object-fit:cover;display:block}
+.qi .qs{position:absolute;left:0;right:0;bottom:0;padding:4px 6px;font:600 11px var(--f-mono);background:color-mix(in srgb,var(--paper) 88%,transparent);color:var(--ink);display:flex;gap:6px;align-items:center}
+.qi .qx{position:absolute;top:4px;right:4px;padding:2px 7px;font-size:12px;border-radius:999px}
+.qi.err .qs{color:var(--bad)} .qi.ok .qs{color:var(--ok)}
+.status{font-family:var(--f-mono);font-size:13px;color:var(--muted);display:flex;align-items:center;gap:8px}
+.spin{width:14px;height:14px;border:2px solid var(--line);border-top-color:var(--accent);border-radius:50%;animation:sp .8s linear infinite;flex:none}
+@keyframes sp{to{transform:rotate(360deg)}}
+@media (prefers-reduced-motion:reduce){.spin{animation:none}}
+
+/* Resumen */
+.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.summary>div{background:var(--paper);padding:14px 16px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.summary b{font-family:var(--f-display);font-stretch:115%;font-size:24px;font-weight:800;font-variant-numeric:tabular-nums}
+.summary .win b{color:var(--ok)}
+
+/* Píldoras */
+.pill{font:600 12px var(--f-mono);letter-spacing:.02em;padding:4px 10px;border-radius:999px;white-space:nowrap;background:var(--ground);color:var(--muted)}
+.pill.premiado{background:var(--ok);color:var(--paper)}
+.pill.premiado_pend{background:var(--ok-soft);color:var(--ok)}
+.pill.faltan,.pill.parcial{background:var(--warn-soft);color:var(--warn)}
+.pill.proximo{background:var(--em-soft);color:var(--em)}
+.tag{font:600 11px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:4px;background:var(--ground);color:var(--muted);white-space:nowrap}
+.tag.ex{background:var(--warn-soft);color:var(--warn)}
+.tag.ok{background:var(--ok-soft);color:var(--ok)}
+.chip{font:500 12.5px var(--f-mono);border:1px solid var(--line);border-radius:999px;padding:3px 9px;background:var(--paper);color:var(--ink)}
+button.chip{cursor:pointer}
+
+/* Tarjeta de boleto */
+.tk{background:var(--paper);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column}
+.tk-head{display:flex;gap:12px;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tk-head .gm{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:16px;color:var(--g)}
+.tk-head .dates{display:flex;gap:6px;flex-wrap:wrap;flex:1 1 160px;min-width:0}
+.games{display:flex;flex-wrap:wrap;gap:6px}
+.games span{font:600 11.5px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--line);color:var(--muted);opacity:.6}
+.games span.on{opacity:1;color:var(--paper);background:var(--g);border-color:var(--g)}
+.tk.is-ej{filter:grayscale(.8);opacity:.62}
+.tk.is-ej:hover,.tk.is-ej:focus-within{filter:grayscale(.3);opacity:.85}
+.ej-note{font-size:13px;color:var(--muted);border:1px dashed var(--line);border-radius:8px;padding:10px 12px}
+.tk-est{padding:12px 14px;border-top:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.est{border-left:4px solid var(--line);padding:8px 0 8px 12px;display:flex;flex-direction:column;gap:6px}
+.est.ok{border-color:var(--ok)} .est.nada{border-color:var(--muted)} .est.prox{border-color:var(--em)} .est.espera{border-color:var(--warn)}
+.est-h{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.est-h b{font-size:14.5px}
+.est-amt{font:700 16px var(--f-mono);font-variant-numeric:tabular-nums;white-space:nowrap}
+.est.ok .est-amt{color:var(--ok)} .est.nada .est-amt{color:var(--muted);font-weight:500;font-size:14px}
+.est ul{margin:0;padding-left:18px;font-size:14px}
+.est li span.v{font-family:var(--f-mono);color:var(--ok);font-weight:600}
+.tk-thumb{width:40px;height:40px;border-radius:5px;object-fit:cover;border:1px solid var(--line);flex:none}
+.tk-vis{padding:16px 14px;background:var(--gsoft)}
+.tk-more>summary{cursor:pointer;padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--muted);list-style:none;border-top:1px solid var(--line);display:flex;justify-content:space-between}
+.tk-more>summary::after{content:"Ver detalle ▾";font-weight:500}
+.tk-more[open]>summary::after{content:"Ocultar ▴"}
+.tk-more>summary::-webkit-details-marker{display:none}
+.tk-body{padding:0 14px 16px;display:flex;flex-direction:column;gap:14px}
+.g-euromillones{--g:var(--em);--gsoft:var(--em-soft)}
+.g-primitiva{--g:var(--pri);--gsoft:var(--pri-soft)}
+.g-bonoloto{--g:var(--bon);--gsoft:var(--bon-soft)}
+.g-elgordo{--g:var(--gor);--gsoft:var(--gor-soft)}
+.g-loteria_nacional{--g:var(--lot);--gsoft:var(--lot-paper)}
+.g-once{--g:var(--onc);--gsoft:var(--onc-paper)}
+
+/* Bolas y estrellas */
+.apl{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center}
+.apl+.apl{margin-top:10px;padding-top:10px;border-top:1px dashed color-mix(in srgb,var(--g) 30%,transparent)}
+.apl .ix{font:600 11px var(--f-mono);color:var(--muted);width:16px}
+.balls{display:flex;flex-wrap:wrap;gap:6px}
+.ball{font:700 14px var(--f-mono);width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-variant-numeric:tabular-nums;
+  background:var(--paper);color:var(--g);border:2px solid var(--g)}
+.ball.hit{background:var(--g);color:var(--paper)}
+.ball.sm{width:30px;height:30px;font-size:12.5px;border-width:1.5px}
+.star{width:42px;height:42px;display:block;flex:none}
+.star path{fill:var(--paper);stroke:var(--star);stroke-width:2.2;stroke-linejoin:round}
+.star text{font:700 12.5px var(--f-mono);fill:var(--star-ink);text-anchor:middle;dominant-baseline:central}
+.star.hit path{fill:var(--star)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .star:not(.hit) text{fill:var(--star)}}
+:root[data-theme="dark"] .star:not(.hit) text{fill:var(--star)}
+.star.sm{width:34px;height:34px}
+.stars{display:flex;gap:2px}
+.badge{font:700 13px var(--f-mono);border-radius:6px;padding:6px 9px;border:1.5px solid var(--g);color:var(--g);background:var(--paper);display:inline-flex;gap:6px;align-items:center}
+.badge.hit{background:var(--g);color:var(--paper)}
+.badge small{font:600 10px var(--f-body);letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.jk{display:inline-flex;gap:2px}
+.jk span{font:700 14px var(--f-mono);width:22px;height:30px;display:grid;place-items:center;border:1px solid var(--line);background:var(--paper);border-radius:3px}
+.jk span.hit{background:var(--g);color:var(--paper);border-color:var(--g)}
+.extras{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:12px}
+
+/* Décimo */
+.decimo{position:relative;border:1.5px solid var(--lot-line);border-radius:6px;padding:16px 18px;color:var(--lot);overflow:hidden;
+  background:
+   repeating-radial-gradient(circle at 0 100%, transparent 0 9px, color-mix(in srgb,var(--lot) 7%,transparent) 9px 10px),
+   repeating-radial-gradient(circle at 100% 0, transparent 0 9px, color-mix(in srgb,var(--lot) 7%,transparent) 9px 10px),
+   var(--lot-paper);
+  display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 16px;align-items:end}
+.decimo::before{content:"";position:absolute;inset:6px;border:1px solid var(--lot-line);border-radius:3px;pointer-events:none}
+.decimo .dt{grid-column:1/-1;display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;font:600 11px var(--f-mono);letter-spacing:.14em;text-transform:uppercase}
+.decimo .num{font-family:var(--f-num);font-weight:900;font-size:clamp(40px,11vw,60px);line-height:1;letter-spacing:.06em;color:var(--ink);font-variant-numeric:lining-nums tabular-nums}
+.decimo .num span.hit{color:var(--ok);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
+.decimo .meta{display:flex;flex-direction:column;gap:2px;text-align:right;font:600 12px var(--f-mono)}
+.decimo .meta b{font:800 18px var(--f-display);font-stretch:110%;color:var(--ink)}
+@media (max-width:520px){.decimo{grid-template-columns:1fr}.decimo .row{justify-content:flex-start!important}}
+.decimo .seal{width:46px;height:46px;border-radius:50%;border:1.5px solid var(--lot-line);display:grid;place-items:center;font:700 10px var(--f-mono);letter-spacing:.08em;text-align:center;line-height:1.1}
+
+/* Cupón */
+.cupon{position:relative;display:grid;grid-template-columns:auto minmax(0,1fr);border:1.5px solid var(--onc-line);border-radius:6px;background:var(--onc-paper);overflow:hidden}
+.cupon .stub{width:54px;background:var(--onc);color:var(--onc-paper);display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font:800 13px var(--f-display);font-stretch:120%;letter-spacing:.2em;text-transform:uppercase;
+  border-right:2px dashed var(--onc-paper)}
+.cupon .cb{padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.cupon .top{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;font:600 11px var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cupon .num{font:800 clamp(36px,10vw,52px)/1 var(--f-display);font-stretch:125%;letter-spacing:.08em;color:var(--ink);font-variant-numeric:tabular-nums}
+.cupon .num span.hit{color:var(--ok);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:6px}
+.cupon .ser{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.cupon .ser b{font:700 15px var(--f-mono);background:var(--onc);color:var(--onc-paper);padding:2px 8px;border-radius:4px}
+.cupon .bars{height:26px;max-width:220px;background:repeating-linear-gradient(90deg,var(--ink) 0 2px,transparent 2px 4px,var(--ink) 4px 5px,transparent 5px 8px,var(--ink) 8px 11px,transparent 11px 13px);opacity:.75}
+
+/* Resultados por boleto */
+.res-draw{border:1px solid var(--line);border-radius:8px;padding:12px;display:flex;flex-direction:column;gap:8px}
+.res-draw .rh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:baseline}
+.line{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center;padding:8px 0;border-top:1px dashed var(--line)}
+.line:first-of-type{border-top:none}
+.line .what{min-width:0;display:flex;flex-direction:column;gap:4px}
+.amt{font:600 15px var(--f-mono);font-variant-numeric:tabular-nums;text-align:right;white-space:nowrap}
+.amt.win{color:var(--ok)} .amt.pend{color:var(--warn);font-size:13px} .amt.none{color:var(--muted);font-weight:500}
+.wn{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center}
+.note{border-left:3px solid var(--warn);background:var(--warn-soft);padding:9px 12px;border-radius:0 6px 6px 0;font-size:13.5px}
+.totals{display:grid;grid-template-columns:auto auto;gap:3px 16px;justify-content:start;font-size:13.5px;margin:0}
+.totals dt{color:var(--muted)} .totals dd{margin:0;font-family:var(--f-mono);text-align:right}
+.apuesta-row{display:flex;gap:8px;align-items:center}
+.apuesta-row input{flex:1}
+
+.alert{border-radius:8px;padding:12px 14px;display:flex;gap:12px;align-items:flex-start;background:var(--bad-soft);border:1px solid var(--bad)}
+.alert.okk{background:var(--ok-soft);border-color:var(--ok)} .alert.okk b{color:var(--ok)}
+.alert b{color:var(--bad)} .alert .msg{flex:1;min-width:0;overflow-wrap:anywhere}
+
+details.box{border:1px solid var(--line);border-radius:8px;background:var(--paper)}
+details.box>summary{cursor:pointer;padding:14px 16px;font-weight:700;list-style:none;display:flex;justify-content:space-between;gap:10px;align-items:center}
+details.box>summary::-webkit-details-marker{display:none}
+details.box>summary::after{content:"+";font-family:var(--f-mono);color:var(--muted)}
+details.box[open]>summary::after{content:"–"}
+details.box>.in{padding:0 16px 16px;display:flex;flex-direction:column;gap:12px}
+pre.log{font:12.5px/1.5 var(--f-mono);background:var(--ground);border-radius:6px;padding:12px;overflow-x:auto;white-space:pre-wrap;overflow-wrap:anywhere;margin:0;max-height:340px}
+.saved .it{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-top:1px solid var(--line);align-items:center;flex-wrap:wrap}
+.saved .it:first-child{border-top:none}
+footer{color:var(--muted);font-size:12.5px;display:flex;flex-direction:column;gap:6px}
+a{color:var(--accent)}
+</style>
+
+<div class="wrap">
+  <header class="stack" style="gap:6px">
+    <div class="games" id="gamesBar"><span class="g-euromillones" data-j="euromillones">Euromillones</span><span class="g-primitiva" data-j="primitiva">Primitiva</span><span class="g-bonoloto" data-j="bonoloto">Bonoloto</span><span class="g-elgordo" data-j="elgordo">El Gordo</span><span class="g-loteria_nacional" data-j="loteria_nacional">Lotería Nacional</span><span class="g-once" data-j="once">ONCE</span></div>
+    <h1>Comprobador de boletos</h1>
+    <p class="lead">Sube una o varias fotos de tus boletos, décimos o cupones, aunque sean de juegos y días distintos. La app los lee, los guarda y te dice cuáles tienen premio.</p>
+  </header>
+
+  <div id="aviso" hidden></div>
+
+  <section class="panel" aria-labelledby="h-fotos">
+    <h2 id="h-fotos">Añadir boletos</h2>
+    <div class="drop" id="drop">
+      <p class="sub" id="dropTxt">Haz fotos con el móvil o sube varias imágenes a la vez. También puedes pegarlas (Ctrl+V). En una misma foto puede haber varios boletos.</p>
+      <div class="row">
+        <label class="btn primary" for="fCam">Hacer foto</label>
+        <input class="hidden-input" type="file" id="fCam" accept="image/*" capture="environment">
+        <label class="btn" for="fUp">Subir fotos</label>
+        <input class="hidden-input" type="file" id="fUp" accept="image/*" multiple>
+        <button id="btnManual">Escribir uno a mano</button>
+      </div>
+      <div class="queue" id="queue" hidden></div>
+      <div class="row" id="qActions" hidden>
+        <button class="primary" id="btnLeer">Leer fotos</button>
+        <button id="btnStop" hidden>Detener</button>
+        <span class="status" id="stLeer"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" id="localPanel" aria-labelledby="h-local" hidden>
+    <h2 id="h-local">Versión web gratuita</h2>
+    <p class="sub">Esta versión funciona sin cuenta y sin coste. Las fotos se leen en tu propio móvil con un reconocimiento de texto gratuito (la primera vez descarga unos 5 MB): revisa siempre los números que propone. Los resultados oficiales se cargan solos en cuanto se publican, mientras tengas la app abierta. Tus boletos se guardan solo en este navegador.</p>
+    <div class="row"><button class="small" id="btnNotif">Activar avisos del navegador</button><button class="small" id="btnRecargar">Comprobar resultados ahora</button></div>
+    <p class="sub" id="stKey"></p>
+    <p class="note" id="localWarn" hidden></p>
+  </section>
+
+  <section class="stack" aria-labelledby="h-mis">
+    <div class="row" style="justify-content:space-between">
+      <h2 id="h-mis">Mis boletos</h2>
+      <span class="sub" id="saveState"></span>
+    </div>
+    <div class="summary" id="summary"></div>
+    <p class="status" id="stAuto"></p>
+    <div class="stack" id="tickets"></div>
+  </section>
+
+  <details class="box" id="addRes">
+    <summary>Añadir los resultados de un sorteo</summary>
+    <div class="in">
+      <p class="sub">Si a un boleto le faltan resultados, sube una captura de la página oficial (con la tabla de premios) o pega el texto. Claude lo convierte en datos y la app lo guarda. La tarea programada también los añade sola cuando se publican.</p>
+      <div class="row">
+        <label class="btn" for="fRes">Subir captura</label>
+        <input class="hidden-input" type="file" id="fRes" accept="image/*">
+        <span class="sub" id="fResName">Ninguna captura</span>
+      </div>
+      <label class="fld" for="txtRes"><span>Texto de resultados</span>
+        <textarea id="txtRes" class="mono" placeholder="Ej.: Euromillones martes 27/10/2026 · 21 30 32 42 48 · estrellas 3 6 · 4+2: 1.957,94 € …"></textarea>
+      </label>
+      <div class="row"><button class="primary" id="btnRes">Leer resultados</button><span class="status" id="stRes"></span></div>
+      <div id="resPreview"></div>
+      <p class="sub">Webs oficiales: <a href="https://www.loteriasyapuestas.es/es/resultados" target="_blank" rel="noopener">loteriasyapuestas.es</a> · <a href="https://www.juegosonce.es/resultados-cupon-diario" target="_blank" rel="noopener">juegosonce.es</a></p>
+    </div>
+  </details>
+
+  <details class="box" id="savedBox">
+    <summary>Sorteos guardados <span class="tag" id="savedCount">…</span></summary>
+    <div class="in"><div class="saved" id="savedList"><p class="sub">Cargando…</p></div></div>
+  </details>
+
+  <details class="box">
+    <summary>Prompt para usar en un chat con Claude</summary>
+    <div class="in">
+      <p class="sub">Si prefieres no usar la app, adjunta las fotos en un chat con Claude que tenga búsqueda web y pega este prompt.</p>
+      <pre class="log" id="chatPrompt"></pre>
+      <div class="row"><button class="small" id="copyPrompt">Copiar prompt</button></div>
+    </div>
+  </details>
+
+  <details class="box" id="logBox">
+    <summary>Registro de errores <span class="tag" id="logCount">0</span></summary>
+    <div class="in">
+      <pre class="log" id="logPre">Sin errores.</pre>
+      <div class="row"><button class="small" id="copyLog">Copiar registro (Markdown)</button><button class="small" id="clearLog">Vaciar</button></div>
+    </div>
+  </details>
+
+  <footer>
+    <span>Los importes salen de los datos de sorteo guardados en la app. Para cobrar, la única lista válida es la oficial de Loterías y Apuestas del Estado o de la ONCE.</span>
+    <span>Gravamen: los premios de más de 40.000 € tributan un 20 % sobre lo que excede de esa cantidad (estimación orientativa).</span>
+  </footer>
+</div>
+
+<script>
+/*ENGINE-START*/
+const JUEGOS = {
+  euromillones:     { nombre: "Euromillones",       tipo: "comb", n: 5, max: 50, est: 2, maxEst: 12 },
+  primitiva:        { nombre: "La Primitiva",       tipo: "comb", n: 6, max: 49 },
+  bonoloto:         { nombre: "Bonoloto",           tipo: "comb", n: 6, max: 49 },
+  elgordo:          { nombre: "El Gordo de la Primitiva", tipo: "comb", n: 5, max: 54 },
+  loteria_nacional: { nombre: "Lotería Nacional",   tipo: "num" },
+  once:             { nombre: "Cupón ONCE",         tipo: "num" },
+};
+const CAT_EM = ["5+2","5+1","5","4+2","4+1","3+2","4","2+2","3+1","3","1+2","2+1","2"];
+const CAT_LABEL = {
+  primitiva: { especial: "Especial (6 + reintegro)", "1": "1ª (6 aciertos)", "2": "2ª (5 + complementario)", "3": "3ª (5 aciertos)", "4": "4ª (4 aciertos)", "5": "5ª (3 aciertos)", R: "Reintegro" },
+  bonoloto:  { "1": "1ª (6 aciertos)", "2": "2ª (5 + complementario)", "3": "3ª (5 aciertos)", "4": "4ª (4 aciertos)", "5": "5ª (3 aciertos)", R: "Reintegro" },
+  elgordo:   { "5+C": "1ª (5 + clave)", "5": "2ª (5)", "4+C": "3ª (4 + clave)", "4": "4ª (4)", "3+C": "5ª (3 + clave)", "3": "6ª (3)", "2+C": "7ª (2 + clave)", "2": "8ª (2)", R: "Reintegro (clave)" },
+};
+const JOKER_PREMIOS = { 7: 1000000, 6: 10000, 5: 1000, 4: 300, 3: 50, 2: 5, 1: 1 };
+
+function combos(arr, k) {
+  const out = [], cur = [];
+  (function rec(i) {
+    if (cur.length === k) { out.push(cur.slice()); return; }
+    for (let j = i; j <= arr.length - (k - cur.length); j++) { cur.push(arr[j]); rec(j + 1); cur.pop(); }
+  })(0);
+  return out;
+}
+const toInt = (x) => { const v = parseInt(x, 10); return Number.isFinite(v) ? v : null; };
+const uniqInts = (a) => [...new Set((a || []).map(toInt).filter((v) => v !== null))];
+const hitsOf = (mine, win) => mine.filter((x) => win.includes(x)).length;
+const gravamen = (x) => (x > 40000 ? 0.2 * (x - 40000) : 0);
+
+// Devuelve { lineas: [{texto, cat, importe|null, pendiente, nums, ests}], avisos: [] }
+function evaluar(ticket, sorteo) {
+  const juego = sorteo.juego, J = JUEGOS[juego];
+  const lineas = [], avisos = [];
+  const premios = sorteo.premios || {};
+  const imp = (k) => (premios[k] === undefined || premios[k] === null || premios[k] === "" ? null : Number(premios[k]));
+  const push = (o) => lineas.push(Object.assign({ pendiente: false, importe: 0 }, o));
+
+  if (J.tipo === "comb") {
+    const W = uniqInts(sorteo.numeros), WE = uniqInts(sorteo.estrellas);
+    const comp = toInt(sorteo.complementario), rein = toInt(sorteo.reintegro);
+    const ticketR = toInt(ticket.reintegro);
+    (ticket.apuestas || []).forEach((ap, idx) => {
+      const nums = uniqInts(ap.numeros), ests = uniqInts(ap.estrellas);
+      const etiqueta = "Apuesta " + (idx + 1);
+      if (nums.length < J.n) { avisos.push(etiqueta + ": tiene " + nums.length + " números y hacen falta " + J.n + "."); return; }
+      const combN = combos(nums, J.n);
+      const combE = juego === "euromillones" ? (ests.length >= 2 ? combos(ests, 2) : null) : [[]];
+      if (!combE) { avisos.push(etiqueta + ": faltan las 2 estrellas."); return; }
+      const multiple = combN.length * combE.length > 1;
+      const tally = {};
+      const add = (cat, n) => { tally[cat] = (tally[cat] || 0) + n; };
+      for (const cn of combN) for (const ce of combE) {
+        const h = hitsOf(cn, W);
+        if (juego === "euromillones") {
+          const e = hitsOf(ce, WE), key = e > 0 ? h + "+" + e : String(h);
+          if (CAT_EM.includes(key)) add(key, 1);
+        } else if (juego === "primitiva" || juego === "bonoloto") {
+          let cat = null;
+          if (h === 6) cat = "1";
+          else if (h === 5 && comp !== null && cn.includes(comp)) cat = "2";
+          else if (h === 5) cat = "3";
+          else if (h === 4) cat = "4";
+          else if (h === 3) cat = "5";
+          const rOk = ticketR !== null && rein !== null && ticketR === rein;
+          if (juego === "primitiva" && h === 6 && rOk) add("especial", 1);
+          if (cat) add(cat, 1);
+          if (rOk && !(juego === "primitiva" && h === 6)) add("R", 1);
+        } else if (juego === "elgordo") {
+          const cOk = ticketR !== null && rein !== null && ticketR === rein;
+          if (h >= 2) add(h + (cOk ? "+C" : ""), 1);
+          else if (cOk) add("R", 1);
+        }
+      }
+      const cats = Object.keys(tally);
+      if (!cats.length) push({ texto: etiqueta + (multiple ? " (múltiple, " + combN.length * combE.length + " combinaciones)" : ""), cat: "Sin premio", importe: 0, nums, ests, sinPremio: true });
+      const order = juego === "euromillones" ? CAT_EM : Object.keys(CAT_LABEL[juego]);
+      cats.sort((a, b) => order.indexOf(a) - order.indexOf(b)).forEach((c) => {
+        const unit = imp(c), n = tally[c];
+        const label = juego === "euromillones" ? (c.includes("+") ? c.split("+")[0] + " aciertos + " + c.split("+")[1] + (c.endsWith("+1") ? " estrella" : " estrellas") : c + " aciertos") : CAT_LABEL[juego][c];
+        push({ texto: etiqueta + (n > 1 ? " · " + n + " combinaciones" : ""), cat: label, importe: unit === null ? null : unit * n, unitario: unit, veces: n, pendiente: unit === null, nums, ests });
+      });
+    });
+    if (ticket.joker && sorteo.joker && juego === "primitiva") {
+      const a = String(ticket.joker).replace(/\D/g, ""), b = String(sorteo.joker).replace(/\D/g, "");
+      if (a.length === 7 && b.length === 7) {
+        let best = 0;
+        for (let k = 7; k >= 1; k--) { if (a.slice(0, k) === b.slice(0, k) || a.slice(-k) === b.slice(-k)) { best = k; break; } }
+        push({ texto: "Joker " + a, cat: best ? (best === 7 ? "Joker (7 cifras)" : "Joker (" + best + " cifra" + (best > 1 ? "s" : "") + " por delante o por detrás)") : "Joker sin premio", importe: best ? JOKER_PREMIOS[best] : 0, sinPremio: !best });
+      } else avisos.push("El número Joker debe tener 7 cifras.");
+    }
+    if (ticket.millon && sorteo.millon && juego === "euromillones") {
+      const a = String(ticket.millon).replace(/\s/g, "").toUpperCase(), b = String(sorteo.millon).replace(/\s/g, "").toUpperCase();
+      push({ texto: "El Millón " + a, cat: a === b ? "El Millón" : "El Millón sin premio", importe: a === b ? 1000000 : 0, sinPremio: a !== b });
+    }
+  } else {
+    const num = String(ticket.numero || "").replace(/\D/g, "");
+    if (num.length !== 5) { avisos.push("El número del décimo o cupón debe tener 5 cifras."); return { lineas, avisos }; }
+    const serie = toInt(ticket.serie);
+    const mult = juego === "loteria_nacional" ? Math.max(1, toInt(ticket.decimos) || 1) : 1;
+    const pad = (n) => String(((n % 100000) + 100000) % 100000).padStart(5, "0");
+    const hits = [];
+    for (const p of sorteo.premiosNumericos || []) {
+      const v = String(p.valor || "").replace(/\D/g, "");
+      if (!v) continue;
+      let ok = false;
+      switch (p.tipo) {
+        case "exacto": ok = num === v.padStart(5, "0"); break;
+        case "terminacion": ok = num.endsWith(v); break;
+        case "inicio": ok = num.startsWith(v); break;
+        case "anterior": ok = num === pad(parseInt(v, 10) - 1); break;
+        case "posterior": ok = num === pad(parseInt(v, 10) + 1); break;
+        case "centena": { const f = v.padStart(5, "0"); ok = num.slice(0, 3) === f.slice(0, 3) && num !== f; break; }
+      }
+      if (ok && p.serie !== null && p.serie !== undefined && p.serie !== "") ok = serie !== null && toInt(p.serie) === serie;
+      if (ok) hits.push(p);
+    }
+    let elegidos = hits;
+    if (!sorteo.acumulables && hits.length > 1) {
+      const known = hits.filter((h) => h.importe !== null && h.importe !== undefined);
+      elegidos = [known.sort((a, b) => b.importe - a.importe)[0] || hits[0]];
+      avisos.push("En este juego solo se cobra el premio mayor; se muestran los demás coincidentes como informativos.");
+    } else if (hits.length > 1) avisos.push("Este número coincide con varios premios y se han sumado. La compatibilidad entre premios la fija el programa oficial de cada sorteo; confírmalo en la lista oficial.");
+    if (!hits.length) push({ texto: "Número " + num + (serie !== null ? " · serie " + serie : ""), cat: "Sin premio", importe: 0, sinPremio: true, numero: num });
+    for (const p of hits) {
+      const used = elegidos.includes(p);
+      const u = p.importe === null || p.importe === undefined || p.importe === "" ? null : Number(p.importe);
+      push({ texto: "Número " + num + (mult > 1 ? " · " + mult + " décimos" : ""), cat: p.concepto + (used ? "" : " (no acumulable)"), importe: used ? (u === null ? null : u * mult) : 0, unitario: u, veces: mult, pendiente: used && u === null, numero: num, valor: String(p.valor), tipoPremio: p.tipo, informativo: !used });
+    }
+    if (sorteo.completo === false) avisos.push("La lista de premios guardada de este sorteo está incompleta. Puede haber premios menores (terminaciones, aproximaciones, centenas) que no aparecen; añade la lista oficial para una comprobación completa.");
+  }
+  return { lineas, avisos };
+}
+
+function totales(lineas) {
+  let bruto = 0, grav = 0, pend = 0;
+  for (const l of lineas) {
+    if (l.pendiente) { pend++; continue; }
+    if (!l.importe) continue;
+    bruto += l.importe;
+    const unit = l.unitario != null ? l.unitario : l.importe, veces = l.veces || 1;
+    grav += gravamen(unit) * veces;
+  }
+  return { bruto, grav, neto: bruto - grav, pend };
+}
+/*ENGINE-END*/
+
+// ---------- Utilidades ----------
+const $ = (id) => document.getElementById(id);
+const SVGNS = "http://www.w3.org/2000/svg";
+function el(tag, attrs = {}, ...kids) {
+  const e = document.createElement(tag);
+  for (const [k, v] of Object.entries(attrs)) {
+    if (k === "class") e.className = v; else if (k === "text") e.textContent = v;
+    else if (k.startsWith("on")) e.addEventListener(k.slice(2), v);
+    else if (v !== null && v !== undefined && v !== false) e.setAttribute(k, v);
+  }
+  for (const k of kids.flat(Infinity)) if (k !== null && k !== undefined && k !== false) e.append(k.nodeType ? k : document.createTextNode(String(k)));
+  return e;
+}
+const eur = (x) => new Intl.NumberFormat("es-ES", { style: "currency", currency: "EUR" }).format(x);
+const fechaLarga = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long", year: "numeric" }); } catch (_) { return iso; } };
+const fechaCorta = (iso) => { try { return new Date(iso + "T12:00:00").toLocaleDateString("es-ES", { weekday: "short", day: "numeric", month: "short" }); } catch (_) { return iso; } };
+const hoyISO = () => { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); };
+const nuevoId = () => "b_" + Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+const clone = (o) => JSON.parse(JSON.stringify(o));
+
+// Estrella de 5 puntas con número dentro
+const STAR_D = (() => { const c = 21, R = 19.5, r = 8.6; let d = ""; for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r : R; d += (i ? "L" : "M") + (c + rr * Math.cos(a)).toFixed(2) + " " + (c + 1 + rr * Math.sin(a)).toFixed(2); } return d + "Z"; })();
+function star(n, hit, sm) {
+  const s = document.createElementNS(SVGNS, "svg"); s.setAttribute("viewBox", "0 0 42 42"); s.setAttribute("class", "star" + (hit ? " hit" : "") + (sm ? " sm" : "")); s.setAttribute("role", "img"); s.setAttribute("aria-label", "Estrella " + n);
+  const p = document.createElementNS(SVGNS, "path"); p.setAttribute("d", STAR_D); s.append(p);
+  const t = document.createElementNS(SVGNS, "text"); t.setAttribute("x", "21"); t.setAttribute("y", "23.5"); t.textContent = String(n).padStart(2, "0"); s.append(t);
+  return s;
+}
+const bolas = (nums, win, sm) => el("div", { class: "balls" }, nums.map((n) => el("span", { class: "ball" + (sm ? " sm" : "") + (win && win.includes(n) ? " hit" : ""), text: String(n).padStart(2, "0") })));
+const estrellas = (nums, win, sm) => el("div", { class: "stars" }, nums.map((n) => star(n, win && win.includes(n), sm)));
+
+// ---------- Registro de errores ----------
+const LOG_KEY = "comprobador.log";
+let logEntries = [];
+try { logEntries = JSON.parse(localStorage.getItem(LOG_KEY) || "[]"); } catch (_) { logEntries = []; }
+function renderLog() { $("logCount").textContent = logEntries.length; $("logPre").textContent = logEntries.length ? logEntries.join("\n") : "Sin errores."; }
+function manejarError(error, tarea, solucion) {
+  const m = error && (error.message || error.code) ? (error.message || error.code) + (error.code && error.message ? " [" + error.code + "]" : "") : String(error);
+  const mensaje = "Error: " + m;
+  const registro = "### Registre d'Acció\n- **Hora:** " + new Date().toISOString() + "\n- **Tasca:** " + tarea + "\n- **Error:** " + mensaje + "\n- **Solució requerida:** " + (solucion || "Analitza el problema i proposa un ajust.") + "\n";
+  logEntries.push(registro); if (logEntries.length > 50) logEntries = logEntries.slice(-50);
+  try { localStorage.setItem(LOG_KEY, JSON.stringify(logEntries)); } catch (_) {}
+  renderLog();
+  const box = $("aviso");
+  box.replaceChildren(el("div", { class: "alert", role: "alert" },
+    el("div", { class: "msg" }, el("b", { text: "S'ha detectat un error · " + tarea }), el("br"), mensaje, el("br"), el("span", { class: "sub", text: solucion || "" })),
+    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Cerrar")));
+  box.hidden = false; console.log(registro); return registro;
+}
+function copiar(texto, btn) {
+  const done = () => { const o = btn.textContent; btn.textContent = "Copiado"; setTimeout(() => (btn.textContent = o), 1400); };
+  const fb = () => { const t = el("textarea"); t.value = texto; document.body.append(t); t.select(); try { document.execCommand("copy"); done(); } catch (_) {} t.remove(); };
+  try { navigator.clipboard.writeText(texto).then(done, fb); } catch (_) { fb(); }
+}
+$("copyLog").onclick = (e) => copiar(logEntries.join("\n") || "Sin errores.", e.currentTarget);
+$("clearLog").onclick = () => { logEntries = []; try { localStorage.removeItem(LOG_KEY); } catch (_) {} renderLog(); };
+renderLog();
+const SAMPLE_SOLUCION = {
+  not_granted: "Permite que la página use Claude (menú Permisos del artefacto) y vuelve a pulsar el botón.",
+  sampling_disabled: "Tu cuenta u organización no tiene Claude disponible aquí. Escribe el boleto a mano.",
+  rate_limited: "Has hecho muchas consultas seguidas. Espera un poco y vuelve a intentarlo.",
+  image_rejected: "La imagen no es válida o es muy grande. Prueba con otra foto (JPG o PNG).",
+  images_unavailable: "Esta vista no puede enviar imágenes a Claude. Abre el artefacto en claude.ai o escribe el boleto a mano.",
+  invalid_json: "Claude no devolvió datos legibles. Vuelve a intentarlo con una foto más nítida.",
+  refused: "Claude no ha podido procesar esta imagen. Prueba con otra foto.",
+  session_expired: "Vuelve a iniciar sesión en Claude.",
+  upstream_error: "Fallo temporal del servicio. Vuelve a intentarlo.",
+  empty_completion: "No se obtuvo respuesta. Prueba con una foto más nítida.",
+  no_key: "Pon tu clave de la API de Claude en «Uso fuera de Claude», o abre la app desde su enlace de claude.ai.",
+  api_401: "La clave API no es válida. Revísala en console.anthropic.com y vuelve a guardarla.",
+  api_403: "La clave API no tiene permiso para esto (por ejemplo, la búsqueda web). Actívalo en console.anthropic.com.",
+  api_400: "La API rechazó la petición. Revisa el nombre del modelo en «Uso fuera de Claude».",
+  api_404: "El modelo indicado no existe. Revisa el nombre del modelo en «Uso fuera de Claude».",
+  api_429: "Has superado el límite de la API. Espera unos minutos.",
+  api_529: "La API está saturada. Se volverá a intentar en unos minutos.",
+  network: "No hay conexión con api.anthropic.com. Revisa la conexión a internet.",
+  no_web: "Dentro de Claude, los resultados los añade la tarea programada o los puedes añadir con una captura.",
+};
+
+// ---------- Estado ----------
+let sample = null, sampleImgs = null, db = null, uid = null, capsListas = false;
+let modo = "claude", apiKey = "", apiModel = "claude-sonnet-5-5", lsOK = true;
+function lsGet(k, def) { try { const v = localStorage.getItem(k); return v === null ? def : JSON.parse(v); } catch (_) { lsOK = false; return def; } }
+function lsSet(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); return true; } catch (_) { lsOK = false; return false; } }
+const iaDisponible = () => (modo === "claude" ? !!sample : !!apiKey);
+let sorteosDB = [], sorteosLocal = [], dbReady = false, ticketsReady = false;
+let tickets = [];            // boletos del usuario
+const EJEMPLOS = [
+  { id: "ej1", ejemplo: true, juego: "euromillones", fechas: ["2026-10-27"], apuestas: [{ numeros: [4, 21, 30, 42, 50], estrellas: [3, 6] }, { numeros: [7, 13, 32, 39, 48], estrellas: [1, 6] }], millon: "GXP83881X" },
+  { id: "ej2", ejemplo: true, juego: "primitiva", fechas: ["2026-10-29"], apuestas: [{ numeros: [2, 11, 18, 19, 33, 40] }], reintegro: 9, joker: "3013555" },
+  { id: "ej3", ejemplo: true, juego: "loteria_nacional", fechas: ["2026-10-29"], numero: "41503", serie: 4, fraccion: 7, decimos: 1, apuestas: [] },
+  { id: "ej4", ejemplo: true, juego: "once", fechas: [hoyISO()], numero: "08214", serie: 37, apuestas: [] },
+];
+const openIds = new Set();
+let queue = [];              // fotos {id,file,url,estado,msg}
+let ctlLeer = null, resFile = null, resParsed = null;
+
+// ---------- IA: Claude dentro del artefacto o API fuera ----------
+function b64(blob) { return new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(String(r.result).split(",")[1]); r.onerror = () => rej(new Error("No se pudo leer la imagen")); r.readAsDataURL(blob); }); }
+function parseJSONsuelto(text) {
+  const tryP = (x) => { try { return JSON.parse(x); } catch (_) { return undefined; } };
+  for (const t of [text]) {
+    if (!t) continue;
+    let v = tryP(t.trim()); if (v !== undefined) return v;
+    const m = t.match(/```(?:json)?\s*([\s\S]*?)```/); if (m && (v = tryP(m[1].trim())) !== undefined) return v;
+    const a = t.search(/[\[{]/), b = Math.max(t.lastIndexOf("}"), t.lastIndexOf("]"));
+    if (a >= 0 && b > a && (v = tryP(t.slice(a, b + 1))) !== undefined) return v;
+  }
+  return undefined;
+}
+async function iaJSON(prompt, opts = {}) {
+  if (modo === "claude") {
+    if (opts.web) throw { code: "no_web", message: "La búsqueda web no está disponible dentro de Claude" };
+    const o = { signal: opts.signal, cache: false }; if (opts.images) o.images = opts.images;
+    return sample.json(prompt, o);
+  }
+  if (!apiKey) throw { code: "no_key", message: "Falta la clave de la API de Claude" };
+  const content = [];
+  for (const b of opts.images || []) content.push({ type: "image", source: { type: "base64", media_type: /^image\/(jpeg|png|webp|gif)$/.test(b.type) ? b.type : "image/jpeg", data: await b64(b) } });
+  content.push({ type: "text", text: prompt + "\n\nResponde únicamente con el JSON pedido, sin ningún otro texto." });
+  const body = { model: apiModel || "claude-sonnet-5-5", max_tokens: 4096, messages: [{ role: "user", content }] };
+  if (opts.web) body.tools = [{ type: "web_search_20250305", name: "web_search", max_uses: 6 }];
+  let res;
+  try {
+    res = await fetch("https://api.anthropic.com/v1/messages", { method: "POST", signal: opts.signal,
+      headers: { "content-type": "application/json", "x-api-key": apiKey, "anthropic-version": "2023-06-01", "anthropic-dangerous-direct-browser-access": "true" },
+      body: JSON.stringify(body) });
+  } catch (e) { if (e && e.name === "AbortError") throw { code: "cancelled" }; throw { code: "network", message: "No se pudo conectar con api.anthropic.com (" + (e && e.message) + ")" }; }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw { code: "api_" + res.status, message: (data.error && data.error.message) || "HTTP " + res.status };
+  const textos = (data.content || []).filter((c) => c.type === "text").map((c) => c.text);
+  let v = parseJSONsuelto(textos[textos.length - 1] || "");
+  if (v === undefined) v = parseJSONsuelto(textos.join("\n"));
+  if (v === undefined) throw { code: "invalid_json", message: "La respuesta no contenía datos legibles", text: textos.join("\n") };
+  return v;
+}
+function persistirLocal() {
+  if (modo !== "local") return;
+  const ok1 = lsSet("cb.tickets", tickets.map((t) => Object.assign({}, t)));
+  const ok2 = lsSet("cb.sorteos", sorteosLocal);
+  setSaveState(ok1 && ok2 ? "Guardado en este navegador" : "Este navegador no permite guardar: se perderá al cerrar");
+}
+function upsertSorteoLocal(s) { sorteosLocal = sorteosLocal.filter((x) => x.id !== s.id).concat(s); persistirLocal(); }
+function mostrarAviso(titulo, texto) {
+  const box = $("aviso");
+  box.replaceChildren(el("div", { class: "alert okk", role: "status" }, el("div", { class: "msg" }, el("b", { text: titulo }), el("br"), texto),
+    el("button", { class: "small", onclick: () => { box.hidden = true; } }, "Cerrar")));
+  box.hidden = false;
+  try { navigator.vibrate && navigator.vibrate([200, 100, 200]); } catch (_) {}
+  try { if (window.Notification && Notification.permission === "granted") new Notification(titulo, { body: texto }); } catch (_) {}
+}
+function avisarSorteo(s, antes) {
+  const afect = tickets.filter((t) => t.juego === s.juego && (t.fechas || []).includes(s.fecha));
+  if (!afect.length) return;
+  const partes = afect.map((t, i) => {
+    const r = evaluar(t, s), T = totales(r.lineas.filter((l) => !l.informativo));
+    const nom = afect.length > 1 ? "Boleto " + (i + 1) + ": " : "";
+    return nom + (T.bruto > 0 ? "premiado con " + eur(T.bruto) + (T.pend ? " (y otra categoría con importe pendiente)" : "") : T.pend ? "premiado, importe pendiente del escrutinio" : "sin premio");
+  });
+  const fase = s.completo ? "" : " (combinación publicada; falta el escrutinio)";
+  if (antes && antes.completo === s.completo) return;
+  mostrarAviso("Resultado publicado · " + JUEGOS[s.juego].nombre + " " + fechaCorta(s.fecha) + fase, partes.join(" · "));
+}
+const PUB_MIN = { once: 3, bonoloto: 25, euromillones: 30, primitiva: 45, elgordo: 45, loteria_nacional: 15 };
+const buscando = new Set(), ultimoIntento = new Map();
+function pendientesBusqueda() {
+  const out = new Map(), now = Date.now();
+  for (const t of tickets) for (const f of t.fechas || []) {
+    const s = buscarSorteo(t.juego, f); if (s && s.completo !== false) continue;
+    const ini = new Date(f + "T" + horaSorteo(t.juego, f) + ":00").getTime() + (PUB_MIN[t.juego] || 20) * 60000;
+    if (now < ini || now - ini > 7 * 864e5) continue;
+    out.set(t.juego + "_" + f, { juego: t.juego, fecha: f, ini });
+  }
+  return [...out.values()];
+}
+async function sondear(manual) {
+  if (modo !== "local" || !apiKey) return;
+  for (const p of pendientesBusqueda()) {
+    const k = p.juego + "_" + p.fecha; if (buscando.has(k)) continue;
+    const espera = Date.now() - p.ini > 6 * 3600e3 ? 60 * 60000 : 5 * 60000;
+    if (!manual && Date.now() - (ultimoIntento.get(k) || 0) < espera) continue;
+    buscando.add(k); ultimoIntento.set(k, Date.now());
+    const nom = JUEGOS[p.juego].nombre + " del " + fechaCorta(p.fecha);
+    $("stAuto").replaceChildren(el("span", { class: "spin" }), "Buscando resultados de " + nom + "…");
+    try {
+      const r = await iaJSON(promptBuscar(p.juego, p.fecha), { web: true });
+      if (r && r.publicado === false) { $("stAuto").textContent = nom + ": aún no publicado. Se volverá a mirar en " + (espera / 60000) + " minutos mientras la app esté abierta."; }
+      else if (r && r.juego === p.juego && r.fecha === p.fecha) {
+        const antes = buscarSorteo(p.juego, p.fecha);
+        const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Búsqueda web");
+        if (antes) for (const [kk, vv] of Object.entries(antes.premios || {})) if (vv != null && s.premios[kk] == null) s.premios[kk] = vv;
+        upsertSorteoLocal(s); renderSaved(); renderTodoFull(); avisarSorteo(s, antes);
+        $("stAuto").textContent = "Resultados de " + nom + " actualizados" + (s.completo ? "." : "; falta el escrutinio y se seguirá buscando.");
+      } else throw { code: "invalid_json", message: "La búsqueda no devolvió los datos de este sorteo" };
+    } catch (e) {
+      $("stAuto").textContent = "";
+      manejarError(e, "Buscar resultados de " + nom, SAMPLE_SOLUCION[e && e.code] || "Se volverá a intentar en unos minutos.");
+      if (e && /^(no_key|api_401|api_403|api_404|api_400)$/.test(e.code || "")) break;
+    } finally { buscando.delete(k); }
+  }
+}
+function iniciarLocal() {
+  modo = "local"; capsListas = true;
+  lsSet("cb.test", 1);
+  tickets = (lsGet("cb.tickets", []) || []).filter((t) => t && t.id && JUEGOS[t.juego]);
+  sorteosLocal = (lsGet("cb.sorteos", []) || []).filter((x) => x && x.id && JUEGOS[x.juego]);
+  apiKey = ""; 
+  sampleImgs = { mediaTypes: ["image/jpeg", "image/png", "image/webp", "image/gif"], maxInputBytes: 3.5e6 };
+  dbReady = true; ticketsReady = true;
+  $("localPanel").hidden = false; $("addRes").hidden = true;
+  $("dropTxt").textContent = "Haz fotos o sube varias imágenes. Se leen en el propio móvil, sin coste; después revisa los números que proponga.";
+  if (!lsOK) { $("localWarn").hidden = false; $("localWarn").textContent = "Este navegador no deja guardar datos de este archivo (pasa al abrirlo desde Descargas en el móvil). Lo que añadas se perderá al cerrar. Para conservarlo, abre la app desde su enlace de claude.ai o publícala en una web."; }
+  setSaveState(lsOK ? "Guardado en este navegador" : "Sin guardado permanente");
+  renderTodoFull(); renderSaved(); renderQueue();
+  cargarResultadosWeb(true); setInterval(() => cargarResultadosWeb(false), 30000);
+}
+// ---------- Resultados oficiales publicados (versión web) ----------
+const RES_URLS = ["https://toniramirezleiva.github.io/comprobador-boletos/resultados.json", "https://raw.githubusercontent.com/toniramirezleiva/comprobador-boletos/main/resultados.json"];
+let ultimaCarga = 0, cargando = false;
+async function cargarResultadosWeb(forzar) {
+  if (modo !== "local" || cargando) return;
+  const pend = pendientesBusqueda().filter((p) => Date.now() - p.ini < 12 * 3600e3);
+  const intervalo = pend.length ? 2 * 60000 : 15 * 60000;
+  if (!forzar && Date.now() - ultimaCarga < intervalo) return;
+  cargando = true; ultimaCarga = Date.now();
+  if (forzar || pend.length) $("stAuto").replaceChildren(el("span", { class: "spin" }), "Consultando resultados oficiales…");
+  let datos = null, err = null;
+  for (const u of RES_URLS) {
+    try { const r = await fetch(u + "?t=" + Date.now(), { cache: "no-store" }); if (!r.ok) throw new Error("HTTP " + r.status + " en " + u); datos = await r.json(); break; }
+    catch (e) { err = e; }
+  }
+  cargando = false;
+  if (!datos) {
+    $("stAuto").textContent = "";
+    if (forzar) manejarError(err || new Error("Sin datos"), "Cargar resultados oficiales", "Comprueba la conexión a internet. Si sigue fallando, puede que el servicio de resultados aún no esté activo.");
+    return;
+  }
+  const lista = Array.isArray(datos) ? datos : datos.sorteos || [];
+  let cambios = 0;
+  for (const r of lista) {
+    if (!r || !JUEGOS[r.juego] || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.fecha || ""))) continue;
+    const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Resultados oficiales");
+    s.actualizado = r.actualizado || s.actualizado;
+    const antes = buscarSorteo(s.juego, s.fecha);
+    if (antes && antes.completo === s.completo && JSON.stringify(antes.numeros) === JSON.stringify(s.numeros) && JSON.stringify(antes.premios) === JSON.stringify(s.premios) && JSON.stringify(antes.premiosNumericos) === JSON.stringify(s.premiosNumericos)) continue;
+    sorteosLocal = sorteosLocal.filter((x) => x.id !== s.id).concat(s); cambios++;
+    avisarSorteo(s, antes);
+  }
+  if (cambios) { persistirLocal(); renderSaved(); renderTodoFull(); }
+  const hh = new Date().toLocaleTimeString("es-ES", { hour: "2-digit", minute: "2-digit" });
+  const quedan = pendientesBusqueda().filter((p) => Date.now() - p.ini < 12 * 3600e3).length;
+  $("stAuto").textContent = "Resultados consultados a las " + hh + (datos.actualizado ? " (publicados " + new Date(datos.actualizado).toLocaleString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ")" : "") + (quedan ? ". Esperando " + quedan + " sorteo(s): se vuelve a mirar cada 2 minutos." : ".");
+}
+// ---------- Lectura gratuita de fotos (OCR en el navegador) ----------
+/*OCR-START*/
+// Analiza el texto reconocido (OCR) de un boleto y devuelve una propuesta de datos.
+// Es aproximado: la persona revisa y corrige en el formulario.
+const OCR_MESES = { ENE: 1, FEB: 2, MAR: 3, ABR: 4, MAY: 5, JUN: 6, JUL: 7, AGO: 8, SEP: 9, SET: 9, OCT: 10, NOV: 11, DIC: 12 };
+const OCR_DIAS_SORTEO = { euromillones: [2, 5], primitiva: [1, 4, 6], bonoloto: [0, 1, 2, 3, 4, 5, 6], elgordo: [0], loteria_nacional: [4, 6, 0, 1, 2, 3, 5], once: [0, 1, 2, 3, 4, 5, 6] };
+function ocrNormaliza(t) {
+  return String(t || "").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
+    .replace(/[|]/g, "1").replace(/\r/g, "");
+}
+function ocrISO(y, m, d) {
+  if (y < 100) y += 2000;
+  if (!(m >= 1 && m <= 12 && d >= 1 && d <= 31 && y >= 2000 && y <= 2100)) return null;
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  if (dt.getUTCMonth() !== m - 1) return null;
+  return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+}
+function ocrFechas(T, hoy) {
+  const out = [];
+  let m;
+  T = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\s+\d{1,2}[:.]\d{2}\b/g, " "); // fecha y hora de venta
+  const r1 = /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/g;
+  while ((m = r1.exec(T))) { const f = ocrISO(+m[3], +m[2], +m[1]); if (f) out.push(f); }
+  const r2 = /\b(\d{1,2})\s*(?:DE\s+)?(ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEPT?|SET|OCT|NOV|DIC)[A-Z]*\.?\s*(?:DE\s+)?(\d{2,4})?/g;
+  while ((m = r2.exec(T))) {
+    const mes = OCR_MESES[m[2].slice(0, 3)];
+    let y = m[3] ? +m[3] : +hoy.slice(0, 4);
+    const f = ocrISO(y, mes, +m[1]); if (f) out.push(f);
+  }
+  const lim0 = new Date(hoy + "T12:00:00").getTime() - 120 * 864e5, lim1 = new Date(hoy + "T12:00:00").getTime() + 400 * 864e5;
+  return [...new Set(out)].filter((f) => { const t = new Date(f + "T12:00:00").getTime(); return t >= lim0 && t <= lim1; }).sort();
+}
+function ocrJuego(T) {
+  if (/EURO\s*MILL?ON|EUROMILL|MILLONES|EL\s*MILLON/.test(T)) return "euromillones";
+  if (/GORDO/.test(T) && /PRIMITIVA|CLAVE/.test(T)) return "elgordo";
+  if (/BONO\s*LOTO/.test(T)) return "bonoloto";
+  if (/PRIMITIVA|JOKER/.test(T)) return "primitiva";
+  if (/\bONCE\b|CUPON|CUPONAZO|SUELDAZO|ORGANIZACION NACIONAL DE CIEGOS/.test(T)) return "once";
+  if (/LOTERIA\s*NACIONAL|DECIMO|FRACCION|BILLETE|SORTEO DEL (JUEVES|SABADO)/.test(T)) return "loteria_nacional";
+  return null;
+}
+function ocrApuestas(T, juego) {
+  const cfg = { euromillones: [5, 50], primitiva: [6, 49], bonoloto: [6, 49], elgordo: [5, 54] }[juego];
+  if (!cfg) return [];
+  const [n, max] = cfg, out = [];
+  for (let line of T.split("\n")) {
+    if (/JOKER|MILLON|REINTEGRO|CLAVE|PRECIO|EUR|TOTAL|SORTEO|FECHA|\d{2}[\/:]\d{2}/.test(line) && !/^\s*\d{1,2}\s*[.):\-]?\s*(\d{1,2}\D+){4,}/.test(line)) continue;
+    line = line.replace(/^\s*\d{1,2}\s*[.):\-]\s*/, " ");
+    const toks = (line.match(/\b\d{1,2}\b/g) || []).map(Number);
+    if (toks.length < n) continue;
+    let nums = toks.slice(0, n), rest = toks.slice(n);
+    // si hay un índice de apuesta delante (n+1 o n+3 números en Euromillones), quítalo
+    if (juego === "euromillones" && toks.length === 8) { nums = toks.slice(1, 6); rest = toks.slice(6); }
+    if (juego !== "euromillones" && toks.length === n + 1 && toks[0] <= 8 && toks[0] < toks[1]) { nums = toks.slice(1); rest = []; }
+    if (nums.some((x) => x < 1 || x > max) || new Set(nums).size !== nums.length) continue;
+    const ap = { numeros: nums.slice().sort((a, b) => a - b), estrellas: [] };
+    if (juego === "euromillones") {
+      const st = rest.filter((x) => x >= 1 && x <= 12).slice(0, 2);
+      if (st.length < 2 || st[0] === st[1]) continue;
+      ap.estrellas = st.sort((a, b) => a - b);
+    }
+    if (!out.some((o) => o.numeros.join() === ap.numeros.join() && o.estrellas.join() === ap.estrellas.join())) out.push(ap);
+  }
+  return out;
+}
+function ocrBoleto(texto, hoy) {
+  const T = ocrNormaliza(texto);
+  const juego = ocrJuego(T);
+  const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
+  if (!juego) return { boletos: [], motivo: "No se reconoce el tipo de juego en la foto." };
+  const b = { juego, fechas: [], apuestas: [], reintegro: null, joker: null, millon: null, numero: null, serie: null, fraccion: null, dudas };
+  let fechas = ocrFechas(T, hoy);
+  const dias = OCR_DIAS_SORTEO[juego];
+  const validas = fechas.filter((f) => dias.includes(new Date(f + "T12:00:00").getDay()));
+  if (validas.length) fechas = validas;
+  if (fechas.length > 1 && (juego === "loteria_nacional" || juego === "once")) fechas = [fechas[fechas.length - 1]];
+  b.fechas = fechas;
+  if (!fechas.length) dudas.push("No se ha leído la fecha del sorteo: escríbela.");
+  let m;
+  if (juego === "loteria_nacional" || juego === "once") {
+    const sinFechas = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g, " ");
+    const cands = (sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || []);
+    const freq = {}; for (const c of cands) freq[c] = (freq[c] || 0) + 1;
+    const best = Object.keys(freq).sort((a, c) => freq[c] - freq[a])[0];
+    if (best) b.numero = best; else dudas.push("No se ha leído el número de 5 cifras: escríbelo.");
+    if ((m = T.match(/SERIE\D{0,6}(\d{1,3})/))) b.serie = +m[1];
+    if ((m = T.match(/FRACC?ION\D{0,6}(\d{1,2})/))) b.fraccion = +m[1];
+    if (b.serie === null) dudas.push("Revisa la serie.");
+    return { boletos: [b] };
+  }
+  b.apuestas = ocrApuestas(T, juego);
+  if (!b.apuestas.length) dudas.push("No se han podido leer las apuestas: escríbelas.");
+  if ((m = T.match(/(?:REINTEGRO|\bREINT\b|\bR\s*[:.=])\D{0,4}(\d)\b/))) b.reintegro = +m[1];
+  if (juego === "elgordo" && (m = T.match(/(?:N[º°O.]?\s*)?CLAVE\D{0,6}(\d)\b/))) b.reintegro = +m[1];
+  if (juego === "primitiva" && (m = T.match(/JOKER\D{0,12}((?:\d\s?){7})/))) b.joker = m[1].replace(/\s/g, "");
+  if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b/))) b.millon = m[1] + m[2];
+  return { boletos: [b] };
+}
+/*OCR-END*/
+let ocrWorker = null;
+function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No se pudo descargar " + src)); document.head.append(sc); }); }
+async function prepararOCR(file) {
+  const bmp = await createImageBitmap(file);
+  const s = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  const g = c.getContext("2d"); g.drawImage(bmp, 0, 0, c.width, c.height);
+  const im = g.getImageData(0, 0, c.width, c.height), d = im.data;
+  let min = 255, max = 0;
+  for (let i = 0; i < d.length; i += 4) { const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; d[i] = y; if (y < min) min = y; if (y > max) max = y; }
+  const k = 255 / Math.max(1, max - min);
+  for (let i = 0; i < d.length; i += 4) { const v = (d[i] - min) * k; d[i] = d[i + 1] = d[i + 2] = v; }
+  g.putImageData(im, 0, 0);
+  return c;
+}
+async function leerConOCR(file, progreso) {
+  if (!window.Tesseract) await cargarScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");
+  if (!ocrWorker) {
+    progreso("Preparando lector…");
+    ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text") progreso("Leyendo " + Math.round(m.progress * 100) + " %"); } });
+  }
+  const img = await prepararOCR(file);
+  await ocrWorker.setParameters({ tessedit_pageseg_mode: "3", tessedit_char_whitelist: "" });
+  const { data } = await ocrWorker.recognize(img);
+  const res = ocrBoleto(data.text, hoyISO());
+  const b = res.boletos[0];
+  if (b && (b.juego === "loteria_nacional" || b.juego === "once") && !b.numero) {
+    progreso("Buscando el número…");
+    await ocrWorker.setParameters({ tessedit_pageseg_mode: "11", tessedit_char_whitelist: "0123456789" });
+    const r2 = await ocrWorker.recognize(img);
+    const lineas = r2.data.text.split("\n").map((x) => x.trim()).filter((x) => /^\d{5}$/.test(x) && !/20\d\d$/.test(x));
+    if (lineas.length) { b.numero = lineas[0]; b.dudas = b.dudas.filter((x) => !/5 cifras/.test(x)); }
+  }
+  return res;
+}
+$("btnRecargar").onclick = () => cargarResultadosWeb(true);
+$("btnNotif").onclick = async () => {
+  try { const p = await Notification.requestPermission(); $("stKey").textContent = p === "granted" ? "Avisos del navegador activados (con la app abierta)." : "El navegador no ha permitido los avisos."; }
+  catch (_) { $("stKey").textContent = "Este navegador no admite avisos desde esta página."; }
+};
+
+// ---------- Sorteos ----------
+const todosSorteos = () => { const m = new Map(); for (const s of sorteosDB) m.set(s.id, s); for (const s of sorteosLocal) m.set(s.id, s); return [...m.values()].sort((a, b) => (a.fecha < b.fecha ? 1 : -1)); };
+const buscarSorteo = (j, f) => todosSorteos().find((s) => s.juego === j && s.fecha === f);
+function horaSorteo(j, f) {
+  const dow = new Date(f + "T12:00:00").getDay();
+  return { euromillones: "21:00", primitiva: "21:40", bonoloto: "21:30", elgordo: "21:40", once: "21:25", loteria_nacional: dow === 6 ? "13:00" : "21:00" }[j] || "21:00";
+}
+function cuando(f) {
+  const d = new Date(f + "T12:00:00"), hoy = new Date(hoyISO() + "T12:00:00"), dias = Math.round((d - hoy) / 864e5);
+  const dm = d.toLocaleDateString("es-ES", { day: "numeric", month: "long" }), wd = d.toLocaleDateString("es-ES", { weekday: "long" });
+  if (dias === 0) return "hoy, " + wd + " " + dm;
+  if (dias === 1) return "mañana, " + wd + " " + dm;
+  if (dias > 1 && dias < 7) return "el próximo " + wd + " " + dm;
+  return "el " + wd + " " + dm + (d.getFullYear() !== hoy.getFullYear() ? " de " + d.getFullYear() : "");
+}
+function publicacionTxt(j, f) {
+  const sab = new Date(f + "T12:00:00").getDay() === 6;
+  return { once: "hacia las 21:30", bonoloto: "hacia las 22:00", euromillones: "entre las 22:00 y las 23:30", primitiva: "entre las 22:30 y las 23:30", elgordo: "normalmente a la mañana siguiente", loteria_nacional: sab ? "entre las 14:00 y las 15:00" : "entre las 22:00 y las 23:00" }[j] || "poco después del sorteo";
+}
+const yaCelebrado = (j, f) => { const h = horaSorteo(j, f); return new Date() >= new Date(f + "T" + h + ":00"); };
+
+// Evalúa un boleto entero → estado + detalle
+function estadoBoleto(t) {
+  const fechas = t.fechas || [];
+  const det = [], faltan = [], futuros = [];
+  for (const f of fechas) {
+    const s = buscarSorteo(t.juego, f);
+    if (s) det.push({ s, r: evaluar(t, s) });
+    else if (yaCelebrado(t.juego, f)) faltan.push(f); else futuros.push(f);
+  }
+  const lineas = det.flatMap((x) => x.r.lineas.filter((l) => !l.informativo));
+  const T = totales(lineas);
+  const parcial = det.some((x) => x.s.completo === false);
+  let estado, texto;
+  if (!fechas.length) { estado = "faltan"; texto = "Falta la fecha"; }
+  else if (T.bruto > 0) { estado = "premiado"; texto = "Premiado · " + eur(T.bruto) + (T.pend ? " + pendiente" : ""); }
+  else if (T.pend) { estado = "premiado_pend"; texto = "Premiado · importe pendiente"; }
+  else if (faltan.length) { estado = "faltan"; texto = "Faltan resultados"; }
+  else if (futuros.length) { estado = "proximo"; texto = "Sorteo pendiente"; }
+  else if (parcial) { estado = "parcial"; texto = "Sin premio (datos parciales)"; }
+  else { estado = "nada"; texto = "Sin premio"; }
+  return { estado, texto, det, faltan, futuros, T };
+}
+
+// ---------- Dibujo del boleto según juego ----------
+function digitos(num, marcas) {
+  return String(num || "·····").padStart(5, "·").split("").map((c, i) => el("span", { class: marcas && marcas[i] ? "hit" : "", text: c }));
+}
+function marcasNumericas(info) {
+  const m = new Array(5).fill(false);
+  for (const d of info.det) for (const l of d.r.lineas) {
+    if (!l.valor || l.informativo) continue;
+    if (l.tipoPremio === "exacto") m.fill(true);
+    else if (l.tipoPremio === "terminacion") for (let i = 5 - l.valor.length; i < 5; i++) m[i] = true;
+    else if (l.tipoPremio === "inicio") for (let i = 0; i < l.valor.length; i++) m[i] = true;
+    else if (l.tipoPremio === "centena") for (let i = 0; i < 3; i++) m[i] = true;
+  }
+  return m;
+}
+function vistaBoleto(t, info) {
+  const J = JUEGOS[t.juego];
+  const s1 = info.det.length === 1 ? info.det[0].s : null;
+  const W = s1 ? uniqInts(s1.numeros) : null, WE = s1 ? uniqInts(s1.estrellas) : null;
+  if (t.juego === "loteria_nacional") {
+    return el("div", { class: "decimo" },
+      el("div", { class: "dt" }, el("span", { text: "Lotería Nacional" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sin fecha" })),
+      el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
+      el("div", { class: "row", style: "gap:14px;justify-content:flex-end" },
+        el("div", { class: "meta" }, el("span", { text: "Serie" }), el("b", { text: t.serie != null ? t.serie + "ª" : "—" })),
+        el("div", { class: "meta" }, el("span", { text: "Fracción" }), el("b", { text: t.fraccion != null ? t.fraccion + "ª" : "—" })),
+        el("div", { class: "seal", text: (t.decimos || 1) + (t.decimos > 1 ? " déc." : " décimo") })));
+  }
+  if (t.juego === "once") {
+    return el("div", { class: "cupon" },
+      el("div", { class: "stub", text: "Cupón" }),
+      el("div", { class: "cb" },
+        el("div", { class: "top" }, el("span", { text: "Sorteo" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sin fecha" })),
+        el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
+        el("div", { class: "ser" }, el("span", { class: "sub", text: "Serie" }), el("b", { text: t.serie != null ? String(t.serie).padStart(3, "0") : "—" }), el("div", { class: "bars", style: "flex:1;min-width:80px" }))));
+  }
+  const aps = (t.apuestas || []).map((a, i) => el("div", { class: "apl" },
+    el("span", { class: "ix", text: String(i + 1) }), bolas(uniqInts(a.numeros), W), t.juego === "euromillones" ? estrellas(uniqInts(a.estrellas), WE) : null));
+  const ex = [];
+  if (t.juego === "euromillones" && t.millon) ex.push(el("span", { class: "badge" + (s1 && s1.millon && s1.millon === t.millon ? " hit" : "") }, el("small", { text: "El Millón" }), t.millon));
+  if (t.juego !== "euromillones" && t.reintegro != null) ex.push(el("span", { class: "badge" + (s1 && s1.reintegro === t.reintegro ? " hit" : "") }, el("small", { text: t.juego === "elgordo" ? "Clave" : "Reintegro" }), String(t.reintegro)));
+  if (t.juego === "primitiva" && t.joker) {
+    const wj = s1 && s1.joker ? String(s1.joker) : null; const tj = String(t.joker).padStart(7, "0");
+    let pre = 0, suf = 0; if (wj) { while (pre < 7 && tj[pre] === wj[pre]) pre++; while (suf < 7 && tj[6 - suf] === wj[6 - suf]) suf++; }
+    const best = Math.max(pre, suf);
+    ex.push(el("span", { class: "row", style: "gap:6px" }, el("span", { class: "lbl", text: "Joker" }), el("span", { class: "jk" }, tj.split("").map((c, i) => el("span", { class: wj && best && (pre >= suf ? i < pre : i >= 7 - suf) ? "hit" : "", text: c })))));
+  }
+  return el("div", {}, aps.length ? aps : el("p", { class: "sub", text: "Sin apuestas." }), ex.length ? el("div", { class: "extras" }, ex) : null);
+}
+
+// ---------- Detalle de resultados ----------
+function vistaResultados(t, info) {
+  const out = [];
+  for (const { s, r } of info.det) {
+    const W = uniqInts(s.numeros), WE = uniqInts(s.estrellas);
+    const ganadora = JUEGOS[s.juego].tipo === "comb"
+      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Ganadora" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
+          s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: (s.juego === "elgordo" ? "Clave " : "R ") + s.reintegro }) : null)
+      : el("div", { class: "wn" }, (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 3).map((p) => el("span", { class: "chip", text: p.concepto + ": " + String(p.valor).padStart(5, "0") })));
+    const lines = r.lineas.map((l) => el("div", { class: "line" },
+      el("div", { class: "what" }, el("span", { style: "font-weight:600", text: l.cat }), el("span", { class: "sub", text: l.texto })),
+      l.pendiente ? el("span", { class: "amt pend", text: "Importe pendiente" }) : l.importe > 0 ? el("span", { class: "amt win", text: eur(l.importe) }) : el("span", { class: "amt none", text: l.informativo ? "—" : "0,00 €" })));
+    out.push(el("div", { class: "res-draw" },
+      el("div", { class: "rh" }, el("h3", { text: fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Datos parciales" }) : el("span", { class: "tag ok", text: "Escrutinio" })),
+      ganadora, lines, r.avisos.length ? el("div", { class: "note", text: r.avisos.join(" ") }) : null,
+      s.fuente ? el("p", { class: "sub", text: "Fuente: " + s.fuente }) : null));
+  }
+  if (info.faltan.length) out.push(modo === "local"
+    ? el("div", { class: "note", text: "Aún no hay resultados oficiales del " + info.faltan.map(fechaLarga).join(", ") + ". Con la app abierta se cargan solos en cuanto se publican." })
+    : el("div", { class: "note" }, "No hay resultados guardados del " + info.faltan.map(fechaLarga).join(", ") + ". La tarea programada los añadirá cuando se publiquen, o puedes ",
+      el("button", { class: "small", onclick: () => { $("addRes").open = true; $("addRes").scrollIntoView({ behavior: "smooth" }); } }, "añadirlos ahora")));
+  if (info.futuros.length) out.push(el("div", { class: "note", text: "Sorteo aún no celebrado: " + info.futuros.map(fechaLarga).join(", ") + "." }));
+  if (info.T.bruto > 0) out.push(el("dl", { class: "totals" }, el("dt", { text: "Premio bruto" }), el("dd", { text: eur(info.T.bruto) }), el("dt", { text: "Gravamen estimado" }), el("dd", { text: "−" + eur(info.T.grav) }), el("dt", { text: "Neto estimado" }), el("dd", { text: eur(info.T.neto) })));
+  return out;
+}
+
+// ---------- Formulario de edición ----------
+const fmtAp = (a, j) => uniqInts(a.numeros).join(" ") + (j === "euromillones" ? " | " + uniqInts(a.estrellas).join(" ") : "");
+const parseAp = (s, j) => { const [n, e] = String(s).split("|"); return { numeros: uniqInts((n || "").match(/\d+/g)), estrellas: j === "euromillones" ? uniqInts((e || "").match(/\d+/g)) : [] }; };
+function formBoleto(t) {
+  const J = JUEGOS[t.juego];
+  const ch = (fn, rebuild) => (e) => { fn(e.target.value); cambiado(t, rebuild); };
+  const f = [el("div", { class: "grid2" },
+    el("label", { class: "fld", for: "j-" + t.id }, el("span", { text: "Juego" }), el("select", { id: "j-" + t.id, onchange: ch((v) => { t.juego = v; }, true) }, Object.entries(JUEGOS).map(([k, v]) => el("option", { value: k, selected: k === t.juego ? "selected" : null }, v.nombre)))),
+    el("label", { class: "fld", for: "f-" + t.id }, el("span", { text: "Fecha(s) AAAA-MM-DD" }), el("input", { id: "f-" + t.id, class: "mono", value: (t.fechas || []).join(", "), oninput: ch((v) => { t.fechas = [...new Set(v.match(/\d{4}-\d{2}-\d{2}/g) || [])].sort(); }) })))];
+  if (J.tipo === "comb") {
+    const aps = (t.apuestas && t.apuestas.length ? t.apuestas : (t.apuestas = [{ numeros: [], estrellas: [] }]));
+    f.push(el("span", { class: "lbl", text: "Apuestas" + (t.juego === "euromillones" ? " (números | estrellas)" : "") }));
+    aps.forEach((a, i) => f.push(el("div", { class: "apuesta-row" },
+      el("span", { class: "mono sub", style: "width:18px", text: String(i + 1) }),
+      el("input", { id: "a-" + t.id + "-" + i, class: "mono", "aria-label": "Apuesta " + (i + 1), value: fmtAp(a, t.juego), oninput: ch((v) => { t.apuestas[i] = parseAp(v, t.juego); }) }),
+      el("button", { class: "small", onclick: () => { t.apuestas.splice(i, 1); cambiado(t, true); } }, "Quitar"))));
+    f.push(el("div", { class: "row" }, el("button", { class: "small", onclick: () => { t.apuestas.push({ numeros: [], estrellas: [] }); cambiado(t, true); } }, "Añadir apuesta")));
+    const g = el("div", { class: "grid2" });
+    if (t.juego !== "euromillones") g.append(el("label", { class: "fld", for: "r-" + t.id }, el("span", { text: t.juego === "elgordo" ? "Número clave" : "Reintegro" }), el("input", { id: "r-" + t.id, class: "mono", inputmode: "numeric", value: t.reintegro ?? "", oninput: ch((v) => { t.reintegro = toInt(v); }) })));
+    if (t.juego === "primitiva") g.append(el("label", { class: "fld", for: "k-" + t.id }, el("span", { text: "Joker (7 cifras)" }), el("input", { id: "k-" + t.id, class: "mono", inputmode: "numeric", value: t.joker ?? "", oninput: ch((v) => { t.joker = v.replace(/\D/g, "") || null; }) })));
+    if (t.juego === "euromillones") g.append(el("label", { class: "fld", for: "m-" + t.id }, el("span", { text: "Código El Millón" }), el("input", { id: "m-" + t.id, class: "mono", value: t.millon ?? "", oninput: ch((v) => { t.millon = v.replace(/\s/g, "").toUpperCase() || null; }) })));
+    f.push(g);
+  } else {
+    f.push(el("div", { class: "grid2" },
+      el("label", { class: "fld", for: "n-" + t.id }, el("span", { text: "Número (5 cifras)" }), el("input", { id: "n-" + t.id, class: "mono", inputmode: "numeric", maxlength: "5", value: t.numero || "", oninput: ch((v) => { t.numero = v.replace(/\D/g, ""); }) })),
+      el("label", { class: "fld", for: "s-" + t.id }, el("span", { text: "Serie" }), el("input", { id: "s-" + t.id, class: "mono", inputmode: "numeric", value: t.serie ?? "", oninput: ch((v) => { t.serie = toInt(v); }) })),
+      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "fr-" + t.id }, el("span", { text: "Fracción" }), el("input", { id: "fr-" + t.id, class: "mono", inputmode: "numeric", value: t.fraccion ?? "", oninput: ch((v) => { t.fraccion = toInt(v); }) })) : null,
+      t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "d-" + t.id }, el("span", { text: "Décimos" }), el("input", { id: "d-" + t.id, type: "number", min: "1", max: "100", value: t.decimos || 1, oninput: ch((v) => { t.decimos = Math.max(1, toInt(v) || 1); }) })) : null));
+  }
+  return el("div", { class: "stack", style: "border-top:1px dashed var(--line);padding-top:12px" }, el("h3", { text: "Editar datos" }), f);
+}
+
+// ---------- Estado visible de cada sorteo del boleto ----------
+function vistaEstado(t, info) {
+  const fechas = t.fechas || [];
+  if (!fechas.length) return [el("div", { class: "est espera" }, el("b", { text: "Falta la fecha del sorteo" }), el("span", { class: "sub", text: "Ábrelo en «Detalle» y añade la fecha." }))];
+  return fechas.map((f) => {
+    const hora = horaSorteo(t.juego, f);
+    const d = info.det.find((x) => x.s.fecha === f);
+    if (!d) {
+      if (!yaCelebrado(t.juego, f)) {
+        const esHoy = f === hoyISO();
+        return el("div", { class: "est prox" }, el("b", { text: "El sorteo se celebrará " + cuando(f) + " a las " + hora + "." }),
+          el("span", { class: "sub", text: (modo === "local" ? "Con la app abierta, cargará el resultado oficial en cuanto se publique y te avisará." : "Cuando salga el resultado, la tarea programada lo comprobará y te avisará.") + " Suele publicarse " + publicacionTxt(t.juego, f) + "." }));
+      }
+      return el("div", { class: "est espera" }, el("b", { text: "Sorteo celebrado el " + fechaLarga(f) + " a las " + hora + "." }),
+        el("span", { class: "sub", text: "Resultados pendientes. Suelen publicarse " + publicacionTxt(t.juego, f) + "." }),
+        modo === "local" && !t.ejemplo ? el("div", { class: "row" }, el("button", { class: "small", onclick: () => cargarResultadosWeb(true) }, "Comprobar ahora")) : null);
+    }
+    const s = d.s, lin = d.r.lineas.filter((l) => !l.informativo);
+    const wins = lin.filter((l) => l.importe > 0 || l.pendiente);
+    const T = totales(lin);
+    const W = uniqInts(s.numeros), WE = uniqInts(s.estrellas);
+    const comb = JUEGOS[s.juego].tipo === "comb"
+      ? el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultado" }), bolas(W, W, true), s.juego === "euromillones" ? estrellas(WE, WE, true) : null,
+          s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: (s.juego === "elgordo" ? "Clave " : "R ") + s.reintegro }) : null)
+      : el("div", { class: "wn" }, el("span", { class: "lbl", text: "Resultado" }), (s.premiosNumericos || []).filter((p) => p.tipo === "exacto").slice(0, 2).map((p) => el("span", { class: "chip", text: p.concepto + ": " + String(p.valor).padStart(5, "0") + (p.serie != null ? " · serie " + p.serie : "") })));
+    const cls = T.bruto > 0 || wins.length ? "ok" : "nada";
+    const amt = T.bruto > 0 ? eur(T.bruto) + (T.pend ? " + pendiente" : "") : wins.length ? "Importe pendiente" : "Sin premio";
+    return el("div", { class: "est " + cls },
+      el("div", { class: "est-h" }, el("b", { text: "Sorteo del " + fechaLarga(f) }), el("span", { class: "est-amt", text: amt })),
+      comb,
+      wins.length ? el("ul", {}, wins.map((l) => el("li", {}, l.texto + " · " + l.cat + " — ", el("span", { class: "v", text: l.pendiente ? "importe pendiente" : eur(l.importe) }))))
+        : el("span", { class: "sub", text: "Tu boleto no tiene aciertos con premio en este sorteo." + (s.completo === false ? " (Lista de premios incompleta: puede haber premios menores.)" : "") }),
+      T.bruto > 40000 ? el("span", { class: "sub", text: "Neto estimado tras el gravamen: " + eur(T.neto) + "." }) : null);
+  });
+}
+
+// ---------- Render de la lista ----------
+const cards = new Map();
+function construirTarjeta(t) {
+  const info = estadoBoleto(t);
+  const vis = el("div", { class: "tk-vis" }, vistaBoleto(t, info));
+  const est = el("div", { class: "tk-est" }, vistaEstado(t, info));
+  const pill = el("span", { class: "pill " + info.estado, text: info.texto });
+  const res = el("div", { class: "stack" }, vistaResultados(t, info));
+  const more = el("details", { class: "tk-more", ontoggle: (e) => { if (e.target.open) openIds.add(t.id); else openIds.delete(t.id); } },
+    el("summary", { text: t.ejemplo ? "Ejemplo" : (t.apuestas && t.apuestas.length > 1 ? t.apuestas.length + " apuestas" : "Detalle") }),
+    el("div", { class: "tk-body" }, res, t.ejemplo ? el("p", { class: "sub", text: "Boleto de ejemplo para ver cómo funciona. Desaparece cuando añadas el primero tuyo." }) : formBoleto(t),
+      t.ejemplo ? null : el("div", { class: "row", style: "justify-content:flex-end" }, el("button", { class: "small ghost", onclick: () => borrar(t) }, "Eliminar boleto"))));
+  if (openIds.has(t.id)) more.open = true;
+  const art = el("article", { class: "tk g-" + t.juego, "aria-label": JUEGOS[t.juego].nombre },
+    el("div", { class: "tk-head" },
+      t.thumb ? el("img", { class: "tk-thumb", src: t.thumb, alt: "" }) : null,
+      el("span", { class: "gm", text: JUEGOS[t.juego].nombre }),
+      el("div", { class: "dates" }, (t.fechas || []).map((f) => el("span", { class: "chip", text: fechaCorta(f) }))),
+      t.ejemplo ? el("span", { class: "tag ex", text: "Ejemplo" }) : null, pill),
+    vis, est, more);
+  if (t.ejemplo) art.classList.add("is-ej");
+  return { art, vis, est, pill, res, info };
+}
+function refrescarTarjeta(t) {
+  const c = cards.get(t.id); if (!c) return;
+  const info = estadoBoleto(t);
+  c.vis.replaceChildren(vistaBoleto(t, info));
+  c.est.replaceChildren(...vistaEstado(t, info));
+  c.pill.className = "pill " + info.estado; c.pill.textContent = info.texto;
+  c.res.replaceChildren(...vistaResultados(t, info));
+  c.info = info;
+}
+function lista() { return tickets.length ? tickets : (ticketsReady || !db ? EJEMPLOS : []); }
+function renderTodo() {
+  const L = lista(), box = $("tickets");
+  const act = document.activeElement;
+  const nodes = L.map((t) => {
+    const prev = cards.get(t.id);
+    if (prev && act && prev.art.contains(act) && prev.juego === t.juego) { refrescarTarjeta(t); return prev.art; }
+    const c = construirTarjeta(t); c.juego = t.juego; cards.set(t.id, c); return c.art;
+  });
+  if (!L.length) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Cargando tus boletos…"));
+  else if (L[0].ejemplo) nodes.unshift(el("p", { class: "ej-note", text: "Ejemplos para ver cómo funciona (atenuados). Desaparecen en cuanto añadas tu primer boleto." }));
+  box.replaceChildren(...nodes);
+  renderResumen(L);
+}
+function renderResumen(L) {
+  const infos = L.map((t) => cards.get(t.id)?.info || estadoBoleto(t));
+  const prem = infos.filter((i) => i.estado === "premiado" || i.estado === "premiado_pend").length;
+  const total = infos.reduce((a, i) => a + i.T.bruto, 0);
+  const pend = infos.filter((i) => i.estado === "faltan" || i.estado === "proximo").length;
+  const ej = L.length && L[0].ejemplo;
+  const usados = new Set(ej ? [] : L.map((t) => t.juego));
+  document.querySelectorAll("#gamesBar span").forEach((s) => s.classList.toggle("on", usados.has(s.dataset.j)));
+  $("summary").replaceChildren(
+    el("div", {}, el("span", { class: "sub", text: ej ? "Boletos de ejemplo" : "Boletos" }), el("b", { text: String(L.length) })),
+    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Premiados" }), el("b", { text: String(prem) })),
+    el("div", { class: total > 0 ? "win" : "" }, el("span", { class: "sub", text: "Total ganado (bruto)" }), el("b", { text: eur(total) })),
+    el("div", {}, el("span", { class: "sub", text: "Pendientes de resultado" }), el("b", { text: String(pend) })));
+}
+
+// ---------- Guardado ----------
+const saveTimers = new Map();
+function setSaveState(t) { $("saveState").textContent = t; }
+function cambiado(t, rebuild) {
+  if (t.ejemplo) return;
+  if (rebuild) { cards.delete(t.id); renderTodo(); } else { refrescarTarjeta(t); renderResumen(lista()); }
+  guardarLuego(t);
+}
+function guardarLuego(t) {
+  clearTimeout(saveTimers.get(t.id));
+  saveTimers.set(t.id, setTimeout(() => guardar(t), 700));
+}
+function docBoleto(t) {
+  const { id, ejemplo, ...d } = t;
+  d.actualizado = new Date().toISOString();
+  return d;
+}
+async function guardar(t) {
+  if (modo === "local") { persistirLocal(); return; }
+  if (!db || !uid) { setSaveState("Guardado solo en esta sesión"); return; }
+  try { setSaveState("Guardando…"); await db.collection("data/users/" + uid).doc(t.id).set(docBoleto(t)); setSaveState("Guardado"); }
+  catch (e) { setSaveState("No guardado"); manejarError(e, "Guardar boleto", e && e.code === "quota_exceeded" ? "Hay demasiados boletos guardados: elimina los antiguos." : "Recarga la página e inténtalo de nuevo."); }
+}
+async function borrar(t) {
+  tickets = tickets.filter((x) => x.id !== t.id); cards.delete(t.id); renderTodo();
+  if (modo === "local") { persistirLocal(); return; }
+  if (db && uid) { try { await db.collection("data/users/" + uid).doc(t.id).delete(); } catch (e) { manejarError(e, "Eliminar boleto", "Recarga la página e inténtalo de nuevo."); } }
+}
+function anadirBoletos(arr) {
+  for (const t of arr) { tickets.unshift(t); openIds.add(t.id); guardar(t); }
+  renderTodo();
+  const ya = arr.map((t) => ({ t, i: estadoBoleto(t) })).filter((x) => x.i.det.length);
+  if (ya.length) mostrarAviso("Ya hay resultados de " + ya.length + (ya.length > 1 ? " boletos" : " boleto"), ya.map((x) => JUEGOS[x.t.juego].nombre + " " + (x.t.fechas || []).map(fechaCorta).join(", ") + ": " + (x.i.T.bruto > 0 ? "premiado con " + eur(x.i.T.bruto) : x.i.T.pend ? "premiado, importe pendiente" : "sin premio")).join(" · "));
+  if (modo === "local") setTimeout(() => cargarResultadosWeb(true), 500);
+}
+
+// ---------- Fotos ----------
+function anadirFotos(files) {
+  for (const f of files) {
+    if (!f) continue;
+    if (!/^image\//.test(f.type)) { manejarError(new Error("Archivo no válido: " + (f.name || f.type)), "Añadir fotos", "Elige fotos en JPG, PNG o WebP."); continue; }
+    let url = ""; try { url = URL.createObjectURL(f); } catch (_) {}
+    queue.push({ id: nuevoId(), file: f, url, estado: "espera", msg: "En espera" });
+  }
+  renderQueue();
+}
+function renderQueue() {
+  $("queue").hidden = !queue.length; $("qActions").hidden = !queue.length;
+  $("queue").replaceChildren(...queue.map((q) => el("div", { class: "qi " + (q.estado === "error" ? "err" : q.estado === "hecho" ? "ok" : "") },
+    q.url ? el("img", { src: q.url, alt: "Foto de boleto" }) : null,
+    q.estado === "leyendo" ? null : el("button", { class: "small qx", "aria-label": "Quitar foto", onclick: () => { queue = queue.filter((x) => x !== q); renderQueue(); } }, "×"),
+    el("div", { class: "qs" }, q.estado === "leyendo" ? el("span", { class: "spin" }) : null, q.msg))));
+  const n = queue.filter((q) => q.estado === "espera" || q.estado === "error").length;
+  $("btnLeer").textContent = n ? "Leer " + n + (n === 1 ? " foto" : " fotos") : "Leído";
+  $("btnLeer").disabled = !n || !!ctlLeer;
+}
+$("fCam").onchange = (e) => { anadirFotos([...e.target.files]); e.target.value = ""; };
+$("fUp").onchange = (e) => { anadirFotos([...e.target.files]); e.target.value = ""; };
+const drop = $("drop");
+drop.addEventListener("dragover", (e) => { e.preventDefault(); drop.classList.add("over"); });
+drop.addEventListener("dragleave", () => drop.classList.remove("over"));
+drop.addEventListener("drop", (e) => { e.preventDefault(); drop.classList.remove("over"); anadirFotos([...e.dataTransfer.files]); });
+document.addEventListener("paste", (e) => {
+  const fs = [...(e.clipboardData?.files || [])].filter((x) => /^image\//.test(x.type)); if (!fs.length) return;
+  if ($("addRes").open) { resFile = fs[0]; $("fResName").textContent = "Captura pegada"; } else anadirFotos(fs);
+});
+$("btnManual").onclick = () => {
+  const t = { id: nuevoId(), juego: "euromillones", fechas: [], apuestas: [{ numeros: [], estrellas: [] }], creado: new Date().toISOString() };
+  anadirBoletos([t]);
+  setTimeout(() => document.getElementById("j-" + t.id)?.focus(), 50);
+};
+
+async function prepararImagen(file) {
+  const lim = sampleImgs;
+  const okType = lim ? lim.mediaTypes.includes(file.type) : /jpe?g|png|webp|gif/.test(file.type);
+  if (okType && file.size <= (lim ? lim.maxInputBytes : 8e6)) return file;
+  const bmp = await createImageBitmap(file); const s = Math.min(1, 2400 / Math.max(bmp.width, bmp.height));
+  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
+  c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height);
+  return await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("No se pudo convertir la imagen"))), "image/jpeg", 0.9));
+}
+async function miniatura(file) {
+  try {
+    const bmp = await createImageBitmap(file); const s = 160 / Math.max(bmp.width, bmp.height);
+    const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(bmp.width * s)); c.height = Math.max(1, Math.round(bmp.height * s));
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", 0.7);
+  } catch (_) { return null; }
+}
+
+function promptBoleto() {
+  return `Eres un lector experto de boletos de juegos de azar de España. Hoy es ${hoyISO()}.
+La imagen adjunta es una foto que puede contener UNO O VARIOS resguardos, décimos o cupones. Extrae cada uno por separado y EXACTAMENTE como aparece impreso. No inventes nada: si un dato no se lee, pon null y explícalo en "dudas".
+
+Juegos posibles ("juego"):
+- "euromillones": cada apuesta 5 números (1-50) y 2 estrellas (1-12). Puede llevar código de El Millón (3 letras + 5 cifras) y valer para varios sorteos (martes y viernes, varias semanas).
+- "primitiva": 6 números (1-49) por apuesta, reintegro (0-9) común, puede llevar Joker (7 cifras). Lunes, jueves y/o sábado.
+- "bonoloto": 6 números (1-49) por apuesta, reintegro (0-9). De lunes a sábado.
+- "elgordo": El Gordo de la Primitiva, 5 números (1-54) por apuesta y número clave (0-9), que va en "reintegro". Domingos.
+- "loteria_nacional": décimo con número de 5 cifras, serie, fracción y fecha del sorteo.
+- "once": cupón de la ONCE con número de 5 cifras, serie (3 cifras) y fecha.
+Las apuestas múltiples tienen más números de lo normal: ponlos todos en la misma apuesta.
+Fechas: TODAS las fechas de sorteo a las que da derecho cada boleto, en AAAA-MM-DD. Si indica fecha inicial y número de sorteos o semanas, calcúlalas con los días de sorteo del juego. Si falta el año, dedúcelo a partir de hoy.
+
+Responde SOLO con JSON con esta forma exacta:
+{"boletos":[{"juego":"euromillones","fechas":["2026-10-27"],"apuestas":[{"numeros":[1,2,3,4,5],"estrellas":[1,2]}],"reintegro":null,"joker":null,"millon":null,"numero":null,"serie":null,"fraccion":null,"dudas":[]}]}
+- "estrellas" solo en Euromillones (en otros juegos, lista vacía). "apuestas" vacía en Lotería Nacional y ONCE.
+- "numero" como texto de 5 cifras, conservando ceros a la izquierda.
+- Si no hay ningún boleto reconocible, responde {"boletos":[],"motivo":"…"}.`;
+}
+function normalizarTicket(r, thumb) {
+  const fechas = (Array.isArray(r.fechas) ? r.fechas : [r.fechas]).map(String).filter((f) => /^\d{4}-\d{2}-\d{2}$/.test(f));
+  return {
+    id: nuevoId(), juego: r.juego, fechas: [...new Set(fechas)].sort(),
+    apuestas: (r.apuestas || []).map((a) => ({ numeros: uniqInts(a.numeros), estrellas: uniqInts(a.estrellas) })),
+    reintegro: toInt(r.reintegro), joker: r.joker ? String(r.joker).replace(/\D/g, "") : null,
+    millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
+    numero: r.numero ? String(r.numero).replace(/\D/g, "").padStart(5, "0").slice(-5) : "",
+    serie: toInt(r.serie), fraccion: toInt(r.fraccion), decimos: 1,
+    dudas: Array.isArray(r.dudas) ? r.dudas.map(String) : [], thumb: thumb || null, creado: new Date().toISOString(),
+  };
+}
+$("btnLeer").onclick = async () => {
+  if (modo === "claude" && !sample) {
+    manejarError(new Error(capsListas ? "Claude no está disponible en esta vista (sample = null)" : "La app aún está conectando con Claude"), "Leer fotos", capsListas ? "Abre la app en claude.ai (navegador o app de Claude) con tu sesión iniciada y recarga la página. Mientras tanto puedes usar “Escribir uno a mano”." : "Espera unos segundos y vuelve a pulsar “Leer fotos”.");
+    return;
+  }
+  ctlLeer = new AbortController(); $("btnStop").hidden = false; renderQueue();
+  let leidos = 0;
+  try {
+    for (const q of queue) {
+      if (q.estado !== "espera" && q.estado !== "error") continue;
+      if (ctlLeer.signal.aborted) break;
+      q.estado = "leyendo"; q.msg = "Leyendo…"; renderQueue();
+      $("stLeer").textContent = modo === "local" && !apiKey ? "Leyendo fotos en el móvil… cada una tarda unos segundos." : "Leyendo fotos… cada una tarda unos 20-40 s.";
+      try {
+        let r;
+        if (modo === "local" && !apiKey) {
+          r = await leerConOCR(q.file, (txt) => { q.msg = txt; renderQueue(); });
+          if (ctlLeer.signal.aborted) throw { code: "cancelled" };
+        } else {
+          const img = await prepararImagen(q.file);
+          r = await iaJSON(promptBoleto(), { images: [img], signal: ctlLeer.signal });
+        }
+        const bs = (r && Array.isArray(r.boletos) ? r.boletos : []).filter((b) => b && JUEGOS[b.juego]);
+        if (!bs.length) { q.estado = "error"; q.msg = "No reconocido"; manejarError(new Error("No se reconoce ningún boleto" + (r && r.motivo ? ": " + r.motivo : "")), "Leer foto " + (q.file.name || ""), "Haz otra foto más cerca, con luz y sin reflejos, o escríbelo a mano."); continue; }
+        const th = await miniatura(q.file);
+        const nuevos = bs.map((b) => normalizarTicket(b, th));
+        anadirBoletos(nuevos); leidos += nuevos.length;
+        q.estado = "hecho"; q.msg = nuevos.length + (nuevos.length > 1 ? " boletos" : " boleto");
+      } catch (e) {
+        if (e && e.code === "cancelled") { q.estado = "espera"; q.msg = "En espera"; break; }
+        q.estado = "error"; q.msg = "Error";
+        manejarError(e, modo === "local" ? "Leer foto (lector gratuito)" : "Leer foto con Claude", SAMPLE_SOLUCION[e && e.code] || (modo === "local" ? "Comprueba la conexión (la primera vez descarga el lector) o escribe el boleto a mano." : "Vuelve a intentarlo o escribe el boleto a mano."));
+        if (e && (e.code === "not_granted" || e.code === "sampling_disabled" || e.code === "rate_limited" || e.code === "images_unavailable" || /^(no_key|api_40[0134]|network)$/.test(e.code || ""))) break;
+      }
+      renderQueue();
+    }
+  } finally {
+    ctlLeer = null; $("btnStop").hidden = true;
+    $("stLeer").textContent = leidos ? leidos + " boleto(s) añadidos. Revisa que los datos coinciden con el papel." : "";
+    renderQueue();
+    setTimeout(() => { queue = queue.filter((q) => q.estado !== "hecho"); renderQueue(); }, 4000);
+  }
+};
+$("btnStop").onclick = () => ctlLeer && ctlLeer.abort();
+
+// ---------- Añadir resultados ----------
+$("fRes").onchange = (e) => { resFile = e.target.files[0] || null; $("fResName").textContent = resFile ? resFile.name : "Ninguna captura"; };
+function promptResultados(texto) {
+  return `Convierte unos resultados oficiales de un sorteo de juegos de azar de España en datos. Hoy es ${hoyISO()}.
+${resFile ? "La imagen adjunta es una captura de los resultados." : ""}${texto ? "\nTexto aportado por el usuario:\n<<<\n" + texto.slice(0, 20000) + "\n>>>" : ""}
+No inventes ningún dato ni importe: usa solo lo que aparece. Importes en euros como número (1957.94).
+
+Responde SOLO con un objeto JSON:
+{"juego":"euromillones|primitiva|bonoloto|elgordo|loteria_nacional|once","fecha":"AAAA-MM-DD","titulo":"texto corto","numeros":[],"estrellas":[],"complementario":null,"reintegro":null,"joker":null,"millon":null,"premios":{},"premiosNumericos":[],"acumulables":true,"precioDecimo":null,"completo":true,"notas":""}
+
+Reglas:
+- euromillones: 5 "numeros", 2 "estrellas", "millon". "premios" con claves "5+2","5+1","5","4+2","4+1","3+2","4","2+2","3+1","3","1+2","2+1","2" e importe por acertante EN ESPAÑA.
+- primitiva: 6 "numeros", "complementario", "reintegro", "joker". "premios": "especial","1","2","3","4","5","R".
+- bonoloto: igual sin especial ni joker: "1","2","3","4","5","R".
+- elgordo: 5 "numeros" y número clave en "reintegro". "premios": "5+C","5","4+C","4","3+C","3","2+C","2","R".
+- loteria_nacional y once: "numeros" vacío y "premiosNumericos" con un elemento por premio: {"concepto":"Primer premio","tipo":"exacto","valor":"65942","serie":null,"importe":30000}. Tipos: "exacto", "terminacion" (últimas cifras; reintegros = terminación de 1 cifra), "inicio" (primeras cifras, ONCE), "anterior"/"posterior" (aproximaciones; "valor" = número premiado de referencia), "centena" ("valor" = número premiado de referencia). Lotería: importe por DÉCIMO (si solo hay por serie o billete, divide entre 10). ONCE: importe por cupón y "serie" solo si el premio la exige. "acumulables": true en lotería, false en ONCE.
+- Categoría sin importe (bote, sin acertantes o no publicado): null. "completo": false si faltan categorías o premios.
+- Si no hay resultados reconocibles: {"juego":null,"notas":"motivo"}.`;
+}
+function promptBuscar(juego, fecha) {
+  const reglas = promptResultados("").split("No inventes ningún dato")[1];
+  return `Busca en la web los resultados OFICIALES del sorteo de ${JUEGOS[juego].nombre} del ${fechaLarga(fecha)} (${fecha}). Hoy es ${hoyISO()}.
+Fuente preferente: loteriasyapuestas.es (o juegosonce.es para la ONCE). Si no se puede, usa dos fuentes fiables que coincidan.
+Si el sorteo aún no se ha celebrado o su resultado no está publicado, responde solo {"publicado":false}.
+Si está publicado, responde con el objeto JSON descrito abajo, con "juego":"${juego}", "fecha":"${fecha}" y un campo extra "fuente" con la URL principal. Si la combinación está publicada pero el escrutinio (importes) aún no, pon los importes a null y "completo": false.
+No inventes ningún dato` + reglas;
+}
+function normalizarSorteo(r, fuente) {
+  const num = (x) => (x === null || x === undefined || x === "" || isNaN(Number(x)) ? null : Number(x));
+  const premios = {}; for (const [k, v] of Object.entries(r.premios || {})) premios[k] = num(v);
+  return {
+    id: r.juego + "_" + r.fecha, juego: r.juego, fecha: r.fecha, titulo: r.titulo || "",
+    numeros: uniqInts(r.numeros), estrellas: uniqInts(r.estrellas), complementario: toInt(r.complementario), reintegro: toInt(r.reintegro),
+    joker: r.joker ? String(r.joker).replace(/\D/g, "") : null, millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
+    premios, premiosNumericos: (r.premiosNumericos || []).map((p) => ({ concepto: String(p.concepto || "Premio"), tipo: String(p.tipo || "exacto"), valor: String(p.valor || "").replace(/\D/g, ""), serie: toInt(p.serie), importe: num(p.importe) })),
+    acumulables: r.juego === "once" ? false : r.acumulables !== false, precioDecimo: num(r.precioDecimo),
+    completo: r.completo !== false, notas: String(r.notas || ""), fuente, actualizado: new Date().toISOString(),
+  };
+}
+function renderSorteoMini(s) {
+  const J = JUEGOS[s.juego];
+  return el("div", { class: "res-draw g-" + s.juego },
+    el("div", { class: "rh" }, el("h3", { text: J.nombre + " · " + fechaLarga(s.fecha) }), s.completo === false ? el("span", { class: "tag ex", text: "Datos parciales" }) : el("span", { class: "tag ok", text: "Escrutinio" })),
+    J.tipo === "comb" ? el("div", { class: "wn" }, bolas(uniqInts(s.numeros), uniqInts(s.numeros), true), s.juego === "euromillones" ? estrellas(uniqInts(s.estrellas), uniqInts(s.estrellas), true) : null,
+      s.complementario != null ? el("span", { class: "chip", text: "C " + s.complementario }) : null, s.reintegro != null ? el("span", { class: "chip", text: "R " + s.reintegro }) : null)
+      : el("div", { class: "wn" }, (s.premiosNumericos || []).slice(0, 6).map((p) => el("span", { class: "chip", text: p.concepto + ": " + p.valor + (p.importe != null ? " · " + eur(p.importe) : "") }))),
+    s.notas ? el("p", { class: "sub", text: s.notas }) : null);
+}
+$("btnRes").onclick = async () => {
+  const texto = $("txtRes").value.trim();
+  if (!texto && !resFile) { manejarError(new Error("No hay captura ni texto"), "Leer resultados", "Sube una captura de la página de resultados o pega el texto."); return; }
+  if (!iaDisponible()) { manejarError(new Error(modo === "local" ? "Falta la clave de la API de Claude" : "Claude no está disponible en esta vista"), "Leer resultados", modo === "local" ? SAMPLE_SOLUCION.no_key : "Abre el artefacto en claude.ai con tu sesión iniciada."); return; }
+  const st = $("stRes"); st.replaceChildren(el("span", { class: "spin" }), "Leyendo resultados…"); $("btnRes").disabled = true;
+  try {
+    const opts = {}; if (resFile) opts.images = [await prepararImagen(resFile)];
+    const r = await iaJSON(promptResultados(texto), opts);
+    if (!r || !r.juego || !JUEGOS[r.juego] || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.fecha || ""))) {
+      st.textContent = "No se reconocieron resultados.";
+      manejarError(new Error("No se reconocen resultados" + (r && r.notas ? ": " + r.notas : "")), "Leer resultados", "Usa la página oficial del sorteo concreto, con la fecha y la tabla de premios visibles."); return;
+    }
+    resParsed = normalizarSorteo(r, resFile ? "Captura aportada por el usuario" : "Texto aportado por el usuario");
+    st.replaceChildren(el("span", { class: "tag ok", text: "Leído" }), " Revisa que coincide con la fuente oficial.");
+    $("resPreview").replaceChildren(renderSorteoMini(resParsed), el("div", { class: "row" },
+      db || modo === "local" ? el("button", { class: "primary", id: "btnGuardar", onclick: guardarSorteo }, "Guardar en la app") : null,
+      el("button", { onclick: () => { sorteosLocal = sorteosLocal.filter((x) => x.id !== resParsed.id).concat(resParsed); $("resPreview").replaceChildren(el("p", { class: "sub", text: "Usado para esta sesión." })); renderSaved(); renderTodoFull(); } }, db ? "Usar solo ahora" : "Usar")));
+  } catch (e) {
+    st.textContent = "No se pudieron leer los resultados.";
+    manejarError(e, "Leer resultados con Claude", SAMPLE_SOLUCION[e && e.code] || "Vuelve a intentarlo con otra captura o con el texto.");
+  } finally { $("btnRes").disabled = false; }
+};
+async function guardarSorteo() {
+  const b = $("btnGuardar"); if (b) b.disabled = true;
+  try {
+    if (modo === "local") upsertSorteoLocal(resParsed); else { const { id, ...data } = resParsed; await db.doc("sorteos/" + id).set(data); }
+    if (modo === "local") { renderSaved(); renderTodoFull(); }
+    $("resPreview").replaceChildren(el("p", { class: "sub" }, el("span", { class: "tag ok", text: "Guardado" }), " Ya se usa para comprobar tus boletos."));
+    $("txtRes").value = ""; resFile = null; $("fResName").textContent = "Ninguna captura";
+  } catch (e) { if (b) b.disabled = false; manejarError(e, "Guardar sorteo", e && e.code === "quota_exceeded" ? "La base de datos está llena: borra sorteos antiguos." : "Puede que no tengas permiso para escribir aquí. Usa “Usar solo ahora”."); }
+}
+function renderSaved() {
+  const L = todosSorteos(); $("savedCount").textContent = L.length;
+  $("savedList").replaceChildren(...(L.length ? L.map((s) => el("div", { class: "it" },
+    el("span", {}, el("b", { text: JUEGOS[s.juego]?.nombre || s.juego }), " · ", el("span", { class: "mono", text: s.fecha }), s.completo === false ? el("span", { class: "tag ex", style: "margin-left:8px", text: "Parcial" }) : null)))
+    : [el("p", { class: "sub", text: dbReady ? "Todavía no hay sorteos guardados." : "Cargando…" })]));
+}
+function renderTodoFull() { cards.clear(); renderTodo(); }
+
+// ---------- Prompt para chat ----------
+$("chatPrompt").textContent = `Te adjunto fotos de boletos de juegos de azar de España (Euromillones, La Primitiva, Bonoloto, El Gordo, Lotería Nacional o cupón de la ONCE). Puede haber varios boletos, de juegos y fechas distintos.
+
+1. Lee cada boleto y dime: juego, fecha(s) de sorteo, todas las apuestas (números y estrellas), reintegro o clave, Joker, código de El Millón, o número, serie y fracción del décimo o cupón. Avisa si algo no se lee bien.
+2. Busca en la web los resultados oficiales de cada sorteo (loteriasyapuestas.es o juegosonce.es), con la combinación ganadora y la tabla de premios por categoría.
+3. Compara apuesta por apuesta y dime qué categoría acierta cada una y el importe. En las múltiples, desglosa las combinaciones. En Lotería Nacional revisa terminaciones, reintegros, aproximaciones y centenas.
+4. Termina con una tabla por boleto, el total bruto, el gravamen estimado (20 % sobre lo que pase de 40.000 € por premio) y el neto, e indica la fuente de cada resultado.`;
+$("copyPrompt").onclick = (e) => copiar($("chatPrompt").textContent, e.currentTarget);
+
+// ---------- Arranque ----------
+renderTodo(); renderSaved(); renderQueue();
+(async () => {
+  if (!window.claude || !window.claude.use) { iniciarLocal(); return; }
+  const [s, d, u] = await Promise.all([claude.use("sample").catch(() => null), claude.use("db").catch(() => null), claude.use("user").catch(() => null)]);
+  if (!s && !d) { iniciarLocal(); return; }
+  sample = s; db = d;
+  if (sample) { try { sampleImgs = (await sample.limits()).images || null; } catch (_) { sampleImgs = null; } }
+  capsListas = true;
+  if (!sample) $("dropTxt").textContent = "Esta vista no puede conectar con Claude para leer fotos. Puedes escribir los boletos a mano.";
+  renderQueue();
+  if (u) { try { uid = await u.id(); } catch (_) { uid = null; } }
+  if (!db) { dbReady = true; ticketsReady = true; setSaveState("Sin guardado en esta vista"); renderTodoFull(); renderSaved(); return; }
+  db.collection("sorteos").onSnapshot((snap) => {
+    sorteosDB = snap.docs.map((x) => Object.assign({ id: x.id }, x.data())); dbReady = true; renderSaved(); renderTodo();
+  }, (err) => { dbReady = true; renderSaved(); manejarError(err, "Cargar sorteos guardados", "Recarga la página. Si sigue fallando, añade los resultados con una captura."); });
+  if (!uid) { ticketsReady = true; setSaveState("Inicia sesión para guardar tus boletos"); renderTodoFull(); return; }
+  db.collection("data/users/" + uid).onSnapshot((snap) => {
+    const remotos = snap.docs.map((x) => Object.assign({ id: x.id }, x.data())).filter((t) => t.juego && JUEGOS[t.juego]);
+    const pendientes = tickets.filter((t) => !remotos.some((r) => r.id === t.id) && saveTimers.has(t.id));
+    // conservar el objeto local que se está editando
+    const act = document.activeElement;
+    tickets = remotos.map((r) => { const loc = tickets.find((t) => t.id === r.id); const c = loc && cards.get(loc.id); return c && act && c.art.contains(act) ? loc : r; }).concat(pendientes)
+      .sort((a, b) => String(b.creado || "").localeCompare(String(a.creado || "")));
+    ticketsReady = true; renderTodo();
+  }, (err) => { ticketsReady = true; renderTodo(); manejarError(err, "Cargar tus boletos", "Recarga la página."); });
+})();
+</script>
+
+</body>
+</html>
