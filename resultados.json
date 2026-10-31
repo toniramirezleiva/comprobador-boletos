@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-10-31T22:56:45+01:00",
+ "actualizado": "2026-11-01T00:00:10+01:00",
  "sorteos": [
   {
    "id": "primitiva_2026-10-31",
@@ -35,6 +35,125 @@
    "notas": "",
    "fuente": "https://www.loteriasyapuestas.es/es/resultados",
    "actualizado": "2026-10-31T22:56:38+01:00"
+  },
+  {
+   "id": "once_2026-10-31",
+   "juego": "once",
+   "fecha": "2026-10-31",
+   "titulo": "Sueldazo Fin de Semana",
+   "numeros": [],
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "5 cifras y serie (300.000 € más 60.000 € durante 20 años)",
+     "tipo": "exacto",
+     "valor": "40606",
+     "serie": 44,
+     "importe": 300000.0
+    },
+    {
+     "concepto": "5 cifras",
+     "tipo": "exacto",
+     "valor": "40606",
+     "serie": null,
+     "importe": 20000.0
+    },
+    {
+     "concepto": "4 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "0606",
+     "serie": null,
+     "importe": 200.0
+    },
+    {
+     "concepto": "3 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "606",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "2 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "06",
+     "serie": null,
+     "importe": 4.0
+    },
+    {
+     "concepto": "Última cifra",
+     "tipo": "terminacion",
+     "valor": "6",
+     "serie": null,
+     "importe": 2.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "27010",
+     "serie": 29,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "68815",
+     "serie": 24,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "82595",
+     "serie": 33,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional) (24.000 € al año durante 10 años)",
+     "tipo": "exacto",
+     "valor": "95225",
+     "serie": 33,
+     "importe": 24000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "27010",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "68815",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "82595",
+     "serie": null,
+     "importe": 400.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "95225",
+     "serie": null,
+     "importe": 400.0
+    }
+   ],
+   "acumulables": false,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Número 40606, serie 044. Números adicionales: 27010 serie 029, 68815 serie 024, 82595 serie 033, 95225 serie 033. En un mismo cupón no se acumulan premios.",
+   "fuente": "https://www.juegosonce.es/resultados-sueldazo-fin-de-semana",
+   "actualizado": "2026-11-01T00:00:10+01:00"
   },
   {
    "id": "loteria_nacional_2026-10-31",
