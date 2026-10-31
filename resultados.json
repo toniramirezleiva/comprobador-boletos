@@ -1,6 +1,223 @@
 {
- "actualizado": "2026-10-31T10:05:44+01:00",
+ "actualizado": "2026-10-31T16:24:33+01:00",
  "sorteos": [
+  {
+   "id": "loteria_nacional_2026-10-31",
+   "juego": "loteria_nacional",
+   "fecha": "2026-10-31",
+   "titulo": "Sorteo De Lotería Nacional",
+   "numeros": [],
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "Primer premio",
+     "tipo": "exacto",
+     "valor": "32586",
+     "serie": null,
+     "importe": 59994.0
+    },
+    {
+     "concepto": "Segundo premio",
+     "tipo": "exacto",
+     "valor": "91313",
+     "serie": null,
+     "importe": 12000.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "0732",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "1255",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "2608",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 4 cifras",
+     "tipo": "terminacion",
+     "valor": "4525",
+     "serie": null,
+     "importe": 150.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "026",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "185",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "222",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "243",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "468",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "518",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "793",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "915",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "928",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 3 cifras",
+     "tipo": "terminacion",
+     "valor": "999",
+     "serie": null,
+     "importe": 30.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "13",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "21",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "32",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "37",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "40",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "65",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "73",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "86",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Extracción de 2 cifras",
+     "tipo": "terminacion",
+     "valor": "89",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "0",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "1",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "Reintegro",
+     "tipo": "terminacion",
+     "valor": "6",
+     "serie": null,
+     "importe": 6.0
+    }
+   ],
+   "acumulables": true,
+   "precioDecimo": 6.0,
+   "completo": false,
+   "notas": "Puede haber premios (aproximaciones, centenas, terminaciones) que no figuran aquí: consulta la lista oficial.",
+   "fuente": "https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería%20Nacional/listas%20de%20premios/SM_LISTAOFICIAL.A2026.S088.pdf",
+   "actualizado": "2026-10-31T16:24:27+01:00"
+  },
   {
    "id": "once_2026-10-30",
    "juego": "once",
