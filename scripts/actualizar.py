@@ -195,18 +195,31 @@ def convertir_once(producto, texto_html):
     s["acumulables"] = False
     i = t.find("Premios de")
     j = t.find("no son acumulables", i)
-    bloque = re.sub(r"\s+", " ", t[i:j if j > 0 else i + 4000])
+    bloque = re.sub(r"\s+", " ", t[i:j if j > 0 else i + 6000])
+    # números adicionales (Sueldazo): pares "NNNNN ... Serie NNN" entre el resultado y la tabla
+    cab = re.sub(r"\s+", " ", t[m.start():i if i > 0 else m.start() + 3000])
+    adicionales = [(n, int(se)) for n, se in re.findall(r"\b(\d{5})\b\D{0,40}?[Ss]erie:?\s*(\d{3})\b", cab) if n != numero]
+    adicionales = list(dict.fromkeys(adicionales))
     pn, raros = [], []
-    for cant, imp, desc in re.findall(r"([\d.]+) premios? de ([\d.,]+ ?€[^a]*?)\s*a (?:las|la) ([^.]+)\.", bloque):
-        desc = desc.strip().lower()
-        importe = euros(re.sub(r"[^\d,.]", "", imp.split("€")[0])) if "mes" not in imp else None
-        if "mes" in imp:
-            raros.append(f"{desc}: {imp.strip()}")
+    for trozo in re.split(r"(?=\b[\d.]+ premios? de )", bloque):
+        mm = re.match(r"([\d.]+) premios? de (.+?) a (?:las|la) (.+?)\.(?:\s|$)", trozo.strip() + " ")
+        if not mm:
+            continue
+        imp, desc = mm.group(2).strip(), mm.group(3).strip().lower()
+        mi = re.search(r"([\d.]+(?:,\d+)?) ?€", imp)
+        importe = euros(mi.group(1)) if mi else None
+        extra = "" if re.fullmatch(r"[\d.,]+ ?€", imp) else f" ({imp})"
+        if re.search(r"adicional|extracci[oó]n", desc):
+            for (n2, se2) in adicionales:
+                pn.append({"concepto": ("5 cifras y serie" if "serie" in desc else "5 cifras") + " (número adicional)" + extra, "tipo": "exacto", "valor": n2, "serie": se2 if "serie" in desc else None, "importe": importe})
+            if not adicionales:
+                raros.append(f"{desc}: {imp}")
+            continue
         m3 = re.match(r"(\d) (primeras|últimas) cifras", desc) or re.match(r"(primera|última) cifra", desc)
         if desc.startswith("5 cifras y serie"):
-            pn.append({"concepto": "5 cifras y serie", "tipo": "exacto", "valor": numero, "serie": serie, "importe": importe})
+            pn.append({"concepto": "5 cifras y serie" + extra, "tipo": "exacto", "valor": numero, "serie": serie, "importe": importe})
         elif desc.startswith("5 cifras"):
-            pn.append({"concepto": "5 cifras", "tipo": "exacto", "valor": numero, "serie": None, "importe": importe})
+            pn.append({"concepto": "5 cifras" + extra, "tipo": "exacto", "valor": numero, "serie": None, "importe": importe})
         elif m3 and m3.group(1).isdigit():
             k = int(m3.group(1))
             ini = m3.group(2) == "primeras"
@@ -215,10 +228,11 @@ def convertir_once(producto, texto_html):
             ini = m3.group(1) == "primera"
             pn.append({"concepto": f"{m3.group(1).capitalize()} cifra", "tipo": "inicio" if ini else "terminacion", "valor": numero[:1] if ini else numero[-1:], "serie": None, "importe": importe})
         else:
-            raros.append(f"{desc}: {imp.strip()}")
+            raros.append(f"{desc}: {imp}")
     s["premiosNumericos"] = pn
     s["completo"] = bool(pn) and not raros
-    s["notas"] = f"Número {numero}, serie {serie:03d}. En un mismo cupón no se acumulan premios." + (" Premios no incluidos: " + "; ".join(raros) if raros else "")
+    ad = ", ".join(f"{n} serie {se:03d}" for n, se in adicionales)
+    s["notas"] = f"Número {numero}, serie {serie:03d}." + (f" Números adicionales: {ad}." if ad else "") + " En un mismo cupón no se acumulan premios." + (" Premios no incluidos: " + "; ".join(raros) if raros else "")
     return s
 
 
