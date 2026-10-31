@@ -1,6 +1,41 @@
 {
- "actualizado": "2026-10-31T16:24:33+01:00",
+ "actualizado": "2026-10-31T22:56:45+01:00",
  "sorteos": [
+  {
+   "id": "primitiva_2026-10-31",
+   "juego": "primitiva",
+   "fecha": "2026-10-31",
+   "titulo": "",
+   "numeros": [
+    2,
+    6,
+    8,
+    17,
+    27,
+    30
+   ],
+   "estrellas": [],
+   "complementario": 47,
+   "reintegro": 1,
+   "joker": "6262149",
+   "millon": null,
+   "premios": {
+    "especial": null,
+    "1": 534448.89,
+    "2": 57778.26,
+    "3": 1151.38,
+    "4": 37.22,
+    "5": 8.0,
+    "R": 1.0
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T22:56:38+01:00"
+  },
   {
    "id": "loteria_nacional_2026-10-31",
    "juego": "loteria_nacional",
@@ -217,6 +252,40 @@
    "notas": "Puede haber premios (aproximaciones, centenas, terminaciones) que no figuran aquí: consulta la lista oficial.",
    "fuente": "https://www.loteriasyapuestas.es/f/loterias/documentos/Lotería%20Nacional/listas%20de%20premios/SM_LISTAOFICIAL.A2026.S088.pdf",
    "actualizado": "2026-10-31T16:24:27+01:00"
+  },
+  {
+   "id": "bonoloto_2026-10-31",
+   "juego": "bonoloto",
+   "fecha": "2026-10-31",
+   "titulo": "",
+   "numeros": [
+    4,
+    5,
+    21,
+    32,
+    40,
+    46
+   ],
+   "estrellas": [],
+   "complementario": 42,
+   "reintegro": 2,
+   "joker": null,
+   "millon": null,
+   "premios": {
+    "1": null,
+    "2": null,
+    "3": 3646.22,
+    "4": 29.7,
+    "5": 4.0,
+    "R": 0.5
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-10-31T22:56:39+01:00"
   },
   {
    "id": "once_2026-10-30",
