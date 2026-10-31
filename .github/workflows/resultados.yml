@@ -1,14 +1,13 @@
 name: Actualizar resultados oficiales
-# GitHub salta sovint les tasques programades freqüents. Per això cada franja té diverses
-# arrencades de reserva i la primera que arrenca es queda vigilant (scripts/vigilar.py).
-# Horas en UTC (Madrid = UTC+1 a l'hivern, UTC+2 a l'estiu).
+# Per ara només es comproven l'Euromilions (divendres) i la Primitiva (dissabte).
+# GitHub salta sovint les tasques programades; per això cada nit té diverses arrencades de
+# reserva i la primera que arrenca es queda vigilant (scripts/vigilar.py).
+# Hores en UTC (Madrid = UTC+1 a l'hivern, UTC+2 a l'estiu).
 on:
   schedule:
-    - cron: "41 18 * * *"          # vigilància nocturna (fins a les 00:40 UTC)
-    - cron: "13 19,20,21,22 * * *" # reserves de la vigilància nocturna
-    - cron: "17 6,8,10 * * *"      # matí: escrutinis endarrerits (El Gordo)
-    - cron: "43 11 * * 6"          # dissabte: Loteria Nacional de les 13:00
-    - cron: "19 12,13 * * 6"       # reserves del dissabte
+    - cron: "41 18 * * 5,6"          # divendres i dissabte: vigilància nocturna (fins a les 00:40 UTC)
+    - cron: "13 19,20,21,22 * * 5,6" # reserves de la vigilància
+    - cron: "17 6,8,10 * * 6,0"      # dissabte i diumenge al matí: escrutinis endarrerits
   workflow_dispatch:
   push:
     branches: [main]
@@ -22,14 +21,14 @@ jobs:
   actualizar:
     runs-on: ubuntu-latest
     timeout-minutes: 355
+    env:
+      JOCS: "EMIL,LAPR"
     steps:
       - uses: actions/checkout@v4
       - name: Vigilar i publicar resultats
         run: |
           git config user.name "Comprobador de boletos (GitHub Actions)"
           git config user.email "actions@users.noreply.github.com"
-          H=$(date -u +%H); D=$(date -u +%u)
-          if [ "$H" -ge 18 ]; then export FINS_UTC="00:40"
-          elif [ "${{ github.event_name }}" = "schedule" ] && [ "$D" = "6" ] && [ "$H" -ge 11 ] && [ "$H" -le 13 ]; then export FINS_UTC="14:40"
-          fi
+          H=$(date -u +%H)
+          if [ "$H" -ge 18 ]; then export FINS_UTC="00:40"; fi
           python3 scripts/vigilar.py

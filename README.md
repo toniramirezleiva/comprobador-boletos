@@ -9,6 +9,6 @@ App web gratuïta per comprovar butlletes d'Euromilions, La Primitiva, Bonoloto,
 
 Los datos son orientativos. Para cobrar, la única lista válida es la oficial de Loterías y Apuestas del Estado o de la ONCE.
 
-## Cómo se actualizan los resultados
+## Com s'actualitzen els resultats
 
-Un proceso automático de GitHub Actions (`.github/workflows/resultados.yml`) consulta las fuentes oficiales (Loterías y Apuestas del Estado y ONCE) cada 5 minutos por la noche, después de los sorteos, y cada 15-20 minutos de madrugada y por la mañana. Cuando hay datos nuevos, actualiza `resultados.json`. No tiene ningún coste.
+Un procés automàtic de GitHub Actions (`.github/workflows/resultados.yml`) consulta les fonts oficials de Loterías y Apuestas del Estado. Per ara només es comproven l'**Euromilions dels divendres** i la **Primitiva dels dissabtes**: aquelles nits el procés vigila fins a la 1:40 i consulta cada 3 minuts, i el matí següent fa unes quantes passades més per als escrutinis endarrerits. Per afegir-hi altres jocs, cal ampliar la variable `JOCS` del flux. No té cap cost.

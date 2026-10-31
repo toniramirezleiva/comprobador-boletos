@@ -27,6 +27,8 @@ CAT_PRI = ["especial", "1", "2", "3", "4", "5", "R"]
 CAT_BON = ["1", "2", "3", "4", "5", "R"]
 CAT_GOR = ["5+C", "5", "4+C", "4", "3+C", "3", "2+C", "2", "R"]
 SELAE = {"EMIL": "euromillones", "LAPR": "primitiva", "BONO": "bonoloto", "ELGR": "elgordo", "LNAC": "loteria_nacional"}
+# Jocs que es comproven (per ara, només Euromilions i Primitiva). Per afegir-ne: JOCS="EMIL,LAPR,BONO,ELGR,LNAC,ONCE"
+JOCS = [j.strip() for j in os.environ.get("JOCS", "EMIL,LAPR").split(",") if j.strip()]
 ONCE_PAGINAS = {
     "Cupón Diario": "https://www.juegosonce.es/resultados-cupon-diario",
     "Cuponazo": "https://www.juegosonce.es/resultados-cuponazo",
@@ -258,7 +260,7 @@ def main():
     ini = (hoy - dt.timedelta(days=DIAS_ATRAS)).strftime("%Y%m%d")
     fin = hoy.strftime("%Y%m%d")
     nuevos = []
-    for game in SELAE:
+    for game in [g for g in SELAE if g in JOCS]:
         url = f"https://www.loteriasyapuestas.es/servicios/buscadorSorteos?game_id={game}&celebrados=true&fechaInicioInclusiva={ini}&fechaFinInclusiva={fin}"
         try:
             datos = json.loads(descargar(url, game))
@@ -273,7 +275,7 @@ def main():
                     nuevos.append(s)
             except Exception as e:
                 avisos.append(f"{game} {d.get('fecha_sorteo')}: {e!r}"[:200])
-    for prod, url in ONCE_PAGINAS.items():
+    for prod, url in (ONCE_PAGINAS.items() if "ONCE" in JOCS else []):
         clave = {"Cupón Diario": "ONCE_html", "Cuponazo": "ONCE_cuponazo_html", "Sueldazo Fin de Semana": "ONCE_sueldazo_html"}[prod]
         try:
             s = convertir_once(prod, descargar(url, clave))
