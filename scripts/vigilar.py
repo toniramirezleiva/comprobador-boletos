@@ -27,7 +27,7 @@ def una_passada():
     print(r.stdout.strip(), r.stderr.strip()[-400:], flush=True)
     if not sh("git", "status", "--porcelain", "resultados.json").stdout.strip():
         return
-    canvis = [l.split("cambios: ")[1] for l in r.stdout.splitlines() if "cambios: " in l]
+    canvis = [l.split("cambios: ")[1].strip("[]").replace("'", "") for l in r.stdout.splitlines() if "cambios: " in l]
     sh("git", "add", "resultados.json")
     sh("git", "commit", "-m", "Resultados: " + (canvis[0] if canvis else "actualización"))
     for _ in range(3):

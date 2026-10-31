@@ -366,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-10-31 · 13:30</span>
+    <span class="mono">Versió 2026-10-31 · 23:15</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -760,7 +760,8 @@ function iniciarLocal() {
 const RES_URLS = ["https://toniramirezleiva.github.io/comprobador-boletos/resultados.json", "https://raw.githubusercontent.com/toniramirezleiva/comprobador-boletos/main/resultados.json"];
 let ultimaCarga = 0, cargando = false;
 async function cargarResultadosWeb(forzar) {
-  if (modo !== "local" || cargando) return;
+  if (modo !== "local") return;
+  if (cargando) { if (forzar) { const k = $("stKey"); if (k) k.textContent = "Ja s'està consultant, un moment…"; } return; }
   const pend = pendientesBusqueda().filter((p) => Date.now() - p.ini < 12 * 3600e3);
   const intervalo = pend.length ? 2 * 60000 : 15 * 60000;
   if (!forzar && Date.now() - ultimaCarga < intervalo) return;
@@ -792,6 +793,14 @@ async function cargarResultadosWeb(forzar) {
   const hh = new Date().toLocaleTimeString("ca-ES", { hour: "2-digit", minute: "2-digit" });
   const quedan = pendientesBusqueda().filter((p) => Date.now() - p.ini < 12 * 3600e3).length;
   $("stAuto").textContent = "Resultats consultats a les " + hh + (datos.actualizado ? " (publicats el " + new Date(datos.actualizado).toLocaleString("ca-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }) + ")" : "") + (quedan ? ". Esperant " + quedan + " sorteig(s): es torna a mirar cada 2 minuts." : ".");
+  if (forzar) {
+    const pendents = pendientesBusqueda();
+    const txt = pendents.length
+      ? "Comprovat a les " + hh + ". Encara no hi ha resultats oficials de: " + pendents.map((p) => JUEGOS[p.juego].nombre + " del " + fechaCorta(p.fecha) + " (se solen publicar " + publicacionTxt(p.juego, p.fecha) + ")").join("; ") + ". L'app ho torna a mirar sola cada 2 minuts mentre la tinguis oberta."
+      : (cambios ? "Comprovat a les " + hh + ": resultats nous carregats." : "Comprovat a les " + hh + ": totes les teves butlletes ja tenen el resultat al dia.");
+    const k = $("stKey"); if (k) k.textContent = txt;
+    document.querySelectorAll(".comprovat-ara").forEach((e) => { e.textContent = txt; });
+  }
 }
 // ---------- Lectura gratuita de fotos (OCR en el navegador) ----------
 /*OCR-START*/
@@ -1138,7 +1147,7 @@ async function leerConOCR(file, progreso) {
   return mejor;
 }
 
-$("btnRecargar").onclick = () => cargarResultadosWeb(true);
+$("btnRecargar").onclick = () => { $("stKey").textContent = "Consultant els resultats oficials…"; cargarResultadosWeb(true); };
 $("btnNotif").onclick = async () => {
   try { const p = await Notification.requestPermission(); $("stKey").textContent = p === "granted" ? "Avisos del navegador activats (amb l'app oberta)." : "El navegador no ha permès els avisos."; }
   catch (_) { $("stKey").textContent = "Aquest navegador no admet avisos des d'aquesta pàgina."; }
@@ -1311,7 +1320,7 @@ function vistaEstado(t, info) {
       }
       return el("div", { class: "est espera" }, el("b", { text: "Sorteig celebrat el " + fechaLarga(f) + " a les " + hora + "." }),
         el("span", { class: "sub", text: "Resultats pendents. Se solen publicar " + publicacionTxt(t.juego, f) + "." }),
-        modo === "local" && !t.ejemplo ? el("div", { class: "row" }, el("button", { class: "small", onclick: () => cargarResultadosWeb(true) }, "Comprovar ara")) : null);
+        modo === "local" && !t.ejemplo ? el("div", { class: "row" }, el("button", { class: "small", onclick: (e) => { const m = e.currentTarget.parentNode.querySelector(".comprovat-ara"); if (m) m.textContent = "Consultant…"; cargarResultadosWeb(true); } }, "Comprovar ara"), el("span", { class: "sub comprovat-ara" })) : null);
     }
     const s = d.s, lin = d.r.lineas.filter((l) => !l.informativo);
     const wins = lin.filter((l) => l.importe > 0 || l.pendiente);

@@ -29,7 +29,7 @@ jobs:
           git config user.name "Comprobador de boletos (GitHub Actions)"
           git config user.email "actions@users.noreply.github.com"
           H=$(date -u +%H); D=$(date -u +%u)
-          if [ "${{ github.event_name }}" = "schedule" ] && [ "$H" -ge 18 ]; then export FINS_UTC="00:40"
+          if [ "$H" -ge 18 ]; then export FINS_UTC="00:40"
           elif [ "${{ github.event_name }}" = "schedule" ] && [ "$D" = "6" ] && [ "$H" -ge 11 ] && [ "$H" -le 13 ]; then export FINS_UTC="14:40"
           fi
           python3 scripts/vigilar.py
