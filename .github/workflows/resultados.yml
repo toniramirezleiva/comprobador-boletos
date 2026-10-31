@@ -1,0 +1,35 @@
+name: Actualizar resultados oficiales
+# Horas en UTC (Madrid = UTC+1 en invierno, UTC+2 en verano).
+on:
+  schedule:
+    - cron: "*/5 19-23 * * *"   # noches: sorteos de 21:00 a 21:40 y escrutinios
+    - cron: "*/15 0-2 * * *"    # madrugada: escrutinios tardíos
+    - cron: "*/20 6-10 * * *"   # mañana: El Gordo y escrutinios pendientes
+    - cron: "*/5 11-14 * * 6"   # sábado: Lotería Nacional de las 13:00
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths: ["scripts/actualizar.py", ".github/workflows/resultados.yml"]
+permissions:
+  contents: write
+concurrency:
+  group: resultados
+  cancel-in-progress: false
+jobs:
+  actualizar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Descargar y convertir resultados
+        id: act
+        run: python3 scripts/actualizar.py
+      - name: Publicar cambios
+        if: steps.act.outputs.cambios != ''
+        run: |
+          git config user.name "Comprobador de boletos (GitHub Actions)"
+          git config user.email "actions@users.noreply.github.com"
+          git add resultados.json
+          git commit -m "Resultados: ${{ steps.act.outputs.cambios }}"
+          git pull --rebase origin main
+          git push origin main
