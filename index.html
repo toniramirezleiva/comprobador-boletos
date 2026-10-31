@@ -366,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-10-31 · 13:00</span>
+    <span class="mono">Versió 2026-10-31 · 13:15</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -506,6 +506,17 @@ function evaluar(ticket, sorteo) {
       avisos.push("En aquest joc només es cobra el premi més alt; els altres coincidents es mostren com a informatius.");
     } else if (hits.length > 1) avisos.push("Aquest número coincideix amb diversos premis i s'han sumat. La compatibilitat entre premis la fixa el programa oficial de cada sorteig; confirma-ho a la llista oficial.");
     if (!hits.length) push({ texto: "Número " + num + (serie !== null ? " · serie " + serie : ""), cat: "Sense premi", importe: 0, sinPremio: true, numero: num });
+    // Premi principal (número complet): una sola línia amb l'import total oficial del número
+    // (inclou reintegrament i terminacions que també cobra), com a la llista oficial
+    const tr = (c) => (typeof trConcepte === "function" ? trConcepte(c) : c);
+    const exactes = elegidos.filter((p) => p.tipo === "exacto").sort((a, b) => (Number(b.importe) || 0) - (Number(a.importe) || 0));
+    if (exactes.length && sorteo.acumulables) {
+      const vals = elegidos.map((p) => (p.importe === null || p.importe === undefined || p.importe === "" ? null : Number(p.importe)));
+      const total = vals.some((v) => v === null) ? null : vals.reduce((a, b) => a + b, 0);
+      const altres = elegidos.filter((p) => p !== exactes[0]).map((p) => tr(p.concepto));
+      push({ texto: "Número " + num + (mult > 1 ? " · " + mult + " dècims" : "") + (altres.length ? " · import total (inclou " + altres.join(", ").toLowerCase() + ")" : ""), cat: tr(exactes[0].concepto), importe: total === null ? null : total * mult, unitario: total, veces: mult, pendiente: total === null, numero: num, valor: String(exactes[0].valor), tipoPremio: "exacto" });
+      hits.length = 0;
+    }
     for (const p of hits) {
       const used = elegidos.includes(p);
       const u = p.importe === null || p.importe === undefined || p.importe === "" ? null : Number(p.importe);
