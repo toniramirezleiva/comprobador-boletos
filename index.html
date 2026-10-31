@@ -132,6 +132,17 @@ button.chip{cursor:pointer}
 .est.ok .est-amt{color:var(--ok)} .est.nada .est-amt{color:var(--muted);font-weight:500;font-size:14px}
 .est ul{margin:0;padding-left:18px;font-size:14px}
 .est li span.v{font-family:var(--f-mono);color:var(--ok);font-weight:600}
+.tk-revisar{padding:14px;border-bottom:1px solid var(--line);background:var(--warn-soft);display:flex;flex-direction:column;gap:12px}
+.rv-tit{margin:0;font-size:14px}
+.rv-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-items:start}
+@media (max-width:560px){.rv-grid{grid-template-columns:1fr}}
+.rv-foto{width:100%;max-height:75vh;object-fit:contain;border-radius:6px;border:1px solid var(--line);background:var(--paper)}
+.rv-datos dl{display:grid;grid-template-columns:auto minmax(0,1fr);gap:6px 12px;margin:0;font-size:14.5px;background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px}
+.rv-datos dt{color:var(--muted);font-size:12.5px;text-transform:uppercase;letter-spacing:.03em;align-self:center}
+.rv-datos dd{margin:0;font-weight:600;overflow-wrap:anywhere}
+.rv-dudas{margin:10px 0 0;padding-left:18px;font-size:13px}
+button.borrar{margin-left:auto}
+button.peligro{background:var(--bad);border-color:var(--bad);color:var(--paper)}
 .tk-thumb-btn{padding:0;border:none;background:none;cursor:zoom-in;flex:none}
 .tk-foto{padding:10px 14px;border-bottom:1px solid var(--line);background:var(--ground)}
 .tk-foto img{display:block;max-width:100%;max-height:70vh;margin:0 auto;border-radius:4px}
@@ -424,7 +435,16 @@ function evaluar(ticket, sorteo) {
     }
     if (ticket.millon && sorteo.millon && juego === "euromillones") {
       const a = String(ticket.millon).replace(/\s/g, "").toUpperCase(), b = String(sorteo.millon).replace(/\s/g, "").toUpperCase();
-      push({ texto: "El Millón " + a, cat: a === b ? "El Millón" : "El Millón sin premio", importe: a === b ? 1000000 : 0, sinPremio: a !== b });
+      // admite un código, varios separados por comas o un rango "HBW23434-HBW23437"
+      const codigos = new Set();
+      for (const parte of a.split(/[,;]+/)) {
+        const r = parte.match(/^([A-Z]{3})(\d{5})(?:-(?:[A-Z]{3})?(\d{5}))?$/);
+        if (!r) { if (parte) codigos.add(parte); continue; }
+        const ini = +r[2], fin = r[3] ? +r[3] : ini;
+        for (let k = ini; k <= Math.min(fin, ini + 200); k++) codigos.add(r[1] + String(k).padStart(5, "0"));
+      }
+      const gana = codigos.has(b);
+      push({ texto: "El Millón " + a, cat: gana ? "El Millón" : "El Millón sin premio", importe: gana ? 1000000 : 0, sinPremio: !gana });
     }
   } else {
     const num = String(ticket.numero || "").replace(/\D/g, "");
@@ -809,7 +829,14 @@ function ocrApuestas(T, juego) {
   const cfg = OCR_CFG[juego];
   if (!cfg) return [];
   const [n, max] = cfg, out = [];
-  for (let line of T.split("\n")) {
+  const lineas = T.split("\n").map((l) => l.trim()).filter(Boolean);
+  const candidatas = [];
+  for (let i = 0; i < lineas.length; i++) {
+    candidatas.push(lineas[i]);
+    // apuestas partidas en dos líneas por el lector ("2. 03 04 08 14" / "41 + 05 08")
+    if (i + 1 < lineas.length && /\d\s*[.,;:+*]?\s*$/.test(lineas[i]) && /^[\s+*]*\d/.test(lineas[i + 1])) candidatas.push(lineas[i] + " " + lineas[i + 1]);
+  }
+  for (let line of candidatas) {
     if (/JOKER|MILLON|REINTEGRO|CLAVE|PRECIO|IMPORTE|EUR|TOTAL|FECHA|HORA|\d{1,2}[:]\d{2}|\d{1,2}\/\d{1,2}\/\d{2}/.test(line)) continue;
     // índice de apuesta al principio ("1.", "1:", "1)", "A:", "1A"), aunque haya basura delante ("Lu 1. 01 10…")
     line = line.replace(/^[^\d]{0,6}?(?:\b\d{1,2}\s*[A-H]?|\b[A-H]\s*\d?)\s*[.):\-]+\s*(?=\d)/, " ").replace(/^\s*[A-H]\s+(?=\d)/, " ");
@@ -884,7 +911,7 @@ function ocrBoleto(texto, hoy) {
   if ((m = T.match(/(?:REINTEGRO|REINT\.?|\bR\s*[:.=])\s*[:.=]?\s*(\d)\b/) || T.match(/^\s*R\s+(\d)\s*$/m))) b.reintegro = +m[1];
   if (juego === "elgordo" && (m = T.match(/(?:N[º°O.]?\s*)?CLAVE\D{0,6}(\d)\b/))) b.reintegro = +m[1];
   if (juego === "primitiva" && (m = T.match(/J[O0]KER\D{0,12}((?:\d\s?){7})/))) b.joker = m[1].replace(/\s/g, "");
-  if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b/))) b.millon = m[1] + m[2];
+  if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b(?:\s*(?:A|AL|-)\s*(?:[A-Z0-9]{3})?\s?(\d{5})\b)?/))) b.millon = m[1] + m[2] + (m[3] && m[3] !== m[2] ? "-" + m[1] + m[3] : "");
   if (juego !== "euromillones" && b.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
   return { boletos: [b] };
 }
@@ -915,7 +942,11 @@ function ocrCombinar(textos, hoy) {
   const grupos = [];
   for (const c of cands) { const g = grupos.find((gr) => gr.some((y) => parecidas(c, y))); if (g) g.push(c); else grupos.push([c]); }
   let elegidos = grupos.map((g, i) => ({ i, total: g.reduce((t, c) => t + c.n, 0), mejor: g.slice().sort((x, y) => (y.a.pad ? 1 : 0) - (x.a.pad ? 1 : 0) || y.n - x.n)[0], dudoso: g.length > 1 }));
-  if (esperadas) elegidos = elegidos.sort((x, y) => y.total - x.total).slice(0, esperadas).sort((x, y) => x.i - y.i);
+  if (esperadas) elegidos = elegidos.sort((x, y) => y.total - x.total).slice(0, esperadas);
+  // orden del resguardo: el de la lectura que más apuestas ha encontrado
+  const ref = delJuego.slice().sort((x, y) => (y.apuestas || []).length - (x.apuestas || []).length)[0];
+  const pos = (e) => { const i = (ref.apuestas || []).findIndex((a) => parecidas({ a }, e.mejor)); return i < 0 ? 100 + e.i : i; };
+  elegidos.sort((x, y) => pos(x) - pos(y));
   out.apuestas = elegidos.map((e) => ({ numeros: e.mejor.a.numeros, estrellas: e.mejor.a.estrellas }));
   const dudosas = elegidos.filter((e) => e.dudoso).map((e) => elegidos.indexOf(e) + 1);
   // datos en los que las lecturas no coinciden
@@ -1214,6 +1245,31 @@ function vistaEstado(t, info) {
 }
 
 // ---------- Render de la lista ----------
+function panelRevision(t) {
+  const J = JUEGOS[t.juego];
+  const dd = (k, v) => [el("dt", { text: k }), el("dd", { class: "mono", text: v })];
+  const filas = [...dd("Juego", J.nombre), ...dd("Sorteo", (t.fechas || []).length ? t.fechas.map(fechaLarga).join(" · ") : "sin fecha")];
+  if (J.tipo === "comb") {
+    (t.apuestas || []).forEach((a, i) => filas.push(...dd("Apuesta " + (i + 1), uniqInts(a.numeros).map((n) => String(n).padStart(2, "0")).join(" ") + (t.juego === "euromillones" ? "  +  " + uniqInts(a.estrellas).map((n) => String(n).padStart(2, "0")).join(" ") : ""))));
+    if (!(t.apuestas || []).length) filas.push(...dd("Apuestas", "ninguna leída"));
+    if (t.juego !== "euromillones") filas.push(...dd(t.juego === "elgordo" ? "Clave" : "Reintegro", t.reintegro != null ? String(t.reintegro) : "—"));
+    if (t.juego === "primitiva") filas.push(...dd("Joker", t.joker || "no"));
+    if (t.juego === "euromillones") filas.push(...dd("El Millón", t.millon ? t.millon.replace("-", " a ") : "—"));
+  } else {
+    filas.push(...dd("Número", t.numero || "—"), ...dd("Serie", t.serie != null ? String(t.serie) : "—"));
+    if (t.juego === "loteria_nacional") filas.push(...dd("Fracción", t.fraccion != null ? String(t.fraccion) : "—"));
+  }
+  return el("div", { class: "tk-revisar" },
+    el("p", { class: "rv-tit" }, el("b", { text: "Comprueba la lectura" }), " — compara la foto con los valores leídos."),
+    el("div", { class: "rv-grid" },
+      t.thumb ? el("img", { class: "rv-foto", src: t.thumb, alt: "Foto del boleto" }) : el("p", { class: "sub", text: "Sin foto." }),
+      el("div", { class: "rv-datos" }, el("dl", {}, filas),
+        (t.dudas || []).length ? el("ul", { class: "rv-dudas" }, t.dudas.map((d) => el("li", { text: d }))) : null)),
+    el("div", { class: "row" },
+      el("button", { class: "primary", onclick: () => { t.revisar = false; t.dudas = []; cambiado(t, true); } }, "Los datos son correctos"),
+      el("button", { onclick: (e) => { const art = e.currentTarget.closest(".tk"); const d = art.querySelector(".tk-more"); d.open = true; openIds.add(t.id); const f = art.querySelector(".tk-body input, .tk-body select"); if (f) { f.scrollIntoView({ behavior: "smooth", block: "center" }); f.focus(); } } }, "Corregir")));
+}
+
 const cards = new Map();
 function construirTarjeta(t) {
   const info = estadoBoleto(t);
@@ -1231,10 +1287,14 @@ function construirTarjeta(t) {
       t.thumb ? el("button", { class: "tk-thumb-btn", "aria-label": "Ver la foto del boleto", onclick: (e) => { const f = e.currentTarget.closest(".tk").querySelector(".tk-foto"); if (f) f.hidden = !f.hidden; } }, el("img", { class: "tk-thumb", src: t.thumb, alt: "" })) : null,
       el("span", { class: "gm", text: JUEGOS[t.juego].nombre }),
       el("div", { class: "dates" }, (t.fechas || []).map((f) => el("span", { class: "chip", text: fechaCorta(f) }))),
-      t.ejemplo ? el("span", { class: "tag ex", text: "Ejemplo" }) : null, pill),
-    t.thumb ? el("div", { class: "tk-foto", hidden: openIds.has(t.id) && t.dudas && t.dudas.length > 1 ? null : "hidden" }, el("img", { src: t.thumb, alt: "Foto del boleto" })) : null,
-    !t.ejemplo && t.dudas && t.dudas.length ? el("div", { class: "tk-dudas" }, el("ul", {}, t.dudas.map((d) => el("li", { text: d }))),
-      el("button", { class: "small", onclick: () => { t.dudas = []; cambiado(t, true); } }, "Revisado, quitar avisos")) : null,
+      t.ejemplo ? el("span", { class: "tag ex", text: "Ejemplo" }) : null, pill,
+      t.ejemplo ? null : el("button", { class: "small borrar", "aria-label": "Eliminar este boleto", onclick: (e) => {
+        const btn = e.currentTarget;
+        if (btn.dataset.confirmar) { borrar(t); return; }
+        btn.dataset.confirmar = "1"; btn.textContent = "¿Eliminar? Toca otra vez"; btn.classList.add("peligro");
+        setTimeout(() => { if (btn.isConnected) { delete btn.dataset.confirmar; btn.textContent = "Eliminar"; btn.classList.remove("peligro"); } }, 4000);
+      } }, "Eliminar")),
+    t.revisar && !t.ejemplo ? panelRevision(t) : (t.thumb ? el("div", { class: "tk-foto", hidden: "hidden" }, el("img", { src: t.thumb, alt: "Foto del boleto" })) : null),
     vis, est, more);
   if (t.ejemplo) art.classList.add("is-ej");
   return { art, vis, est, pill, res, info };
@@ -1246,6 +1306,7 @@ function refrescarTarjeta(t) {
   c.est.replaceChildren(...vistaEstado(t, info));
   c.pill.className = "pill " + info.estado; c.pill.textContent = info.texto;
   c.res.replaceChildren(...vistaResultados(t, info));
+  const rv = c.art.querySelector(".tk-revisar"); if (rv && t.revisar) rv.replaceWith(panelRevision(t));
   c.info = info;
 }
 function lista() { return tickets; }
@@ -1398,7 +1459,7 @@ function normalizarTicket(r, thumb) {
     millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
     numero: r.numero ? String(r.numero).replace(/\D/g, "").padStart(5, "0").slice(-5) : "",
     serie: toInt(r.serie), fraccion: toInt(r.fraccion), decimos: 1,
-    dudas: Array.isArray(r.dudas) ? r.dudas.map(String) : [], thumb: thumb || null, creado: new Date().toISOString(),
+    dudas: Array.isArray(r.dudas) ? r.dudas.map(String) : [], thumb: thumb || null, creado: new Date().toISOString(), revisar: true,
   };
 }
 $("btnLeer").onclick = async () => {
