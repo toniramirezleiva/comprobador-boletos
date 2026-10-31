@@ -246,6 +246,36 @@ pre.log{font:12.5px/1.5 var(--f-mono);background:var(--ground);border-radius:6px
 .saved .it:first-child{border-top:none}
 footer{color:var(--muted);font-size:12.5px;display:flex;flex-direction:column;gap:6px}
 a{color:var(--accent)}
+
+/* una apuesta = una línea: números y estrellas juntos, tamaño según el ancho */
+.apl{flex-wrap:nowrap;gap:clamp(4px,1.6vw,12px)}
+.apl .balls,.apl .stars{flex-wrap:nowrap}
+.apl .balls{gap:clamp(2px,0.9vw,6px)}
+.apl .ball{width:clamp(26px,8.2vw,36px);height:clamp(26px,8.2vw,36px);font-size:clamp(11px,3.3vw,14px);border-width:clamp(1.5px,0.4vw,2px)}
+.apl .star{width:clamp(28px,8.8vw,42px);height:clamp(28px,8.8vw,42px)}
+.apl .ix{width:auto;min-width:10px}
+/* resultado oficial: etiqueta arriba y números + estrellas en una sola línea */
+.wn .lbl{flex-basis:100%}
+.wn{column-gap:clamp(4px,1.6vw,10px)}
+.wn .balls,.wn .stars{flex-wrap:nowrap}
+.wn .ball.sm{width:clamp(24px,7.4vw,30px);height:clamp(24px,7.4vw,30px);font-size:clamp(10.5px,3vw,12.5px)}
+.wn .star.sm{width:clamp(26px,8vw,34px);height:clamp(26px,8vw,34px)}
+/* grupos por juego plegables */
+.grupo{background:var(--paper);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.grupo>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;flex-direction:column;gap:6px;border-left:5px solid var(--g)}
+.grupo>summary::-webkit-details-marker{display:none}
+.grupo-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.grupo-h .gm{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:17px;color:var(--g)}
+.grupo-h .cnt{font:600 12px var(--f-mono);color:var(--muted)}
+.grupo-h .tot{margin-left:auto;font:700 15px var(--f-mono);font-variant-numeric:tabular-nums}
+.grupo-h .tot.win{color:var(--ok)}
+.grupo-h .flecha{font:600 12px var(--f-mono);color:var(--muted)}
+.grupo[open] .flecha-t{display:none} .grupo:not([open]) .flecha-o{display:none}
+.grupo-res{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:3px;font-size:13.5px}
+.grupo-res li{display:flex;gap:8px;justify-content:space-between;flex-wrap:wrap}
+.grupo-res li .v{font-family:var(--f-mono);font-weight:700;color:var(--ok);white-space:nowrap}
+.grupo-res li.nada{color:var(--muted)} .grupo-res li.pend{color:var(--warn)}
+.grupo-body{display:flex;flex-direction:column;gap:12px;padding:0 10px 12px}
 </style>
 
 <div class="wrap">
@@ -336,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versión 2026-10-31 · 12:00</span>
+    <span class="mono">Versión 2026-10-31 · 12:30</span>
     <span>Los importes salen de los datos de sorteo guardados en la app. Para cobrar, la única lista válida es la oficial de Loterías y Apuestas del Estado o de la ONCE.</span>
     <span>Gravamen: los premios de más de 40.000 € tributan un 20 % sobre lo que excede de esa cantidad (estimación orientativa).</span>
   </footer>
@@ -1354,17 +1384,61 @@ function refrescarTarjeta(t) {
   c.pill.className = "pill " + info.estado; c.pill.textContent = info.texto;
   c.res.replaceChildren(...vistaResultados(t, info));
   const rv = c.art.querySelector(".tk-revisar"); if (rv && t.revisar) rv.replaceWith(panelRevision(t));
+  const g = c.art.closest(".grupo");
+  if (g) { const del = lista().filter((x) => x.juego === t.juego); const { items, total } = resumenGrupo(del); g.querySelector(".grupo-res").replaceChildren(...items); const tt = g.querySelector(".tot"); tt.textContent = total > 0 ? eur(total) : ""; tt.className = "tot" + (total > 0 ? " win" : ""); }
   c.info = info;
 }
 function lista() { return tickets; }
+const GRUPOS_KEY = "cb.gruposAbiertos";
+let gruposAbiertos = null;
+function grupoAbierto(j, lista) {
+  if (gruposAbiertos === null) { try { gruposAbiertos = new Set(JSON.parse(localStorage.getItem(GRUPOS_KEY) || "[]")); } catch (_) { gruposAbiertos = new Set(); } }
+  // abierto si la persona lo dejó abierto o si hay algo pendiente de revisar
+  return gruposAbiertos.has(j) || lista.some((t) => t.revisar);
+}
+function guardarGrupos() { try { localStorage.setItem(GRUPOS_KEY, JSON.stringify([...gruposAbiertos])); } catch (_) {} }
+// resumen plegado: solo premios (apuesta, categoría, importe) y lo pendiente
+function resumenGrupo(lista) {
+  const items = []; let total = 0, pend = 0;
+  for (const t of lista) {
+    const info = estadoBoleto(t);
+    total += info.T.bruto;
+    for (const { s, r } of info.det) {
+      for (const l of r.lineas.filter((l) => !l.informativo && (l.importe > 0 || l.pendiente))) {
+        items.push(el("li", {}, el("span", { text: fechaCorta(s.fecha) + " · " + l.texto + " · " + l.cat }), el("span", { class: "v", text: l.pendiente ? "importe pendiente" : eur(l.importe) })));
+      }
+    }
+    for (const f of info.futuros) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Pendiente: sorteo " + cuando(f) + " a las " + horaSorteo(t.juego, f) }))); }
+    for (const f of info.faltan) { pend++; items.push(el("li", { class: "pend" }, el("span", { text: "Esperando resultado del " + fechaCorta(f) }))); }
+  }
+  const sinPremio = !items.some((li) => li.querySelector(".v")) && !pend;
+  if (sinPremio) items.push(el("li", { class: "nada" }, el("span", { text: "Sin premio" })));
+  return { items, total };
+}
 function renderTodo() {
   const L = lista(), box = $("tickets");
   const act = document.activeElement;
-  const nodes = L.map((t) => {
+  const tarjeta = (t) => {
     const prev = cards.get(t.id);
     if (prev && act && prev.art.contains(act) && prev.juego === t.juego) { refrescarTarjeta(t); return prev.art; }
     const c = construirTarjeta(t); c.juego = t.juego; cards.set(t.id, c); return c.art;
-  });
+  };
+  const nodes = [];
+  for (const j of Object.keys(JUEGOS)) {
+    const del = L.filter((t) => t.juego === j);
+    if (!del.length) continue;
+    const arts = del.map(tarjeta);
+    const { items, total } = resumenGrupo(del);
+    const det = el("details", { class: "grupo g-" + j, ontoggle: (e) => { if (e.target.open) gruposAbiertos.add(j); else gruposAbiertos.delete(j); guardarGrupos(); } },
+      el("summary", {},
+        el("div", { class: "grupo-h" }, el("span", { class: "gm", text: JUEGOS[j].nombre }), el("span", { class: "cnt", text: del.length + (del.length > 1 ? " boletos" : " boleto") }),
+          el("span", { class: "tot" + (total > 0 ? " win" : ""), text: total > 0 ? eur(total) : "" }),
+          el("span", { class: "flecha" }, el("span", { class: "flecha-t", text: "Ver ▾" }), el("span", { class: "flecha-o", text: "Plegar ▴" }))),
+        el("ul", { class: "grupo-res" }, items)),
+      el("div", { class: "grupo-body" }, arts));
+    if (grupoAbierto(j, del)) det.open = true;
+    nodes.push(det);
+  }
   if (!L.length && !(ticketsReady || !db)) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Cargando tus boletos…"));
   else if (!L.length) nodes.push(el("div", { class: "vacio" },
     el("b", { text: "Todavía no has añadido ningún boleto." }),
