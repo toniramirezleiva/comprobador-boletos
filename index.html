@@ -130,6 +130,12 @@ button.chip{cursor:pointer}
 .est.ok .est-amt{color:var(--ok)} .est.nada .est-amt{color:var(--muted);font-weight:500;font-size:14px}
 .est ul{margin:0;padding-left:18px;font-size:14px}
 .est li span.v{font-family:var(--f-mono);color:var(--ok);font-weight:600}
+.tk-thumb-btn{padding:0;border:none;background:none;cursor:zoom-in;flex:none}
+.tk-foto{padding:10px 14px;border-bottom:1px solid var(--line);background:var(--ground)}
+.tk-foto img{display:block;max-width:100%;max-height:70vh;margin:0 auto;border-radius:4px}
+.tk-dudas{padding:10px 14px;background:var(--warn-soft);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:8px;font-size:13.5px}
+.tk-dudas ul{margin:0;padding-left:18px}
+.tk-dudas button{align-self:flex-start}
 .tk-thumb{width:40px;height:40px;border-radius:5px;object-fit:cover;border:1px solid var(--line);flex:none}
 .tk-vis{padding:16px 14px;background:var(--gsoft)}
 .tk-more>summary{cursor:pointer;padding:10px 14px;font-size:13.5px;font-weight:600;color:var(--muted);list-style:none;border-top:1px solid var(--line);display:flex;justify-content:space-between}
@@ -729,9 +735,25 @@ async function cargarResultadosWeb(forzar) {
 // Es aproximado: la persona revisa y corrige en el formulario.
 const OCR_MESES = { ENE: 1, FEB: 2, MAR: 3, ABR: 4, MAY: 5, JUN: 6, JUL: 7, AGO: 8, SEP: 9, SET: 9, OCT: 10, NOV: 11, DIC: 12 };
 const OCR_DIAS_SORTEO = { euromillones: [2, 5], primitiva: [1, 4, 6], bonoloto: [0, 1, 2, 3, 4, 5, 6], elgordo: [0], loteria_nacional: [4, 6, 0, 1, 2, 3, 5], once: [0, 1, 2, 3, 4, 5, 6] };
+const OCR_CFG = { euromillones: [5, 50], primitiva: [6, 49], bonoloto: [6, 49], elgordo: [5, 54] };
 function ocrNormaliza(t) {
-  return String(t || "").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/[|]/g, "1").replace(/\r/g, "");
+  let s = String(t || "").toUpperCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\r/g, "").replace(/[|¦]/g, "1");
+  // confusiones típicas de letras por cifras dentro de grupos numéricos (O→0, I/L→1, Z→2, S→5, B→8)
+  const fix = (w) => w.replace(/[OQD]/g, "0").replace(/[IL!]/g, "1").replace(/Z/g, "2").replace(/S/g, "5").replace(/B/g, "8").replace(/G/g, "6");
+  s = s.split("\n").map((line) => {
+    const toks = line.split(/(\s+)/);
+    const numericos = toks.filter((w) => /^\d[\dOQDILZSBG!]?$|^[OQDILZSBG!]\d$/.test(w)).length;
+    if (numericos < 3) return line;
+    let primero = true;
+    return toks.map((w) => {
+      if (!w.trim()) return w;
+      const esIndice = primero && /^[A-H][.):\-]?$/.test(w); // letra de apuesta (A, B, C…) al principio
+      primero = false;
+      if (esIndice) return w;
+      return /^[\dOQDILZSBG!]{1,2}[.,:;]?$/.test(w) && (/\d/.test(w) || numericos >= 4) ? fix(w) : w;
+    }).join("");
+  }).join("\n");
+  return s;
 }
 function ocrISO(y, m, d) {
   if (y < 100) y += 2000;
@@ -740,47 +762,67 @@ function ocrISO(y, m, d) {
   if (dt.getUTCMonth() !== m - 1) return null;
   return y + "-" + String(m).padStart(2, "0") + "-" + String(d).padStart(2, "0");
 }
+// cifra inicial 6, 8 o 9 leída en lugar de 0 cuando el valor no cabe en el rango (p. ej. "65" por "05")
+function ocrCero(x, max) { return x > max && x >= 60 && x % 10 >= 1 && [6, 8, 9].includes(Math.floor(x / 10)) && x % 10 <= max ? x % 10 : x; }
 function ocrFechas(T, hoy) {
   const out = [];
   let m;
-  T = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\s+\d{1,2}[:.]\d{2}\b/g, " "); // fecha y hora de venta
+  T = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\s+\d{1,2}[:.]\d{2}(?:[:.]\d{2})?\b/g, " "); // fecha y hora de venta
   const r1 = /\b(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})\b/g;
-  while ((m = r1.exec(T))) { const f = ocrISO(+m[3], +m[2], +m[1]); if (f) out.push(f); }
+  while ((m = r1.exec(T))) { const f = ocrISO(+m[3], ocrCero(+m[2], 12), ocrCero(+m[1], 31)); if (f) out.push(f); }
   const r2 = /\b(\d{1,2})\s*(?:DE\s+)?(ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEPT?|SET|OCT|NOV|DIC)[A-Z]*\.?\s*(?:DE\s+)?(\d{2,4})?/g;
   while ((m = r2.exec(T))) {
     const mes = OCR_MESES[m[2].slice(0, 3)];
-    let y = m[3] ? +m[3] : +hoy.slice(0, 4);
-    const f = ocrISO(y, mes, +m[1]); if (f) out.push(f);
+    const y = m[3] ? +m[3] : +hoy.slice(0, 4);
+    const f = ocrISO(y, mes, ocrCero(+m[1], 31)); if (f) out.push(f);
   }
   const lim0 = new Date(hoy + "T12:00:00").getTime() - 120 * 864e5, lim1 = new Date(hoy + "T12:00:00").getTime() + 400 * 864e5;
   return [...new Set(out)].filter((f) => { const t = new Date(f + "T12:00:00").getTime(); return t >= lim0 && t <= lim1; }).sort();
 }
-function ocrJuego(T) {
-  if (/EURO\s*MILL?ON|EUROMILL|MILLONES|EL\s*MILLON/.test(T)) return "euromillones";
+function ocrJuegoTexto(T) {
+  if (/EURO\s*MILL?ON|EUROMILL|EUROMI|MILLONES|EL\s*MILLON|ESTRELLAS/.test(T)) return "euromillones";
   if (/GORDO/.test(T) && /PRIMITIVA|CLAVE/.test(T)) return "elgordo";
-  if (/BONO\s*LOTO/.test(T)) return "bonoloto";
-  if (/PRIMITIVA|JOKER/.test(T)) return "primitiva";
+  if (/BONO\s*LOTO|BONOL/.test(T)) return "bonoloto";
+  if (/PRIMITIVA|PRIMIT|JOKER|J0KER/.test(T)) return "primitiva";
   if (/\bONCE\b|CUPON|CUPONAZO|SUELDAZO|ORGANIZACION NACIONAL DE CIEGOS/.test(T)) return "once";
   if (/LOTERIA\s*NACIONAL|DECIMO|FRACCION|BILLETE|SORTEO DEL (JUEVES|SABADO)/.test(T)) return "loteria_nacional";
   return null;
 }
+// Números de una línea: tokens de 1-2 cifras; los grupos pegados de 4-14 cifras pares se separan de dos en dos
+function ocrNumerosLinea(line) {
+  const out = [];
+  for (const tok of line.match(/\d+/g) || []) {
+    if (tok.length <= 2) out.push(+tok);
+    else if (tok.length % 2 === 0 && tok.length <= 14 && tok.length >= 4) for (let i = 0; i < tok.length; i += 2) out.push(+tok.slice(i, i + 2));
+    else out.push(-1); // número largo (código, importe, hora...)
+  }
+  return out;
+}
 function ocrApuestas(T, juego) {
-  const cfg = { euromillones: [5, 50], primitiva: [6, 49], bonoloto: [6, 49], elgordo: [5, 54] }[juego];
+  const cfg = OCR_CFG[juego];
   if (!cfg) return [];
   const [n, max] = cfg, out = [];
   for (let line of T.split("\n")) {
-    if (/JOKER|MILLON|REINTEGRO|CLAVE|PRECIO|EUR|TOTAL|SORTEO|FECHA|\d{2}[\/:]\d{2}/.test(line) && !/^\s*\d{1,2}\s*[.):\-]?\s*(\d{1,2}\D+){4,}/.test(line)) continue;
-    line = line.replace(/^\s*\d{1,2}\s*[.):\-]\s*/, " ");
-    const toks = (line.match(/\b\d{1,2}\b/g) || []).map(Number);
+    if (/JOKER|MILLON|REINTEGRO|CLAVE|PRECIO|IMPORTE|EUR|TOTAL|FECHA|HORA|\d{1,2}[:]\d{2}|\d{1,2}\/\d{1,2}\/\d{2}/.test(line)) continue;
+    // índice de apuesta al principio: "1.", "1:", "1)", "A:", "1A", "A1"
+    line = line.replace(/^\s*(?:\d{1,2}\s*[A-H]?|[A-H]\s*\d?)\s*[.):\-]\s*/, " ").replace(/^\s*[A-H]\s+(?=\d)/, " ");
+    let toks = ocrNumerosLinea(line).filter((x) => x !== -1).map((x) => ocrCero(x, max));
     if (toks.length < n) continue;
-    let nums = toks.slice(0, n), rest = toks.slice(n);
-    // si hay un índice de apuesta delante (n+1 o n+3 números en Euromillones), quítalo
-    if (juego === "euromillones" && toks.length === 8) { nums = toks.slice(1, 6); rest = toks.slice(6); }
-    if (juego !== "euromillones" && toks.length === n + 1 && toks[0] <= 8 && toks[0] < toks[1]) { nums = toks.slice(1); rest = []; }
+    let nums, rest;
+    if (juego === "euromillones") {
+      // 5 números + 2 estrellas; si sobra uno delante, es el índice
+      const off = toks.length >= 8 && toks[0] <= 10 ? 1 : 0;
+      nums = toks.slice(off, off + 5); rest = toks.slice(off + 5);
+    } else {
+      const off = toks.length === n + 1 && toks[0] <= 10 && toks[0] < toks[1] ? 1 : 0;
+      nums = toks.slice(off, off + n); rest = toks.slice(off + n);
+      // apuestas múltiples: hasta 11 números (Primitiva) en la misma línea
+      if (rest.length && rest.length <= 5 && rest.every((x) => x >= 1 && x <= max && !nums.includes(x))) { nums = nums.concat(rest); rest = []; }
+    }
     if (nums.some((x) => x < 1 || x > max) || new Set(nums).size !== nums.length) continue;
     const ap = { numeros: nums.slice().sort((a, b) => a - b), estrellas: [] };
     if (juego === "euromillones") {
-      const st = rest.filter((x) => x >= 1 && x <= 12).slice(0, 2);
+      const st = rest.map((x) => ocrCero(x, 12)).filter((x) => x >= 1 && x <= 12).slice(0, 2);
       if (st.length < 2 || st[0] === st[1]) continue;
       ap.estrellas = st.sort((a, b) => a - b);
     }
@@ -788,11 +830,24 @@ function ocrApuestas(T, juego) {
   }
   return out;
 }
+// Si el logotipo no se lee, se deduce el juego por la forma de las apuestas
+function ocrJuegoEstructura(T) {
+  const em = ocrApuestas(T, "euromillones").length, pr = ocrApuestas(T, "primitiva").length, go = ocrApuestas(T, "elgordo").length;
+  if (pr && pr >= em) return "primitiva";
+  if (em) return "euromillones";
+  if (go) return "elgordo";
+  if (/SERIE/.test(T) && /(?<!\d)\d{5}(?!\d)/.test(T)) return /FRACC/.test(T) ? "loteria_nacional" : "once";
+  return null;
+}
 function ocrBoleto(texto, hoy) {
   const T = ocrNormaliza(texto);
-  const juego = ocrJuego(T);
   const dudas = ["Leído con reconocimiento de texto gratuito: comprueba los números con el boleto antes de fiarte del resultado."];
-  if (!juego) return { boletos: [], motivo: "No se reconoce el tipo de juego en la foto." };
+  let juego = ocrJuegoTexto(T);
+  if (!juego) {
+    juego = ocrJuegoEstructura(T);
+    if (juego) dudas.push("No se ha leído el nombre del juego: revisa que sea " + { primitiva: "La Primitiva (o Bonoloto)", euromillones: "Euromillones", elgordo: "El Gordo", loteria_nacional: "Lotería Nacional", once: "un cupón de la ONCE" }[juego] + ".");
+  }
+  if (!juego) return { boletos: [], motivo: "No se ha reconocido ni el juego ni los números en la foto.", texto: T };
   const b = { juego, fechas: [], apuestas: [], reintegro: null, joker: null, millon: null, numero: null, serie: null, fraccion: null, dudas };
   let fechas = ocrFechas(T, hoy);
   const dias = OCR_DIAS_SORTEO[juego];
@@ -804,7 +859,7 @@ function ocrBoleto(texto, hoy) {
   let m;
   if (juego === "loteria_nacional" || juego === "once") {
     const sinFechas = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g, " ");
-    const cands = (sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || []);
+    const cands = (sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || []).filter((c) => !/^20\d\d\d$/.test(c) || true);
     const freq = {}; for (const c of cands) freq[c] = (freq[c] || 0) + 1;
     const best = Object.keys(freq).sort((a, c) => freq[c] - freq[a])[0];
     if (best) b.numero = best; else dudas.push("No se ha leído el número de 5 cifras: escríbelo.");
@@ -815,48 +870,96 @@ function ocrBoleto(texto, hoy) {
   }
   b.apuestas = ocrApuestas(T, juego);
   if (!b.apuestas.length) dudas.push("No se han podido leer las apuestas: escríbelas.");
-  if ((m = T.match(/(?:REINTEGRO|\bREINT\b|\bR\s*[:.=])\D{0,4}(\d)\b/))) b.reintegro = +m[1];
+  else dudas.push("Se han leído " + b.apuestas.length + (b.apuestas.length > 1 ? " apuestas" : " apuesta") + ": comprueba que no falta ninguna.");
+  if ((m = T.match(/(?:REINTEGRO|REINT\.?|\bR\s*[:.=])\s*[:.=]?\s*(\d)\b/) || T.match(/^\s*R\s+(\d)\s*$/m))) b.reintegro = +m[1];
   if (juego === "elgordo" && (m = T.match(/(?:N[º°O.]?\s*)?CLAVE\D{0,6}(\d)\b/))) b.reintegro = +m[1];
-  if (juego === "primitiva" && (m = T.match(/JOKER\D{0,12}((?:\d\s?){7})/))) b.joker = m[1].replace(/\s/g, "");
+  if (juego === "primitiva" && (m = T.match(/J[O0]KER\D{0,12}((?:\d\s?){7})/))) b.joker = m[1].replace(/\s/g, "");
   if (juego === "euromillones" && (m = T.match(/\b([A-Z]{3})\s?(\d{5})\b/))) b.millon = m[1] + m[2];
+  if (juego !== "euromillones" && b.reintegro === null) dudas.push("No se ha leído el reintegro: escríbelo.");
   return { boletos: [b] };
 }
 /*OCR-END*/
 let ocrWorker = null;
 function cargarScript(src) { return new Promise((res, rej) => { const sc = document.createElement("script"); sc.src = src; sc.onload = res; sc.onerror = () => rej(new Error("No se pudo descargar " + src)); document.head.append(sc); }); }
-async function prepararOCR(file) {
+async function prepararOCR(file, modo, giro) {
   const bmp = await createImageBitmap(file);
-  const s = Math.min(1, 2000 / Math.max(bmp.width, bmp.height));
-  const c = document.createElement("canvas"); c.width = Math.round(bmp.width * s); c.height = Math.round(bmp.height * s);
-  const g = c.getContext("2d"); g.drawImage(bmp, 0, 0, c.width, c.height);
-  const im = g.getImageData(0, 0, c.width, c.height), d = im.data;
+  const lado = Math.max(bmp.width, bmp.height);
+  const s = Math.min(2.5, Math.max(1, 1800 / lado)) * Math.min(1, 2600 / lado) || 1;
+  const w = Math.round(bmp.width * s), h = Math.round(bmp.height * s);
+  const c = document.createElement("canvas");
+  const rot = giro === 90 || giro === 270;
+  c.width = rot ? h : w; c.height = rot ? w : h;
+  const g = c.getContext("2d");
+  g.translate(c.width / 2, c.height / 2); g.rotate((giro || 0) * Math.PI / 180); g.drawImage(bmp, -w / 2, -h / 2, w, h); g.setTransform(1, 0, 0, 1, 0, 0);
+  const im = g.getImageData(0, 0, c.width, c.height), d = im.data, n = d.length / 4;
+  const y = new Uint8ClampedArray(n);
   let min = 255, max = 0;
-  for (let i = 0; i < d.length; i += 4) { const y = 0.299 * d[i] + 0.587 * d[i + 1] + 0.114 * d[i + 2]; d[i] = y; if (y < min) min = y; if (y > max) max = y; }
+  for (let i = 0; i < n; i++) { const v = 0.299 * d[i * 4] + 0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]; y[i] = v; if (v < min) min = v; if (v > max) max = v; }
   const k = 255 / Math.max(1, max - min);
-  for (let i = 0; i < d.length; i += 4) { const v = (d[i] - min) * k; d[i] = d[i + 1] = d[i + 2] = v; }
+  for (let i = 0; i < n; i++) y[i] = (y[i] - min) * k;
+  if (modo === "bin") {
+    // umbral adaptativo (media local) para papel térmico con sombras
+    const W = c.width, H = c.height, R = Math.max(8, Math.round(Math.min(W, H) / 40));
+    const integ = new Float64Array((W + 1) * (H + 1));
+    for (let yy = 0; yy < H; yy++) { let fila = 0; for (let xx = 0; xx < W; xx++) { fila += y[yy * W + xx]; integ[(yy + 1) * (W + 1) + xx + 1] = integ[yy * (W + 1) + xx + 1] + fila; } }
+    for (let yy = 0; yy < H; yy++) for (let xx = 0; xx < W; xx++) {
+      const x0 = Math.max(0, xx - R), x1 = Math.min(W, xx + R + 1), y0 = Math.max(0, yy - R), y1 = Math.min(H, yy + R + 1);
+      const sum = integ[y1 * (W + 1) + x1] - integ[y0 * (W + 1) + x1] - integ[y1 * (W + 1) + x0] + integ[y0 * (W + 1) + x0];
+      const media = sum / ((x1 - x0) * (y1 - y0));
+      y[yy * W + xx] = y[yy * W + xx] < media - 12 ? 0 : 255;
+    }
+  }
+  for (let i = 0; i < n; i++) { d[i * 4] = d[i * 4 + 1] = d[i * 4 + 2] = y[i]; }
   g.putImageData(im, 0, 0);
   return c;
+}
+function puntuacionOCR(res) {
+  const b = res.boletos[0];
+  if (!b) return 0;
+  return 10 + (b.apuestas || []).length * 10 + (b.numero ? 10 : 0) + (b.fechas || []).length * 3 + (b.reintegro != null ? 2 : 0) + (b.joker ? 2 : 0) - (b.dudas || []).length;
 }
 async function leerConOCR(file, progreso) {
   if (!window.Tesseract) await cargarScript("https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js");
   if (!ocrWorker) {
     progreso("Preparando lector…");
-    ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text") progreso("Leyendo " + Math.round(m.progress * 100) + " %"); } });
+    ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
   }
-  const img = await prepararOCR(file);
-  await ocrWorker.setParameters({ tessedit_pageseg_mode: "3", tessedit_char_whitelist: "" });
-  const { data } = await ocrWorker.recognize(img);
-  const res = ocrBoleto(data.text, hoyISO());
-  const b = res.boletos[0];
+  const pasadas = [["gris", 0, "3"], ["bin", 0, "6"], ["bin", 0, "11"], ["gris", 90, "3"], ["gris", 270, "3"]];
+  let mejor = null, mejorP = -1, textos = [];
+  for (let i = 0; i < pasadas.length; i++) {
+    const [modoImg, giro, psm] = pasadas[i];
+    ocrWorker._paso = "Lectura " + (i + 1) + "/" + pasadas.length;
+    progreso(ocrWorker._paso);
+    const img = await prepararOCR(file, modoImg, giro);
+    await ocrWorker.setParameters({ tessedit_pageseg_mode: psm, tessedit_char_whitelist: "" });
+    const { data } = await ocrWorker.recognize(img);
+    textos.push(data.text);
+    const res = ocrBoleto(data.text, hoyISO());
+    const p = puntuacionOCR(res);
+    if (p > mejorP) { mejor = res; mejorP = p; }
+    const b = res.boletos[0];
+    // suficiente: juego leído y apuestas o número encontrados
+    if (b && !b.dudas.some((x) => /nombre del juego|No se han podido|5 cifras|fecha/.test(x)) && ((b.apuestas || []).length || b.numero)) break;
+    if (i === 2 && mejor.boletos.length) break; // los giros solo si no se ha leído nada
+  }
+  // como último recurso, combinar todos los textos
+  if (!mejor.boletos.length || !((mejor.boletos[0].apuestas || []).length || mejor.boletos[0].numero)) {
+    const comb = ocrBoleto(textos.join("\n"), hoyISO());
+    if (puntuacionOCR(comb) > mejorP) mejor = comb;
+  }
+  const b = mejor.boletos[0];
   if (b && (b.juego === "loteria_nacional" || b.juego === "once") && !b.numero) {
-    progreso("Buscando el número…");
+    ocrWorker._paso = "Buscando el número";
+    const img = await prepararOCR(file, "gris", 0);
     await ocrWorker.setParameters({ tessedit_pageseg_mode: "11", tessedit_char_whitelist: "0123456789" });
     const r2 = await ocrWorker.recognize(img);
     const lineas = r2.data.text.split("\n").map((x) => x.trim()).filter((x) => /^\d{5}$/.test(x) && !/20\d\d$/.test(x));
     if (lineas.length) { b.numero = lineas[0]; b.dudas = b.dudas.filter((x) => !/5 cifras/.test(x)); }
   }
-  return res;
+  mejor.textoLeido = textos.join("\n----\n").slice(0, 4000);
+  return mejor;
 }
+
 $("btnRecargar").onclick = () => cargarResultadosWeb(true);
 $("btnNotif").onclick = async () => {
   try { const p = await Notification.requestPermission(); $("stKey").textContent = p === "granted" ? "Avisos del navegador activados (con la app abierta)." : "El navegador no ha permitido los avisos."; }
@@ -1066,10 +1169,13 @@ function construirTarjeta(t) {
   if (openIds.has(t.id)) more.open = true;
   const art = el("article", { class: "tk g-" + t.juego, "aria-label": JUEGOS[t.juego].nombre },
     el("div", { class: "tk-head" },
-      t.thumb ? el("img", { class: "tk-thumb", src: t.thumb, alt: "" }) : null,
+      t.thumb ? el("button", { class: "tk-thumb-btn", "aria-label": "Ver la foto del boleto", onclick: (e) => { const f = e.currentTarget.closest(".tk").querySelector(".tk-foto"); if (f) f.hidden = !f.hidden; } }, el("img", { class: "tk-thumb", src: t.thumb, alt: "" })) : null,
       el("span", { class: "gm", text: JUEGOS[t.juego].nombre }),
       el("div", { class: "dates" }, (t.fechas || []).map((f) => el("span", { class: "chip", text: fechaCorta(f) }))),
       t.ejemplo ? el("span", { class: "tag ex", text: "Ejemplo" }) : null, pill),
+    t.thumb ? el("div", { class: "tk-foto", hidden: openIds.has(t.id) && t.dudas && t.dudas.length > 1 ? null : "hidden" }, el("img", { src: t.thumb, alt: "Foto del boleto" })) : null,
+    !t.ejemplo && t.dudas && t.dudas.length ? el("div", { class: "tk-dudas" }, el("ul", {}, t.dudas.map((d) => el("li", { text: d }))),
+      el("button", { class: "small", onclick: () => { t.dudas = []; cambiado(t, true); } }, "Revisado, quitar avisos")) : null,
     vis, est, more);
   if (t.ejemplo) art.classList.add("is-ej");
   return { art, vis, est, pill, res, info };
@@ -1195,9 +1301,9 @@ async function prepararImagen(file) {
 }
 async function miniatura(file) {
   try {
-    const bmp = await createImageBitmap(file); const s = 160 / Math.max(bmp.width, bmp.height);
+    const bmp = await createImageBitmap(file); const s = Math.min(1, (modo === "local" ? 1000 : 160) / Math.max(bmp.width, bmp.height));
     const c = document.createElement("canvas"); c.width = Math.max(1, Math.round(bmp.width * s)); c.height = Math.max(1, Math.round(bmp.height * s));
-    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", 0.7);
+    c.getContext("2d").drawImage(bmp, 0, 0, c.width, c.height); return c.toDataURL("image/jpeg", modo === "local" ? 0.6 : 0.7);
   } catch (_) { return null; }
 }
 
@@ -1256,6 +1362,13 @@ $("btnLeer").onclick = async () => {
           r = await iaJSON(promptBoleto(), { images: [img], signal: ctlLeer.signal });
         }
         const bs = (r && Array.isArray(r.boletos) ? r.boletos : []).filter((b) => b && JUEGOS[b.juego]);
+        if (!bs.length && modo === "local") {
+          const th0 = await miniatura(q.file);
+          const t0 = normalizarTicket({ juego: "primitiva", fechas: [], apuestas: [{ numeros: [], estrellas: [] }], dudas: ["No se ha podido leer la foto: elige el juego y escribe los números mirando la foto (arriba a la izquierda). También puedes repetir la foto más cerca, recta y con buena luz."] }, th0);
+          t0.textoLeido = r && r.textoLeido ? r.textoLeido : "";
+          anadirBoletos([t0]); leidos++;
+          q.estado = "hecho"; q.msg = "Completar a mano"; renderQueue(); continue;
+        }
         if (!bs.length) { q.estado = "error"; q.msg = "No reconocido"; manejarError(new Error("No se reconoce ningún boleto" + (r && r.motivo ? ": " + r.motivo : "")), "Leer foto " + (q.file.name || ""), "Haz otra foto más cerca, con luz y sin reflejos, o escríbelo a mano."); continue; }
         const th = await miniatura(q.file);
         const nuevos = bs.map((b) => normalizarTicket(b, th));
