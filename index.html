@@ -366,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-10-31 · 13:15</span>
+    <span class="mono">Versió 2026-10-31 · 13:30</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -1518,10 +1518,37 @@ function anadirBoletos(arr) {
 function anadirFotos(files) {
   for (const f of files) {
     if (!f) continue;
-    if (!/^image\//.test(f.type)) { manejarError(new Error("Fitxer no vàlid: " + (f.name || f.type)), "Afegir fotos", "Tria fotos en JPG, PNG o WebP."); continue; }
-    let url = ""; try { url = URL.createObjectURL(f); } catch (_) {}
-    queue.push({ id: nuevoId(), file: f, url, estado: "espera", msg: "En espera" });
+    const nom = f.name || "foto";
+    if (f.type && !/^image\//.test(f.type)) { manejarError(new Error("Fitxer no vàlid: " + (nom || f.type)), "Afegir fotos", "Tria fotos en JPG, PNG o WebP."); continue; }
+    const q = { id: nuevoId(), file: f, nombre: nom, url: "", estado: "copiant", msg: "Preparant…" };
+    queue.push(q);
+    copiarFoto(q, f);
   }
+  renderQueue();
+}
+// Còpia a la memòria en el moment de triar la foto: alguns mòbils (Android, Google Fotos)
+// només deixen llegir el fitxer original durant una estona.
+async function copiarFoto(q, f) {
+  try {
+    const buf = await f.arrayBuffer();
+    q.file = new Blob([buf], { type: f.type || "image/jpeg" });
+  } catch (e1) {
+    try {
+      // segon intent: a través de la imatge que el navegador sí que pot mostrar
+      const url0 = URL.createObjectURL(f);
+      const im = await new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = url0; });
+      const c = document.createElement("canvas"); c.width = im.naturalWidth; c.height = im.naturalHeight;
+      c.getContext("2d").drawImage(im, 0, 0);
+      q.file = await new Promise((res, rej) => c.toBlob((b) => (b ? res(b) : rej(new Error("no"))), "image/jpeg", 0.95));
+      URL.revokeObjectURL(url0);
+    } catch (e2) {
+      q.estado = "error"; q.msg = "No es pot llegir aquesta foto";
+      manejarError(new Error("El mòbil no deixa llegir la foto «" + q.nombre + "» (" + ((e1 && e1.message) || e1) + ")"), "Afegir fotos", "Treu-la amb la ×, i torna-la a triar des de la galeria o la càmera. Si és una foto de Google Fotos al núvol, fes-ne abans una captura de pantalla o baixa-la al mòbil.");
+      renderQueue(); return;
+    }
+  }
+  try { q.url = URL.createObjectURL(q.file); } catch (_) {}
+  q.estado = "espera"; q.msg = "En espera";
   renderQueue();
 }
 function renderQueue() {
@@ -1629,7 +1656,7 @@ $("btnLeer").onclick = async () => {
           anadirBoletos([t0]); leidos++;
           q.estado = "hecho"; q.msg = "Completar a mà"; renderQueue(); continue;
         }
-        if (!bs.length) { q.estado = "error"; q.msg = "No reconeguda"; manejarError(new Error("No es reconeix cap butlleta" + (r && r.motivo ? ": " + r.motivo : "")), "Llegir la foto " + (q.file.name || ""), "Fes una altra foto més a prop, amb llum i sense reflexos, o escriu-la a mà."); continue; }
+        if (!bs.length) { q.estado = "error"; q.msg = "No reconeguda"; manejarError(new Error("No es reconeix cap butlleta" + (r && r.motivo ? ": " + r.motivo : "")), "Llegir la foto " + (q.nombre || ""), "Fes una altra foto més a prop, amb llum i sense reflexos, o escriu-la a mà."); continue; }
         const th = await miniatura(q.file);
         const nuevos = bs.map((b) => normalizarTicket(b, th));
         anadirBoletos(nuevos); leidos += nuevos.length;
