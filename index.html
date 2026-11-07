@@ -276,6 +276,16 @@ a{color:var(--accent)}
 .grupo-res li .v{font-family:var(--f-mono);font-weight:700;color:var(--ok);white-space:nowrap}
 .grupo-res li.nada{color:var(--muted)} .grupo-res li.pend{color:var(--warn)}
 .grupo-body{display:flex;flex-direction:column;gap:12px;padding:0 10px 12px}
+.seccio{margin:4px 2px 0;font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.seccio-fets{border:1px dashed var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 55%,transparent)}
+.seccio-fets>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.seccio-fets>summary::-webkit-details-marker{display:none}
+.seccio-fets>summary .gm{font-family:var(--f-display);font-stretch:118%;font-weight:800;font-size:17px}
+.seccio-fets>summary .cnt{font:600 12px var(--f-mono);color:var(--muted)}
+.seccio-fets>summary .tot{margin-left:auto;font:700 15px var(--f-mono)} .seccio-fets>summary .tot.win{color:var(--ok)}
+.seccio-fets>summary .flecha{font:600 12px var(--f-mono);color:var(--muted)}
+.seccio-fets[open]>summary .flecha-t{display:none} .seccio-fets:not([open])>summary .flecha-o{display:none}
+.seccio-body{display:flex;flex-direction:column;gap:12px;padding:0 8px 10px}
 </style>
 
 <div class="wrap">
@@ -366,7 +376,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-11-07 · 12:20</span>
+    <span class="mono">Versió 2026-11-07 · 23:55</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -1512,18 +1522,26 @@ function refrescarTarjeta(t) {
   c.res.replaceChildren(...vistaResultados(t, info));
   const rv = c.art.querySelector(".tk-revisar"); if (rv && t.revisar) rv.replaceWith(panelRevision(t));
   const g = c.art.closest(".grupo");
-  if (g) { const del = lista().filter((x) => x.juego === t.juego); const { items, total } = resumenGrupo(del); g.querySelector(".grupo-res").replaceChildren(...items); const tt = g.querySelector(".tot"); tt.textContent = total > 0 ? eur(total) : ""; tt.className = "tot" + (total > 0 ? " win" : ""); }
+  if (g) { const del = lista().filter((x) => claveGrupo(x) === g.dataset.k); const { items, total } = resumenGrupo(del); g.querySelector(".grupo-res").replaceChildren(...items); const tt = g.querySelector(".tot"); tt.textContent = total > 0 ? eur(total) : ""; tt.className = "tot" + (total > 0 ? " win" : ""); }
   c.info = info;
 }
 function lista() { return tickets; }
-const GRUPOS_KEY = "cb.gruposAbiertos";
-let gruposAbiertos = null;
-function grupoAbierto(j, lista) {
-  if (gruposAbiertos === null) { try { gruposAbiertos = new Set(JSON.parse(localStorage.getItem(GRUPOS_KEY) || "[]")); } catch (_) { gruposAbiertos = new Set(); } }
-  // abierto si la persona lo dejó abierto o si hay algo pendiente de revisar
-  return gruposAbiertos.has(j) || lista.some((t) => t.revisar);
+// Grups: primer els sortejos pendents i després els ja sortejats, cadascun per sorteig (joc + data), del més recent al més antic
+const GRUPOS_KEY = "cb.grupsEstat";
+let grupsEstat = null;
+function estatGrups() { if (grupsEstat === null) { try { grupsEstat = JSON.parse(localStorage.getItem(GRUPOS_KEY) || "{}") || {}; } catch (_) { grupsEstat = {}; } } return grupsEstat; }
+function guardarGrupos() { try { localStorage.setItem(GRUPOS_KEY, JSON.stringify(grupsEstat || {})); } catch (_) {} }
+// obert segons el que hagi deixat la persona; si no, el valor per defecte. Sempre obert si cal revisar alguna butlleta
+function grupoAbierto(k, lista, perDefecte) { const e = estatGrups(); return lista.some((t) => t.revisar) || (k in e ? !!e[k] : perDefecte); }
+function recordarGrup(k, obert) { estatGrups()[k] = obert; guardarGrupos(); }
+function esPendent(t) { const info = cards.get(t.id)?.info || estadoBoleto(t); return !(t.fechas || []).length || info.futuros.length > 0 || info.faltan.length > 0; }
+function dataClau(t) {
+  const f = (t.fechas || []).slice().sort();
+  if (!f.length) return "9999-99-99";
+  if (esPendent(t)) { const info = cards.get(t.id)?.info || estadoBoleto(t); const p = info.futuros.concat(info.faltan).sort(); return p.length ? p[0] : f[f.length - 1]; }
+  return f[f.length - 1];
 }
-function guardarGrupos() { try { localStorage.setItem(GRUPOS_KEY, JSON.stringify([...gruposAbiertos])); } catch (_) {} }
+function claveGrupo(t) { return (esPendent(t) ? "p:" : "s:") + t.juego + "_" + dataClau(t); }
 // resumen plegado: solo premios (apuesta, categoría, importe) y lo pendiente
 function resumenGrupo(lista) {
   const items = []; let total = 0, pend = 0;
@@ -1550,21 +1568,41 @@ function renderTodo() {
     if (prev && act && prev.art.contains(act) && prev.juego === t.juego) { refrescarTarjeta(t); return prev.art; }
     const c = construirTarjeta(t); c.juego = t.juego; cards.set(t.id, c); return c.art;
   };
-  const nodes = [];
-  for (const j of Object.keys(JUEGOS)) {
-    const del = L.filter((t) => t.juego === j);
-    if (!del.length) continue;
-    const arts = del.map(tarjeta);
+  const ordreJoc = Object.keys(JUEGOS);
+  const grups = new Map();
+  for (const t of L) { const k = claveGrupo(t); if (!grups.has(k)) grups.set(k, []); grups.get(k).push(t); }
+  const claus = [...grups.keys()].sort((a, b) => {
+    const [, ja, fa] = a.match(/^.:(.+)_(.+)$/), [, jb, fb] = b.match(/^.:(.+)_(.+)$/);
+    return fb.localeCompare(fa) || ordreJoc.indexOf(ja) - ordreJoc.indexOf(jb);
+  });
+  const fesGrup = (k, perDefecte) => {
+    const del = grups.get(k), j = del[0].juego, f = k.slice(k.lastIndexOf("_") + 1);
     const { items, total } = resumenGrupo(del);
-    const det = el("details", { class: "grupo g-" + j, ontoggle: (e) => { if (e.target.open) gruposAbiertos.add(j); else gruposAbiertos.delete(j); guardarGrupos(); } },
+    const det = el("details", { class: "grupo g-" + j, "data-k": k, ontoggle: (e) => { if (e.target === det) recordarGrup(k, det.open); } },
       el("summary", {},
-        el("div", { class: "grupo-h" }, el("span", { class: "gm", text: JUEGOS[j].nombre }), el("span", { class: "cnt", text: del.length + (del.length > 1 ? " butlletes" : " butlleta") }),
+        el("div", { class: "grupo-h" }, el("span", { class: "gm", text: JUEGOS[j].nombre }), el("span", { class: "cnt", text: (f === "9999-99-99" ? "sense data" : fechaCorta(f)) + " · " + del.length + (del.length > 1 ? " butlletes" : " butlleta") }),
           el("span", { class: "tot" + (total > 0 ? " win" : ""), text: total > 0 ? eur(total) : "" }),
           el("span", { class: "flecha" }, el("span", { class: "flecha-t", text: "Veure ▾" }), el("span", { class: "flecha-o", text: "Plegar ▴" }))),
         el("ul", { class: "grupo-res" }, items)),
-      el("div", { class: "grupo-body" }, arts));
-    if (grupoAbierto(j, del)) det.open = true;
-    nodes.push(det);
+      el("div", { class: "grupo-body" }, del.map(tarjeta)));
+    if (grupoAbierto(k, del, perDefecte)) det.open = true;
+    return det;
+  };
+  const nodes = [];
+  const pend = claus.filter((k) => k.startsWith("p:")), fets = claus.filter((k) => k.startsWith("s:"));
+  if (pend.length) nodes.push(el("h3", { class: "seccio", text: "Pendents de sorteig o de resultat" }), ...pend.map((k) => fesGrup(k, true)));
+  if (fets.length) {
+    const delFets = fets.flatMap((k) => grups.get(k));
+    const totalFets = delFets.reduce((a, t) => a + (cards.get(t.id)?.info || estadoBoleto(t)).T.bruto, 0);
+    const premiats = delFets.filter((t) => (cards.get(t.id)?.info || estadoBoleto(t)).T.bruto > 0).length;
+    const sec = el("details", { class: "seccio-fets", ontoggle: (e) => { if (e.target === sec) recordarGrup("sec:fets", sec.open); } },
+      el("summary", {}, el("span", { class: "gm", text: "Ja sortejats" }),
+        el("span", { class: "cnt", text: fets.length + (fets.length > 1 ? " sortejos · " : " sorteig · ") + delFets.length + (delFets.length > 1 ? " butlletes" : " butlleta") + (premiats ? " · " + premiats + " premiada" + (premiats > 1 ? "es" : "") : "") }),
+        el("span", { class: "tot" + (totalFets > 0 ? " win" : ""), text: totalFets > 0 ? eur(totalFets) : "" }),
+        el("span", { class: "flecha" }, el("span", { class: "flecha-t", text: "Veure ▾" }), el("span", { class: "flecha-o", text: "Plegar ▴" }))),
+      el("div", { class: "seccio-body" }, fets.map((k) => fesGrup(k, false))));
+    if (grupoAbierto("sec:fets", delFets, false)) sec.open = true;
+    nodes.push(sec);
   }
   if (!L.length && !(ticketsReady || !db)) nodes.push(el("p", { class: "status" }, el("span", { class: "spin" }), "Carregant les teves butlletes…"));
   else if (!L.length) nodes.push(el("div", { class: "vacio" },
