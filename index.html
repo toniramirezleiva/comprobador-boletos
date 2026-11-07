@@ -366,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-10-31 · 23:15</span>
+    <span class="mono">Versió 2026-11-07 · 11:30</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -862,7 +862,7 @@ function ocrJuegoTexto(T) {
   if (/GORDO/.test(T) && /PRIMITIVA|CLAVE/.test(T)) return "elgordo";
   if (/BONO\s*LOTO|BONOL/.test(T)) return "bonoloto";
   if (/PRIMITIVA|PRIMIT|JOKER|J0KER/.test(T)) return "primitiva";
-  if (/\bONCE\b|CUPON|CUPONAZO|SUELDAZO|ORGANIZACION NACIONAL DE CIEGOS/.test(T)) return "once";
+  if (/[O0]NCE\b|CUPON|CUPONAZO|SUELDAZO|ORGANIZACION NACIONAL DE CIEGOS|11 DEL 11|\d PREMIOS DE 1\.000\.000/.test(T)) return "once";
   if (/LOTERIA\s*NACIONAL|DECIMO|FRACCION|BILLETE|SORTEO DEL (JUEVES|SABADO)/.test(T)) return "loteria_nacional";
   return null;
 }
@@ -926,6 +926,66 @@ function ocrJuegoEstructura(T) {
   if (/SERIE/.test(T) && /(?<!\d)\d{5}(?!\d)/.test(T)) return /FRACC/.test(T) ? "loteria_nacional" : "once";
   return null;
 }
+// Serie: junto al número ("050 20174", "05020174"), delante de la palabra SERIE ("050 / SERIE") o detrás ("SERIE 4ª")
+function ocrSerie(T, numero, juego) {
+  const c = [];
+  let m;
+  if (numero) {
+    const r = new RegExp("(?<![\\d.,])(\\d{1,3})[ \\t]{0,3}" + numero + "(?!\\d)", "g");
+    while ((m = r.exec(T))) c.push({ v: m[1], p: 3 });
+  }
+  if ((m = T.match(/SERIE\s*[:=]\s*(\d{1,3})(?![\d.,])/))) c.push({ v: m[1], p: 2.6 });
+  if ((m = T.match(/SERIE[ \t.]{0,3}(\d{1,3})(?![\d.,])/))) c.push({ v: m[1], p: 2.4 });
+  if ((m = T.match(/(?<![\d.,])(\d{1,3})\s*[ªº°]\s*SERIE/))) c.push({ v: m[1], p: 2.5 });
+  // grups d'1 a 3 xifres a prop de la paraula SERIE (davant o darrere); el lector hi afegeix soroll («1», «6€»…)
+  const r2 = /SERIE/g;
+  while ((m = r2.exec(T))) {
+    const abans = T.slice(Math.max(0, m.index - 40), m.index), despres = T.slice(m.index + 5, m.index + 45);
+    const grups = (txt) => [...txt.matchAll(/(?<![\d.,])(\d{1,3})(?![\d.,])\s*([ªº°€“"]|E\b|EUR)?/g)].filter((g) => !/[€“"E]/.test(g[2] || "")).map((g) => g[1]);
+    grups(abans).reverse().forEach((v, i) => c.push({ v, p: 2 - i * 0.01 }));
+    grups(despres).forEach((v, i) => c.push({ v, p: 1 - i * 0.01 }));
+  }
+  let ok = c.filter((x) => +x.v >= 1 && +x.v <= 999);
+  // la ONCE imprime siempre la serie con 3 cifras (050)
+  if (juego === "once" && ok.some((x) => x.v.length === 3)) ok = ok.filter((x) => x.v.length === 3 || x.p === 3);
+  else if (juego === "once") ok = ok.filter((x) => x.p === 3 || x.v.length >= 2);
+  ok.sort((a, b) => b.p - a.p);
+  return ok.length ? +ok[0].v : null;
+}
+function ocrFraccion(T) {
+  const m = T.match(/FRACC?I?O?N?\s*[:=]\s*(\d{1,2})(?![\d.,])/) || T.match(/(?<![\d.,])(\d{1,2})\s*[ªº°]\s*FRACC/) || T.match(/FRACC?I?O?N?[^\dA-Z]{0,8}(\d{1,2})(?![\d.,])/) || T.match(/(?<![\d.,])(\d{1,2})[^\dA-Z]{0,8}FRACC/);
+  return m && +m[1] >= 1 && +m[1] <= 20 ? +m[1] : null;
+}
+function ocrDecimos(T) {
+  const m = T.match(/(?<![\d.,])(\d{1,3})\s*DECIMOS\b/) || T.match(/DECIMOS\s*[:=]\s*(\d{1,3})(?!\d)/);
+  return m && +m[1] >= 1 && +m[1] <= 100 ? +m[1] : null;
+}
+// Tipo de sorteo (diario, Cuponazo, extraordinario…): por el texto del boleto y, si no, por la fecha
+function ocrSorteig(T, juego, fecha) {
+  const md = fecha ? fecha.slice(5) : "", dow = fecha ? new Date(fecha + "T12:00:00").getDay() : -1;
+  if (juego === "once") {
+    if (/11 DEL 11/.test(T) || md === "11-11" || (/11\.000\.000/.test(T) && /11 PREMIOS/.test(T))) return "Extraordinari de l'11 de l'11";
+    if (/VERANO/.test(T)) return "Extraordinari d'Estiu";
+    if (/NAVIDAD|NADAL/.test(T)) return "Extraordinari de Nadal";
+    if (/REYES/.test(T)) return "Extraordinari de Reis";
+    if (/EXTRA/.test(T)) return "Sorteig extraordinari";
+    if (/CUPONAZO/.test(T)) return "Cuponazo";
+    if (/SUELDAZO|FIN DE SEMANA/.test(T)) return "Sueldazo de cap de setmana";
+    if (dow === 5) return "Cuponazo";
+    if (dow === 6 || dow === 0) return "Sueldazo de cap de setmana";
+    if (dow >= 1) return "Cupó diari";
+    return null;
+  }
+  if (juego === "loteria_nacional") {
+    if (/NAVIDAD/.test(T) || md === "12-22") return "Sorteig de Nadal";
+    if (/\bNI[NÑ]O\b/.test(T) || md === "01-06") return "Sorteig del Nen";
+    if (/EXTRAORDINARIO/.test(T)) return "Sorteig extraordinari";
+    if (dow === 4) return "Sorteig de dijous";
+    if (dow === 6) return "Sorteig de dissabte";
+    return null;
+  }
+  return null;
+}
 function ocrBoleto(texto, hoy) {
   const T = ocrNormaliza(texto);
   const dudas = ["Llegit amb reconeixement de text gratuït: comprova els números amb la butlleta abans de fiar-te del resultat."];
@@ -936,7 +996,7 @@ function ocrBoleto(texto, hoy) {
     if (juego) dudas.push("No s'ha llegit el nom del joc: revisa que sigui " + { primitiva: "La Primitiva (o Bonoloto)", euromillones: "Euromilions", elgordo: "El Gordo", loteria_nacional: "Loteria Nacional", once: "un cupó de l'ONCE" }[juego] + ".");
   }
   if (!juego) return { boletos: [], motivo: "No s'ha reconegut ni el joc ni els números a la foto.", texto: T };
-  const b = { juego, fechas: [], apuestas: [], reintegro: null, joker: null, millon: null, numero: null, serie: null, fraccion: null, dudas };
+  const b = { juego, fechas: [], apuestas: [], reintegro: null, joker: null, millon: null, numero: null, serie: null, fraccion: null, decimos: null, sorteig: null, dudas };
   let fechas = ocrFechas(T, hoy);
   const dias = OCR_DIAS_SORTEO[juego];
   const validas = fechas.filter((f) => dias.includes(new Date(f + "T12:00:00").getDay()));
@@ -946,14 +1006,17 @@ function ocrBoleto(texto, hoy) {
   if (!fechas.length) dudas.push("No s'ha llegit la data del sorteig: escriu-la.");
   let m;
   if (juego === "loteria_nacional" || juego === "once") {
-    const sinFechas = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g, " ");
-    const cands = (sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || []).filter((c) => !/^20\d\d\d$/.test(c) || true);
+    const sinFechas = T.replace(/\b\d{1,2}[\/\-.]\d{1,2}[\/\-.]\d{2,4}\b/g, " ").replace(/\b\d{1,2}\s*(?:DE\s+)?(?:ENE|FEB|MAR|ABR|MAY|JUN|JUL|AGO|SEPT?|SET|OCT|NOV|DIC)[A-Z]*\.?\s*(?:DE\s+)?(?:\d{4}|\d{2}\b)?/g, " ");
+    let cands = sinFechas.match(/(?<![\d.,])\d{5}(?![\d.,])/g) || [];
+    // sèrie i número enganxats ("05020174", "5020174"): el número són les 5 últimes xifres
+    if (!cands.length) cands = (sinFechas.match(/(?<![\d.,])\d{6,8}(?![\d.,])/g) || []).map((x) => x.slice(-5));
     const freq = {}; for (const c of cands) freq[c] = (freq[c] || 0) + 1;
     const best = Object.keys(freq).sort((a, c) => freq[c] - freq[a])[0];
     if (best) b.numero = best; else dudas.push("No s'ha llegit el número de 5 xifres: escriu-lo.");
-    if ((m = T.match(/SERIE\D{0,6}(\d{1,3})/))) b.serie = +m[1];
-    if ((m = T.match(/FRACC?ION\D{0,6}(\d{1,2})/))) b.fraccion = +m[1];
-    if (b.serie === null) dudas.push("Revisa la sèrie.");
+    b.serie = ocrSerie(sinFechas, b.numero, juego);
+    if (juego === "loteria_nacional") { b.fraccion = ocrFraccion(sinFechas); b.decimos = ocrDecimos(sinFechas); }
+    b.sorteig = ocrSorteig(T, juego, fechas[0]);
+    if (b.serie === null) dudas.push("No s'ha llegit la sèrie: escriu-la.");
     return { boletos: [b] };
   }
   b.apuestas = ocrApuestas(T, juego);
@@ -977,7 +1040,12 @@ function ocrCombinar(textos, hoy) {
   const delJuego = bs.filter((b) => b.juego === juego);
   const out = Object.assign({}, delJuego[0], { juego });
   out.fechas = voto(delJuego.map((b) => (b.fechas && b.fechas.length ? b.fechas : null))) || [];
-  for (const k of ["reintegro", "joker", "millon", "numero", "serie", "fraccion"]) out[k] = voto(delJuego.map((b) => b[k]));
+  for (const k of ["reintegro", "joker", "millon", "numero", "serie", "fraccion", "decimos"]) out[k] = voto(delJuego.map((b) => b[k]));
+  // tipus de sorteig: el llegit al text (extraordinari, Cuponazo…) mana sobre el deduït per la data
+  if (juego === "once" || juego === "loteria_nacional") {
+    const llegits = res.filter((x) => x.r.boletos[0].juego === juego).map((x) => ocrSorteig(x.t, juego, null)).filter(Boolean);
+    out.sorteig = voto(llegits) || ocrSorteig("", juego, out.fechas[0]);
+  }
   // apuestas: cuántas dice el resguardo ("3 APUESTA(S)") y las más votadas
   let esperadas = null;
   for (const x of res) { const m = x.t.match(/\b(\d{1,2})\s*APUESTA/); if (m && +m[1] >= 1 && +m[1] <= 12) { esperadas = +m[1]; break; } }
@@ -1004,7 +1072,7 @@ function ocrCombinar(textos, hoy) {
   const dudosas = elegidos.filter((e) => e.dudoso).map((e) => elegidos.indexOf(e) + 1);
   // datos en los que las lecturas no coinciden
   const discrepan = [];
-  for (const [k, nom] of [["reintegro", "el reintegrament"], ["joker", "el Joker"], ["millon", "el codi d'El Millón"], ["numero", "el número"], ["serie", "la sèrie"]]) {
+  for (const [k, nom] of [["reintegro", "el reintegrament"], ["joker", "el Joker"], ["millon", "el codi d'El Millón"], ["numero", "el número"], ["serie", "la sèrie"], ["fraccion", "la fracció"]]) {
     const vals = new Set(delJuego.map((b) => b[k]).filter((v) => v !== null && v !== undefined && v !== ""));
     if (vals.size > 1) discrepan.push(nom);
   }
@@ -1014,7 +1082,11 @@ function ocrCombinar(textos, hoy) {
     else if (esperadas && out.apuestas.length < esperadas) dudas.push("El resguard indica " + esperadas + " apostes i només se n'han llegit " + out.apuestas.length + ": afegeix les que faltin.");
     else dudas.push("S'han llegit " + out.apuestas.length + (out.apuestas.length > 1 ? " apostes" : " aposta") + (esperadas ? " (les que indica el resguard)" : "") + ": comprova-les.");
     if (juego !== "euromillones" && out.reintegro === null) dudas.push("No s'ha llegit el reintegrament: escriu-lo.");
-  } else if (!out.numero) dudas.push("No s'ha llegit el número de 5 xifres: escriu-lo.");
+  } else {
+    if (!out.numero) dudas.push("No s'ha llegit el número de 5 xifres: escriu-lo.");
+    if (out.serie === null) dudas.push("No s'ha llegit la sèrie: escriu-la.");
+    if (juego === "loteria_nacional" && out.fraccion === null) dudas.push("No s'ha llegit la fracció: escriu-la si la vols guardar.");
+  }
   if (!out.fechas.length) dudas.push("No s'ha llegit la data del sorteig: escriu-la.");
   if (delJuego.some((b) => b.dudas.some((d) => /nom del joc/.test(d))) && !bs.some((b) => b.juego === juego && !b.dudas.some((d) => /nom del joc/.test(d)))) dudas.push(delJuego[0].dudas.find((d) => /nom del joc/.test(d)));
   if (dudosas.length) dudas.push("Revisa amb atenció l'aposta " + dudosas.join(", ") + ": les lectures no coincideixen del tot.");
@@ -1065,7 +1137,12 @@ async function prepararOCR(file, modo, giro) {
   const im = g.getImageData(0, 0, c.width, c.height), d = im.data, n = d.length / 4;
   const y = new Uint8ClampedArray(n);
   let min = 255, max = 0;
-  for (let i = 0; i < n; i++) { const v = 0.8 * d[i * 4] + 0.2 * (0.587 * d[i * 4 + 1] + 0.114 * d[i * 4 + 2]) / 0.701; y[i] = v; if (v < min) min = v; if (v > max) max = v; } // casi solo canal rojo: lo impreso en rojo desaparece
+  for (let i = 0; i < n; i++) {
+    const r = d[i * 4], gg = d[i * 4 + 1], bb = d[i * 4 + 2];
+    // «lum»: lluminositat normal; «min»: el canal més fosc (text blanc sobre fons de color); per defecte, gairebé només el canal vermell (el que s'imprimeix en vermell desapareix)
+    const v = modo === "lum" ? 0.299 * r + 0.587 * gg + 0.114 * bb : modo === "min" ? Math.min(r, gg, bb) : 0.8 * r + 0.2 * (0.587 * gg + 0.114 * bb) / 0.701;
+    y[i] = v; if (v < min) min = v; if (v > max) max = v;
+  }
   const k = 255 / Math.max(1, max - min);
   for (let i = 0; i < n; i++) y[i] = (y[i] - min) * k;
   const umbral = /^bin(\d+)$/.test(modo) ? +modo.slice(3) : 12;
@@ -1129,9 +1206,15 @@ async function leerConOCR(file, progreso) {
   await pasar([["bin", 0, "11"], ["gris", 0, "4"], ["bin6", 0, "6"], ["bin20", 0, "6"], ["gris", 0, "6", "0123456789.+*: "]], 5, 0);
   let mejor = ocrCombinar(textos, hoyISO());
   const vacia = (r) => !r.boletos.length || !((r.boletos[0].apuestas || []).length || r.boletos[0].numero);
+  const jocMejor = mejor.boletos.length ? mejor.boletos[0].juego : null;
+  if (vacia(mejor) || jocMejor === "once" || jocMejor === "loteria_nacional") {
+    // cupons i dècims en color: dues lectures més pensades per a text blanc o negre sobre fons de color
+    await pasar([["lum", 0, "11"], ["min", 0, "11"]], 7, 5);
+    mejor = ocrCombinar(textos, hoyISO());
+  }
   if (vacia(mejor)) {
     // quizá la foto está de lado
-    await pasar([["bin", 90, "6"], ["bin", 270, "6"]], 7, 5);
+    await pasar([["bin", 90, "6"], ["bin", 270, "6"]], textos.length + 2, textos.length);
     mejor = ocrCombinar(textos, hoyISO());
   }
   const b = mejor.boletos[0];
@@ -1212,13 +1295,15 @@ function marcasNumericas(info) {
   }
   return m;
 }
+// jocs amb resultats automàtics (GitHub Actions i tasca programada)
+const JOCS_AUTO = ["euromillones", "primitiva"];
 function vistaBoleto(t, info) {
   const J = JUEGOS[t.juego];
   const s1 = info.det.length === 1 ? info.det[0].s : null;
   const W = s1 ? uniqInts(s1.numeros) : null, WE = s1 ? uniqInts(s1.estrellas) : null;
   if (t.juego === "loteria_nacional") {
     return el("div", { class: "decimo" },
-      el("div", { class: "dt" }, el("span", { text: "Loteria Nacional" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
+      el("div", { class: "dt" }, el("span", { text: t.sorteig ? "Loteria Nacional · " + t.sorteig : "Loteria Nacional" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
       el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
       el("div", { class: "row", style: "gap:14px;justify-content:flex-end" },
         el("div", { class: "meta" }, el("span", { text: "Sèrie" }), el("b", { text: t.serie != null ? t.serie + "ª" : "—" })),
@@ -1229,7 +1314,7 @@ function vistaBoleto(t, info) {
     return el("div", { class: "cupon" },
       el("div", { class: "stub", text: "Cupó" }),
       el("div", { class: "cb" },
-        el("div", { class: "top" }, el("span", { text: "Sorteig" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
+        el("div", { class: "top" }, el("span", { text: t.sorteig || "Sorteig" }), el("span", { text: (t.fechas || []).map(fechaCorta).join(" · ") || "Sense data" })),
         el("div", { class: "num", "aria-label": "Número " + (t.numero || "") }, digitos(t.numero, marcasNumericas(info))),
         el("div", { class: "ser" }, el("span", { class: "sub", text: "Sèrie" }), el("b", { text: t.serie != null ? String(t.serie).padStart(3, "0") : "—" }), el("div", { class: "bars", style: "flex:1;min-width:80px" }))));
   }
@@ -1298,7 +1383,8 @@ function formBoleto(t) {
   } else {
     f.push(el("div", { class: "grid2" },
       el("label", { class: "fld", for: "n-" + t.id }, el("span", { text: "Número (5 xifres)" }), el("input", { id: "n-" + t.id, class: "mono", inputmode: "numeric", maxlength: "5", value: t.numero || "", oninput: ch((v) => { t.numero = v.replace(/\D/g, ""); }) })),
-      el("label", { class: "fld", for: "s-" + t.id }, el("span", { text: "Sèrie" }), el("input", { id: "s-" + t.id, class: "mono", inputmode: "numeric", value: t.serie ?? "", oninput: ch((v) => { t.serie = toInt(v); }) })),
+      el("label", { class: "fld", for: "s-" + t.id }, el("span", { text: t.juego === "once" ? "Sèrie (3 xifres)" : "Sèrie" }), el("input", { id: "s-" + t.id, class: "mono", inputmode: "numeric", value: t.serie != null ? (t.juego === "once" ? String(t.serie).padStart(3, "0") : t.serie) : "", oninput: ch((v) => { t.serie = toInt(v); }) })),
+      el("label", { class: "fld", for: "ts-" + t.id }, el("span", { text: "Tipus de sorteig" }), el("input", { id: "ts-" + t.id, value: t.sorteig || "", placeholder: t.juego === "once" ? "Cupó diari, Cuponazo, extraordinari…" : "Sorteig de dijous, de Nadal…", oninput: ch((v) => { t.sorteig = v.trim() || null; }) })),
       t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "fr-" + t.id }, el("span", { text: "Fracció" }), el("input", { id: "fr-" + t.id, class: "mono", inputmode: "numeric", value: t.fraccion ?? "", oninput: ch((v) => { t.fraccion = toInt(v); }) })) : null,
       t.juego === "loteria_nacional" ? el("label", { class: "fld", for: "d-" + t.id }, el("span", { text: "Dècims" }), el("input", { id: "d-" + t.id, type: "number", min: "1", max: "100", value: t.decimos || 1, oninput: ch((v) => { t.decimos = Math.max(1, toInt(v) || 1); }) })) : null));
   }
@@ -1316,7 +1402,7 @@ function vistaEstado(t, info) {
       if (!yaCelebrado(t.juego, f)) {
         const esHoy = f === hoyISO();
         return el("div", { class: "est prox" }, el("b", { text: "El sorteig se celebrarà " + cuando(f) + " a les " + hora + "." }),
-          el("span", { class: "sub", text: (modo === "local" ? "Amb l'app oberta, carregarà el resultat oficial tan bon punt es publiqui i t'avisarà." : "Quan surti el resultat, la tasca programada el comprovarà i t'avisarà.") + " Se sol publicar " + publicacionTxt(t.juego, f) + "." }));
+          el("span", { class: "sub", text: !JOCS_AUTO.includes(t.juego) ? "Ara mateix els resultats d'aquest joc no es baixen automàticament (només Euromilions i Primitiva). Si el vols comprovar, demana que s'activi." : (modo === "local" ? "Amb l'app oberta, carregarà el resultat oficial tan bon punt es publiqui i t'avisarà." : "Quan surti el resultat, la tasca programada el comprovarà i t'avisarà.") + " Se sol publicar " + publicacionTxt(t.juego, f) + "." }));
       }
       return el("div", { class: "est espera" }, el("b", { text: "Sorteig celebrat el " + fechaLarga(f) + " a les " + hora + "." }),
         el("span", { class: "sub", text: "Resultats pendents. Se solen publicar " + publicacionTxt(t.juego, f) + "." }),
@@ -1358,8 +1444,8 @@ function panelRevision(t) {
     if (t.juego === "primitiva") filas.push(...dd("Joker", t.joker || "no"));
     if (t.juego === "euromillones") filas.push(...dd("El Millón", t.millon ? t.millon.replace("-", " a ") : "—"));
   } else {
-    filas.push(...dd("Número", t.numero || "—"), ...dd("Sèrie", t.serie != null ? String(t.serie) : "—"));
-    if (t.juego === "loteria_nacional") filas.push(...dd("Fracció", t.fraccion != null ? String(t.fraccion) : "—"));
+    filas.push(...dd("Tipus de sorteig", t.sorteig || "—"), ...dd("Número", t.numero || "—"), ...dd("Sèrie", t.serie != null ? (t.juego === "once" ? String(t.serie).padStart(3, "0") : t.serie + "ª") : "no llegida"));
+    if (t.juego === "loteria_nacional") filas.push(...dd("Fracció", t.fraccion != null ? t.fraccion + "ª" : "—"), ...dd("Dècims", String(t.decimos || 1)));
   }
   return el("div", { class: "tk-revisar" },
     el("p", { class: "rv-tit" }, el("b", { text: "Comprova la lectura" }), " — compara la foto amb els valors llegits."),
@@ -1519,7 +1605,7 @@ function anadirBoletos(arr) {
   for (const t of arr) { tickets.unshift(t); openIds.add(t.id); guardar(t); }
   renderTodo();
   const ya = arr.map((t) => ({ t, i: estadoBoleto(t) })).filter((x) => x.i.det.length);
-  if (ya.length) mostrarAviso("Ja hi ha resultats de " + ya.length + (ya.length > 1 ? " butlletes" : " butlleta"), ya.map((x) => JUEGOS[x.t.juego].nombre + " " + (x.t.fechas || []).map(fechaCorta).join(", ") + ": " + (x.i.T.bruto > 0 ? "premiada amb " + eur(x.i.T.bruto) : x.i.T.pend ? "premiado, importe pendiente" : "sense premi")).join(" · "));
+  if (ya.length) mostrarAviso("Ja hi ha resultats de " + ya.length + (ya.length > 1 ? " butlletes" : " butlleta"), ya.map((x) => JUEGOS[x.t.juego].nombre + " " + (x.t.fechas || []).map(fechaCorta).join(", ") + ": " + (x.i.T.bruto > 0 ? "premiada amb " + eur(x.i.T.bruto) : x.i.T.pend ? "premiada, import pendent" : "sense premi")).join(" · "));
   if (modo === "local") setTimeout(() => cargarResultadosWeb(true), 500);
 }
 
@@ -1612,13 +1698,14 @@ Juegos posibles ("juego"):
 - "primitiva": 6 números (1-49) por apuesta, reintegro (0-9) común, puede llevar Joker (7 cifras). Lunes, jueves y/o sábado.
 - "bonoloto": 6 números (1-49) por apuesta, reintegro (0-9). De lunes a sábado.
 - "elgordo": El Gordo de la Primitiva, 5 números (1-54) por apuesta y número clave (0-9), que va en "reintegro". Domingos.
-- "loteria_nacional": décimo con número de 5 cifras, serie, fracción y fecha del sorteo.
-- "once": cupón de la ONCE con número de 5 cifras, serie (3 cifras) y fecha.
+- "loteria_nacional": décimo con número de 5 cifras, serie, fracción, número de décimos (si lo indica) y fecha del sorteo.
+- "once": cupón de la ONCE con número de 5 cifras, serie (3 cifras, junto al número o junto a la palabra SERIE) y fecha.
+En Lotería Nacional y ONCE pon en "sorteig" el tipo de sorteo en catalán: "Cupó diari", "Cuponazo", "Sueldazo de cap de setmana", "Extraordinari de l'11 de l'11", "Extraordinari d'Estiu", "Sorteig de dijous", "Sorteig de dissabte", "Sorteig de Nadal", "Sorteig del Nen"…
 Las apuestas múltiples tienen más números de lo normal: ponlos todos en la misma apuesta.
 Fechas: TODAS las fechas de sorteo a las que da derecho cada boleto, en AAAA-MM-DD. Si indica fecha inicial y número de sorteos o semanas, calcúlalas con los días de sorteo del juego. Si falta el año, dedúcelo a partir de hoy.
 
 Responde SOLO con JSON con esta forma exacta:
-{"boletos":[{"juego":"euromillones","fechas":["2026-10-27"],"apuestas":[{"numeros":[1,2,3,4,5],"estrellas":[1,2]}],"reintegro":null,"joker":null,"millon":null,"numero":null,"serie":null,"fraccion":null,"dudas":[]}]}
+{"boletos":[{"juego":"euromillones","fechas":["2026-10-27"],"apuestas":[{"numeros":[1,2,3,4,5],"estrellas":[1,2]}],"reintegro":null,"joker":null,"millon":null,"numero":null,"serie":null,"fraccion":null,"decimos":null,"sorteig":null,"dudas":[]}]}
 - "estrellas" solo en Euromillones (en otros juegos, lista vacía). "apuestas" vacía en Lotería Nacional y ONCE.
 - "numero" como texto de 5 cifras, conservando ceros a la izquierda.
 - Si no hay ningún boleto reconocible, responde {"boletos":[],"motivo":"…"}.`;
@@ -1631,7 +1718,8 @@ function normalizarTicket(r, thumb) {
     reintegro: toInt(r.reintegro), joker: r.joker ? String(r.joker).replace(/\D/g, "") : null,
     millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
     numero: r.numero ? String(r.numero).replace(/\D/g, "").padStart(5, "0").slice(-5) : "",
-    serie: toInt(r.serie), fraccion: toInt(r.fraccion), decimos: 1,
+    serie: toInt(r.serie), fraccion: toInt(r.fraccion), decimos: Math.max(1, toInt(r.decimos) || 1),
+    sorteig: r.sorteig ? String(r.sorteig).slice(0, 60) : null,
     dudas: Array.isArray(r.dudas) ? r.dudas.map(String) : [], thumb: thumb || null, creado: new Date().toISOString(), revisar: true,
   };
 }
