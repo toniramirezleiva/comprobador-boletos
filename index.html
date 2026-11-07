@@ -276,6 +276,10 @@ a{color:var(--accent)}
 .grupo-res li .v{font-family:var(--f-mono);font-weight:700;color:var(--ok);white-space:nowrap}
 .grupo-res li.nada{color:var(--muted)} .grupo-res li.pend{color:var(--warn)}
 .grupo-body{display:flex;flex-direction:column;gap:12px;padding:0 10px 12px}
+.dups{display:flex;flex-direction:column;gap:10px;margin-top:12px}
+.dup{display:flex;flex-direction:column;gap:6px;padding:12px 14px;border-radius:12px;border:1px solid var(--warn);background:color-mix(in srgb,var(--warn) 10%,var(--paper));font-size:14px}
+.dup b{color:var(--warn)}
+.tk.resalta{outline:3px solid var(--warn);outline-offset:2px;transition:outline-color .3s}
 .seccio{margin:4px 2px 0;font:700 12px var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
 .seccio-fets{border:1px dashed var(--line);border-radius:14px;background:color-mix(in srgb,var(--paper) 55%,transparent)}
 .seccio-fets>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
@@ -314,6 +318,7 @@ a{color:var(--accent)}
         <button id="btnStop" hidden>Aturar</button>
         <span class="status" id="stLeer"></span>
       </div>
+      <div class="dups" id="dups" hidden></div>
     </div>
   </section>
 
@@ -376,7 +381,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-11-07 · 23:55</span>
+    <span class="mono">Versió 2026-11-08 · 00:20</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -1204,12 +1209,13 @@ async function leerConOCR(file, progreso) {
     progreso("Baixant el lector (només la primera vegada)…");
     const rutas = enWeb ? { workerPath: base + "worker.min.js", corePath: base, langPath: base + "lang", gzip: true } : {};
     try {
-      ocrWorker = await Tesseract.createWorker("spa", 1, Object.assign({ logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } }, rutas));
+      ocrWorker = await Tesseract.createWorker("spa", 1, Object.assign({ logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso && ocrWorker._progreso) ocrWorker._progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } }, rutas));
     } catch (e) {
       if (!enWeb) throw e;
-      ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso) progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
+      ocrWorker = await Tesseract.createWorker("spa", 1, { logger: (m) => { if (m.status === "recognizing text" && ocrWorker && ocrWorker._paso && ocrWorker._progreso) ocrWorker._progreso(ocrWorker._paso + " · " + Math.round(m.progress * 100) + " %"); } });
     }
   }
+  ocrWorker._progreso = progreso; // cada foto actualitza el seu propi missatge
   const textos = [], fallos = [];
   const pasar = async (lista, total, desde) => {
     for (let i = 0; i < lista.length; i++) {
@@ -1253,6 +1259,7 @@ async function leerConOCR(file, progreso) {
     if (lineas.length) { b.numero = lineas[0]; b.dudas = b.dudas.filter((x) => !/5 xifres/.test(x)); }
   }
   mejor.textoLeido = textos.join("\n----\n").slice(0, 4000);
+  ocrWorker._progreso = null; ocrWorker._paso = null;
   return mejor;
 }
 
@@ -1663,6 +1670,57 @@ function anadirBoletos(arr) {
   if (modo === "local") setTimeout(() => cargarResultadosWeb(true), 500);
 }
 
+// ---------- Butlletes repetides ----------
+// Empremta de les dades que identifiquen una butlleta (sense l'ordre de les apostes ni de les dates)
+function empremta(t) {
+  const f = (t.fechas || []).slice().sort().join(",");
+  if (t.juego === "once" || t.juego === "loteria_nacional") return [t.juego, f, t.numero || "", t.serie ?? "", t.juego === "loteria_nacional" ? t.fraccion ?? "" : ""].join("|");
+  const ap = (t.apuestas || []).map((a) => (a.numeros || []).slice().sort((x, y) => x - y).join(".") + "+" + (a.estrellas || []).slice().sort((x, y) => x - y).join(".")).sort().join("/");
+  return [t.juego, f, ap, t.reintegro ?? "", t.joker || "", t.millon || ""].join("|");
+}
+// Semblant: mateix joc i data, i el mateix número (ONCE/Loteria) o almenys la meitat de les apostes iguals (per si el lector s'ha equivocat en alguna xifra)
+function semblant(a, b) {
+  if (a.juego !== b.juego) return false;
+  const fa = new Set(a.fechas || []);
+  if (!(b.fechas || []).some((x) => fa.has(x))) return false;
+  if (a.juego === "once" || a.juego === "loteria_nacional") return !!a.numero && a.numero === b.numero && (a.serie == null || b.serie == null || a.serie === b.serie);
+  const k = (x) => (x.numeros || []).slice().sort((p, q) => p - q).join(".") + "+" + (x.estrellas || []).slice().sort((p, q) => p - q).join(".");
+  const sa = new Set((a.apuestas || []).map(k)), kb = (b.apuestas || []).map(k);
+  const iguals = kb.filter((x) => sa.has(x)).length;
+  return iguals > 0 && iguals * 2 >= Math.max(sa.size, kb.length);
+}
+function buscarDuplicada(t, mesos) {
+  const e = empremta(t), tots = lista().concat(mesos || []).filter((x) => !x.ejemplo && x.id !== t.id);
+  const exacta = tots.find((x) => empremta(x) === e);
+  if (exacta) return { t: exacta, exacta: true };
+  const s = tots.find((x) => semblant(t, x));
+  return s ? { t: s, exacta: false } : null;
+}
+let duplicades = [];
+function descripcioCurta(t) {
+  const f = (t.fechas || []).map(fechaCorta).join(", ") || "sense data";
+  const det = t.juego === "once" || t.juego === "loteria_nacional" ? " · núm. " + (t.numero || "?") + (t.serie != null ? " sèrie " + (t.juego === "once" ? String(t.serie).padStart(3, "0") : t.serie) : "") : " · " + (t.apuestas || []).length + ((t.apuestas || []).length === 1 ? " aposta" : " apostes");
+  return JUEGOS[t.juego].nombre + " del " + f + det;
+}
+function renderDuplicades() {
+  const box = $("dups");
+  box.hidden = !duplicades.length;
+  box.replaceChildren(...duplicades.map((d, i) => el("div", { class: "dup" },
+    el("b", { text: d.ja.exacta ? "Aquesta butlleta ja està carregada" : "Sembla que aquesta butlleta ja està carregada" }),
+    el("span", { text: descripcioCurta(d.t) + (d.ja.exacta ? ". Té exactament les mateixes dades que una que ja tens." : ". N'hi ha una de molt semblant (mateix joc, data i " + (d.t.juego === "once" || d.t.juego === "loteria_nacional" ? "número" : "apostes") + ").") + " Et proposo no tornar-la a afegir." }),
+    el("div", { class: "row" },
+      el("button", { class: "small primary", onclick: () => { duplicades.splice(i, 1); renderDuplicades(); } }, "No l'afegeixis"),
+      el("button", { class: "small", onclick: () => veureButlleta(d.ja.t) }, "Veure la que ja tinc"),
+      el("button", { class: "small", onclick: () => { duplicades.splice(i, 1); renderDuplicades(); anadirBoletos([d.t]); } }, "Afegir-la igualment")))));
+}
+function veureButlleta(t) {
+  const c = cards.get(t.id); if (!c) return;
+  let n = c.art.parentElement;
+  while (n && n !== document.body) { if (n.tagName === "DETAILS") n.open = true; n = n.parentElement; }
+  c.art.scrollIntoView({ behavior: "smooth", block: "start" });
+  c.art.classList.add("resalta"); setTimeout(() => c.art.classList.remove("resalta"), 2200);
+}
+
 // ---------- Fotos ----------
 function anadirFotos(files) {
   for (const f of files) {
@@ -1809,9 +1867,14 @@ $("btnLeer").onclick = async () => {
         }
         if (!bs.length) { q.estado = "error"; q.msg = "No reconeguda"; manejarError(new Error("No es reconeix cap butlleta" + (r && r.motivo ? ": " + r.motivo : "")), "Llegir la foto " + (q.nombre || ""), "Fes una altra foto més a prop, amb llum i sense reflexos, o escriu-la a mà."); continue; }
         const th = await miniatura(q.file);
-        const nuevos = bs.map((b) => normalizarTicket(b, th));
-        anadirBoletos(nuevos); leidos += nuevos.length;
-        q.estado = "hecho"; q.msg = nuevos.length + (nuevos.length > 1 ? " butlletes" : " butlleta");
+        const llegits = bs.map((b) => normalizarTicket(b, th));
+        // no tornar a carregar una butlleta que ja hi és: es proposa no afegir-la
+        const nuevos = [], repetits = [];
+        for (const t of llegits) { const ja = buscarDuplicada(t, nuevos); if (ja) repetits.push({ t, ja }); else nuevos.push(t); }
+        if (nuevos.length) { anadirBoletos(nuevos); leidos += nuevos.length; }
+        if (repetits.length) { duplicades.push(...repetits); renderDuplicades(); }
+        q.estado = "hecho";
+        q.msg = nuevos.length ? nuevos.length + (nuevos.length > 1 ? " butlletes" : " butlleta") + (repetits.length ? " (+" + repetits.length + " ja carregada)" : "") : "Ja carregada";
       } catch (e) {
         if (e && e.code === "cancelled") { q.estado = "espera"; q.msg = "En espera"; break; }
         q.estado = "error"; q.msg = "Error: " + String((e && (e.message || e.code)) || e).slice(0, 80);
@@ -1822,7 +1885,7 @@ $("btnLeer").onclick = async () => {
     }
   } finally {
     ctlLeer = null; $("btnStop").hidden = true;
-    $("stLeer").textContent = leidos ? leidos + " butlleta(es) afegides. Revisa que les dades coincideixin amb el paper." : "";
+    $("stLeer").textContent = leidos ? leidos + " butlleta(es) afegides. Revisa que les dades coincideixin amb el paper." : duplicades.length ? "No s'ha afegit res: la butlleta ja hi era." : "";
     renderQueue();
     setTimeout(() => { queue = queue.filter((q) => q.estado !== "hecho"); renderQueue(); }, 4000);
   }
