@@ -366,7 +366,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-11-07 · 11:30</span>
+    <span class="mono">Versió 2026-11-07 · 12:20</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -755,6 +755,22 @@ function iniciarLocal() {
   setSaveState(lsOK ? "Desat en aquest navegador" : "Sense desament permanent");
   renderTodoFull(); renderSaved(); renderQueue();
   cargarResultadosWeb(true); setInterval(() => cargarResultadosWeb(false), 30000);
+  comprovarVersioNova();
+}
+// ---------- Actualització automàtica de la versió web (el navegador pot tenir guardada una versió antiga) ----------
+async function comprovarVersioNova() {
+  if (!/^https?:$/.test(location.protocol)) return;
+  try {
+    const actual = (document.querySelector("footer .mono") || {}).textContent || "";
+    const r = await fetch(location.pathname + "?v=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) return;
+    const m = (await r.text()).match(/Versió [^<]+/);
+    if (!m || m[0].trim() === actual.trim()) return;
+    let fet = null; try { fet = sessionStorage.getItem("cb.recarregat"); } catch (_) {}
+    if (fet === m[0]) return; // ja s'ha intentat: no entrar en bucle
+    try { sessionStorage.setItem("cb.recarregat", m[0]); } catch (_) {}
+    location.replace(location.pathname + "?v=" + Date.now());
+  } catch (_) {}
 }
 // ---------- Resultados oficiales publicados (versión web) ----------
 const RES_URLS = ["https://toniramirezleiva.github.io/comprobador-boletos/resultados.json", "https://raw.githubusercontent.com/toniramirezleiva/comprobador-boletos/main/resultados.json"];
