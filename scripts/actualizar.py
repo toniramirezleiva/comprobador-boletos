@@ -27,12 +27,18 @@ CAT_PRI = ["especial", "1", "2", "3", "4", "5", "R"]
 CAT_BON = ["1", "2", "3", "4", "5", "R"]
 CAT_GOR = ["5+C", "5", "4+C", "4", "3+C", "3", "2+C", "2", "R"]
 SELAE = {"EMIL": "euromillones", "LAPR": "primitiva", "BONO": "bonoloto", "ELGR": "elgordo", "LNAC": "loteria_nacional"}
-# Jocs que es comproven (per ara, només Euromilions i Primitiva). Per afegir-ne: JOCS="EMIL,LAPR,BONO,ELGR,LNAC,ONCE"
-JOCS = [j.strip() for j in os.environ.get("JOCS", "EMIL,LAPR").split(",") if j.strip()]
+# Jocs que es comproven: Euromilions, Primitiva i els sortejos extraordinaris de l'ONCE (ONCEX).
+# Per afegir-ne: JOCS="EMIL,LAPR,BONO,ELGR,LNAC,ONCE,ONCEX"
+JOCS = [j.strip() for j in os.environ.get("JOCS", "EMIL,LAPR,ONCEX").split(",") if j.strip()]
 ONCE_PAGINAS = {
     "Cupón Diario": "https://www.juegosonce.es/resultados-cupon-diario",
     "Cuponazo": "https://www.juegosonce.es/resultados-cuponazo",
     "Sueldazo Fin de Semana": "https://www.juegosonce.es/resultados-sueldazo-fin-de-semana",
+}
+# Sortejos extraordinaris: es desen amb id "once_<data>_extra" per no barrejar-los amb el cupó diari del mateix dia
+ONCE_EXTRA = {
+    "Extraordinario 11/11": "https://www.juegosonce.es/resultados-once-del-once-de-la-once",
+    "Cupón Extra de Navidad": "https://www.juegosonce.es/resultados-sorteo-once-cupon-extra-navidad",
 }
 MESES = {m: i + 1 for i, m in enumerate(["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"])}
 OFFLINE = sys.argv[sys.argv.index("--offline") + 1] if "--offline" in sys.argv else None
@@ -184,7 +190,7 @@ def convertir_once(producto, texto_html):
     t = html.unescape(re.sub(r"<[^>]+>", "\n", t))
     t = re.sub(r"[ \t\xa0]+", " ", t)
     t = re.sub(r"\n\s*\n+", "\n", t)
-    m = re.search(r"[ÚU]ltimo sorteo celebrado el \w+, (\d{1,2}) de (\w+) de (\d{4})", t)
+    m = re.search(r"(?:[ÚU]ltimo sorteo celebrado el|Resultados del [^\n]*?(?:de hoy|del)) \w+, (\d{1,2}) de (\w+) de (\d{4})", t)
     if not m:
         return None
     fecha = dt.date(int(m.group(3)), MESES[m.group(2).lower()], int(m.group(1))).isoformat()
@@ -192,8 +198,12 @@ def convertir_once(producto, texto_html):
     if not m2:
         return None
     numero, serie = m2.group(1), int(m2.group(2))
-    s = base("once", fecha, ONCE_PAGINAS[producto])
+    extra = producto in ONCE_EXTRA
+    s = base("once", fecha, ONCE_EXTRA[producto] if extra else ONCE_PAGINAS[producto])
     s["titulo"] = producto
+    if extra:
+        s["id"] += "_extra"
+        s["extra"] = True
     s["acumulables"] = False
     i = t.find("Premios de")
     j = t.find("no son acumulables", i)
@@ -275,8 +285,10 @@ def main():
                     nuevos.append(s)
             except Exception as e:
                 avisos.append(f"{game} {d.get('fecha_sorteo')}: {e!r}"[:200])
-    for prod, url in (ONCE_PAGINAS.items() if "ONCE" in JOCS else []):
-        clave = {"Cupón Diario": "ONCE_html", "Cuponazo": "ONCE_cuponazo_html", "Sueldazo Fin de Semana": "ONCE_sueldazo_html"}[prod]
+    paginas = (list(ONCE_PAGINAS.items()) if "ONCE" in JOCS else []) + (list(ONCE_EXTRA.items()) if "ONCEX" in JOCS else [])
+    for prod, url in paginas:
+        clave = {"Cupón Diario": "ONCE_html", "Cuponazo": "ONCE_cuponazo_html", "Sueldazo Fin de Semana": "ONCE_sueldazo_html",
+                 "Extraordinario 11/11": "ONCE_11del11_html", "Cupón Extra de Navidad": "ONCE_navidad_html"}[prod]
         try:
             s = convertir_once(prod, descargar(url, clave))
             if s:

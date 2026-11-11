@@ -381,7 +381,7 @@ a{color:var(--accent)}
   </details>
 
   <footer>
-    <span class="mono">Versió 2026-11-08 · 00:20</span>
+    <span class="mono">Versió 2026-11-11 · 23:10</span>
     <span>Els imports surten de les dades dels sortejos desades a l'app. Per cobrar, l'única llista vàlida és l'oficial de Loterías y Apuestas del Estado o de l'ONCE.</span>
     <span>Gravamen: els premis de més de 40.000 € tributen un 20 % sobre el que excedeix d'aquesta quantitat (estimació orientativa).</span>
   </footer>
@@ -707,7 +707,7 @@ function mostrarAviso(titulo, texto) {
   try { if (window.Notification && Notification.permission === "granted") new Notification(titulo, { body: texto }); } catch (_) {}
 }
 function avisarSorteo(s, antes) {
-  const afect = tickets.filter((t) => t.juego === s.juego && (t.fechas || []).includes(s.fecha));
+  const afect = tickets.filter((t) => sorteoDeButlleta(s, t) && (t.fechas || []).includes(s.fecha));
   if (!afect.length) return;
   const partes = afect.map((t, i) => {
     const r = evaluar(t, s), T = totales(r.lineas.filter((l) => !l.informativo));
@@ -723,7 +723,7 @@ const buscando = new Set(), ultimoIntento = new Map();
 function pendientesBusqueda() {
   const out = new Map(), now = Date.now();
   for (const t of tickets) for (const f of t.fechas || []) {
-    const s = buscarSorteo(t.juego, f); if (s && s.completo !== false) continue;
+    const s = buscarSorteo(t.juego, f, t); if (s && s.completo !== false) continue;
     const ini = new Date(f + "T" + horaSorteo(t.juego, f) + ":00").getTime() + (PUB_MIN[t.juego] || 20) * 60000;
     if (now < ini || now - ini > 7 * 864e5) continue;
     out.set(t.juego + "_" + f, { juego: t.juego, fecha: f, ini });
@@ -815,7 +815,7 @@ async function cargarResultadosWeb(forzar) {
     if (!r || !JUEGOS[r.juego] || !/^\d{4}-\d{2}-\d{2}$/.test(String(r.fecha || ""))) continue;
     const s = normalizarSorteo(r, r.fuente ? String(r.fuente) : "Resultats oficials");
     s.actualizado = r.actualizado || s.actualizado;
-    const antes = buscarSorteo(s.juego, s.fecha);
+    const antes = todosSorteos().find((x) => x.id === s.id);
     if (antes && antes.completo === s.completo && JSON.stringify(antes.numeros) === JSON.stringify(s.numeros) && JSON.stringify(antes.premios) === JSON.stringify(s.premios) && JSON.stringify(antes.premiosNumericos) === JSON.stringify(s.premiosNumericos)) continue;
     sorteosLocal = sorteosLocal.filter((x) => x.id !== s.id).concat(s); cambios++;
     avisarSorteo(s, antes);
@@ -1271,7 +1271,10 @@ $("btnNotif").onclick = async () => {
 
 // ---------- Sorteos ----------
 const todosSorteos = () => { const m = new Map(); for (const s of sorteosDB) m.set(s.id, s); for (const s of sorteosLocal) m.set(s.id, s); return [...m.values()].sort((a, b) => (a.fecha < b.fecha ? 1 : -1)); };
-const buscarSorteo = (j, f) => todosSorteos().find((s) => s.juego === j && s.fecha === f);
+// ONCE: el mateix dia hi pot haver el cupó diari i un sorteig extraordinari (id "…_extra"); cada butlleta va amb el seu
+const esExtra = (t) => !!t && t.juego === "once" && /extraordinari/i.test(t.sorteig || "");
+const sorteoDeButlleta = (s, t) => s.juego === t.juego && (t.juego !== "once" || !!s.extra === esExtra(t));
+const buscarSorteo = (j, f, t) => todosSorteos().find((s) => s.juego === j && s.fecha === f && (!t || sorteoDeButlleta(s, t)));
 function horaSorteo(j, f) {
   const dow = new Date(f + "T12:00:00").getDay();
   return { euromillones: "21:00", primitiva: "21:40", bonoloto: "21:30", elgordo: "21:40", once: "21:25", loteria_nacional: dow === 6 ? "13:00" : "21:00" }[j] || "21:00";
@@ -1295,7 +1298,7 @@ function estadoBoleto(t) {
   const fechas = t.fechas || [];
   const det = [], faltan = [], futuros = [];
   for (const f of fechas) {
-    const s = buscarSorteo(t.juego, f);
+    const s = buscarSorteo(t.juego, f, t);
     if (s) det.push({ s, r: evaluar(t, s) });
     else if (yaCelebrado(t.juego, f)) faltan.push(f); else futuros.push(f);
   }
@@ -1435,7 +1438,7 @@ function vistaEstado(t, info) {
       if (!yaCelebrado(t.juego, f)) {
         const esHoy = f === hoyISO();
         return el("div", { class: "est prox" }, el("b", { text: "El sorteig se celebrarà " + cuando(f) + " a les " + hora + "." }),
-          el("span", { class: "sub", text: !JOCS_AUTO.includes(t.juego) ? "Ara mateix els resultats d'aquest joc no es baixen automàticament (només Euromilions i Primitiva). Si el vols comprovar, demana que s'activi." : (modo === "local" ? "Amb l'app oberta, carregarà el resultat oficial tan bon punt es publiqui i t'avisarà." : "Quan surti el resultat, la tasca programada el comprovarà i t'avisarà.") + " Se sol publicar " + publicacionTxt(t.juego, f) + "." }));
+          el("span", { class: "sub", text: !JOCS_AUTO.includes(t.juego) && !esExtra(t) ? "Ara mateix els resultats d'aquest joc no es baixen automàticament (només Euromilions, Primitiva i els extraordinaris de l'ONCE). Si el vols comprovar, demana que s'activi." : (modo === "local" ? "Amb l'app oberta, carregarà el resultat oficial tan bon punt es publiqui i t'avisarà." : "Quan surti el resultat, la tasca programada el comprovarà i t'avisarà.") + " Se sol publicar " + publicacionTxt(t.juego, f) + "." }));
       }
       return el("div", { class: "est espera" }, el("b", { text: "Sorteig celebrat el " + fechaLarga(f) + " a les " + hora + "." }),
         el("span", { class: "sub", text: "Resultats pendents. Se solen publicar " + publicacionTxt(t.juego, f) + "." }),
@@ -1923,7 +1926,7 @@ function normalizarSorteo(r, fuente) {
   const num = (x) => (x === null || x === undefined || x === "" || isNaN(Number(x)) ? null : Number(x));
   const premios = {}; for (const [k, v] of Object.entries(r.premios || {})) premios[k] = num(v);
   return {
-    id: r.juego + "_" + r.fecha, juego: r.juego, fecha: r.fecha, titulo: r.titulo || "",
+    id: r.juego + "_" + r.fecha + (r.extra ? "_extra" : ""), extra: !!r.extra, juego: r.juego, fecha: r.fecha, titulo: r.titulo || "",
     numeros: uniqInts(r.numeros), estrellas: uniqInts(r.estrellas), complementario: toInt(r.complementario), reintegro: toInt(r.reintegro),
     joker: r.joker ? String(r.joker).replace(/\D/g, "") : null, millon: r.millon ? String(r.millon).replace(/\s/g, "").toUpperCase() : null,
     premios, premiosNumericos: (r.premiosNumericos || []).map((p) => ({ concepto: String(p.concepto || "Premi"), tipo: String(p.tipo || "exacto"), valor: String(p.valor || "").replace(/\D/g, ""), serie: toInt(p.serie), importe: num(p.importe) })),

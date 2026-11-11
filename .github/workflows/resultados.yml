@@ -1,5 +1,5 @@
 name: Actualizar resultados oficiales
-# Per ara només es comproven l'Euromilions (divendres) i la Primitiva (dissabte).
+# Es comproven l'Euromilions (divendres), la Primitiva (dissabte) i els sortejos extraordinaris de l'ONCE.
 # GitHub salta sovint les tasques programades; per això cada nit té diverses arrencades de
 # reserva i la primera que arrenca es queda vigilant (scripts/vigilar.py).
 # Hores en UTC (Madrid = UTC+1 a l'hivern, UTC+2 a l'estiu).
@@ -8,6 +8,8 @@ on:
     - cron: "41 18 * * 5,6"          # divendres i dissabte: vigilància nocturna (fins a les 00:40 UTC)
     - cron: "13 19,20,21,22 * * 5,6" # reserves de la vigilància
     - cron: "17 6,8,10 * * 6,0"      # dissabte i diumenge al matí: escrutinis endarrerits
+    - cron: "23 21 * * *"            # cada nit: extraordinaris de l'ONCE (11 de l'11, Nadal…)
+    - cron: "37 7 * * *"             # cada matí: repàs
   workflow_dispatch:
   push:
     branches: [main]
@@ -22,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 355
     env:
-      JOCS: "EMIL,LAPR"
+      JOCS: "EMIL,LAPR,ONCEX"
     steps:
       - uses: actions/checkout@v4
       - name: Vigilar i publicar resultats

@@ -11,4 +11,4 @@ Los datos son orientativos. Para cobrar, la única lista válida es la oficial d
 
 ## Com s'actualitzen els resultats
 
-Un procés automàtic de GitHub Actions (`.github/workflows/resultados.yml`) consulta les fonts oficials de Loterías y Apuestas del Estado. Per ara només es comproven l'**Euromilions dels divendres** i la **Primitiva dels dissabtes**: aquelles nits el procés vigila fins a la 1:40 i consulta cada 3 minuts, i el matí següent fa unes quantes passades més per als escrutinis endarrerits. Per afegir-hi altres jocs, cal ampliar la variable `JOCS` del flux. No té cap cost.
+Un procés automàtic de GitHub Actions (`.github/workflows/resultados.yml`) consulta les fonts oficials de Loterías y Apuestas del Estado. Es comproven l'**Euromilions dels divendres**, la **Primitiva dels dissabtes** i els **sortejos extraordinaris de l'ONCE** (11 de l'11, Nadal): aquelles nits el procés vigila fins a la 1:40 i consulta cada 3 minuts, i el matí següent fa unes quantes passades més per als escrutinis endarrerits. Per afegir-hi altres jocs, cal ampliar la variable `JOCS` del flux. No té cap cost.
