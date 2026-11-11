@@ -1,6 +1,302 @@
 {
- "actualizado": "2026-11-07T23:15:16+01:00",
+ "actualizado": "2026-11-11T22:49:07+01:00",
  "sorteos": [
+  {
+   "id": "once_2026-11-11_extra",
+   "juego": "once",
+   "fecha": "2026-11-11",
+   "titulo": "Extraordinario 11/11",
+   "numeros": [],
+   "estrellas": [],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": null,
+   "premios": {},
+   "premiosNumericos": [
+    {
+     "concepto": "5 cifras y serie",
+     "tipo": "exacto",
+     "valor": "69944",
+     "serie": 48,
+     "importe": 11000000.0
+    },
+    {
+     "concepto": "5 cifras",
+     "tipo": "exacto",
+     "valor": "69944",
+     "serie": null,
+     "importe": 50000.0
+    },
+    {
+     "concepto": "4 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "9944",
+     "serie": null,
+     "importe": 1200.0
+    },
+    {
+     "concepto": "3 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "944",
+     "serie": null,
+     "importe": 120.0
+    },
+    {
+     "concepto": "2 últimas cifras",
+     "tipo": "terminacion",
+     "valor": "44",
+     "serie": null,
+     "importe": 12.0
+    },
+    {
+     "concepto": "Última cifra",
+     "tipo": "terminacion",
+     "valor": "4",
+     "serie": null,
+     "importe": 6.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "22131",
+     "serie": 14,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "25989",
+     "serie": 83,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "28253",
+     "serie": 92,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "46994",
+     "serie": 112,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "56204",
+     "serie": 105,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "56579",
+     "serie": 3,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "56738",
+     "serie": 43,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "62087",
+     "serie": 116,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "62261",
+     "serie": 115,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "77935",
+     "serie": 95,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras y serie (número adicional)",
+     "tipo": "exacto",
+     "valor": "88571",
+     "serie": 25,
+     "importe": 1000000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "22131",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "25989",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "28253",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "46994",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "56204",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "56579",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "56738",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "62087",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "62261",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "77935",
+     "serie": null,
+     "importe": 2000.0
+    },
+    {
+     "concepto": "5 cifras (número adicional)",
+     "tipo": "exacto",
+     "valor": "88571",
+     "serie": null,
+     "importe": 2000.0
+    }
+   ],
+   "acumulables": false,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Número 69944, serie 048. Números adicionales: 22131 serie 014, 25989 serie 083, 28253 serie 092, 46994 serie 112, 56204 serie 105, 56579 serie 003, 56738 serie 043, 62087 serie 116, 62261 serie 115, 77935 serie 095, 88571 serie 025. En un mismo cupón no se acumulan premios.",
+   "fuente": "https://www.juegosonce.es/resultados-once-del-once-de-la-once",
+   "actualizado": "2026-11-11T22:49:05+01:00",
+   "extra": true
+  },
+  {
+   "id": "euromillones_2026-11-10",
+   "juego": "euromillones",
+   "fecha": "2026-11-10",
+   "titulo": "Sorteo 90",
+   "numeros": [
+    15,
+    18,
+    31,
+    37,
+    41
+   ],
+   "estrellas": [
+    1,
+    5
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "HJL03816",
+   "premios": {
+    "5+2": 141899445.0,
+    "5+1": 369732.75,
+    "5": 57608.42,
+    "4+2": 1682.21,
+    "4+1": 135.28,
+    "3+2": 70.88,
+    "4": 47.8,
+    "2+2": 15.67,
+    "3+1": 12.7,
+    "3": 10.59,
+    "1+2": 7.13,
+    "2+1": 5.98,
+    "2": 4.31
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-11T22:49:02+01:00"
+  },
+  {
+   "id": "primitiva_2026-11-09",
+   "juego": "primitiva",
+   "fecha": "2026-11-09",
+   "titulo": "",
+   "numeros": [
+    1,
+    6,
+    14,
+    23,
+    30,
+    39
+   ],
+   "estrellas": [],
+   "complementario": 36,
+   "reintegro": 2,
+   "joker": "2369520",
+   "millon": null,
+   "premios": {
+    "especial": null,
+    "1": null,
+    "2": 7200.88,
+    "3": 1868.15,
+    "4": 49.55,
+    "5": 8.0,
+    "R": 1.0
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-11T22:49:03+01:00"
+  },
   {
    "id": "primitiva_2026-11-07",
    "juego": "primitiva",
