@@ -1,6 +1,49 @@
 {
- "actualizado": "2026-11-13T02:56:44+01:00",
+ "actualizado": "2026-11-14T00:50:02+01:00",
  "sorteos": [
+  {
+   "id": "euromillones_2026-11-13",
+   "juego": "euromillones",
+   "fecha": "2026-11-13",
+   "titulo": "Sorteo 91",
+   "numeros": [
+    16,
+    27,
+    32,
+    41,
+    45
+   ],
+   "estrellas": [
+    2,
+    12
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "HJV00197",
+   "premios": {
+    "5+2": null,
+    "5+1": 175411.76,
+    "5": 20498.31,
+    "4+2": 1702.59,
+    "4+1": 131.6,
+    "3+2": 78.75,
+    "4": 41.36,
+    "2+2": 18.44,
+    "3+1": 13.65,
+    "3": 10.12,
+    "1+2": 8.59,
+    "2+1": 6.55,
+    "2": 4.31
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-14T00:49:57+01:00"
+  },
   {
    "id": "primitiva_2026-11-12",
    "juego": "primitiva",
