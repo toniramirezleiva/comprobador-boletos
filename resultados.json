@@ -1,6 +1,41 @@
 {
- "actualizado": "2026-11-14T23:42:40+01:00",
+ "actualizado": "2026-11-17T04:59:17+01:00",
  "sorteos": [
+  {
+   "id": "primitiva_2026-11-16",
+   "juego": "primitiva",
+   "fecha": "2026-11-16",
+   "titulo": "",
+   "numeros": [
+    8,
+    9,
+    17,
+    34,
+    43,
+    48
+   ],
+   "estrellas": [],
+   "complementario": 29,
+   "reintegro": 0,
+   "joker": "6436393",
+   "millon": null,
+   "premios": {
+    "especial": 10925401.24,
+    "1": 733749.98,
+    "2": 118986.48,
+    "3": 2451.03,
+    "4": 58.06,
+    "5": 8.0,
+    "R": 1.0
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-17T04:59:13+01:00"
+  },
   {
    "id": "primitiva_2026-11-14",
    "juego": "primitiva",
