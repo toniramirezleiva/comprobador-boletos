@@ -1,6 +1,49 @@
 {
- "actualizado": "2026-11-20T03:24:49+01:00",
+ "actualizado": "2026-11-21T01:09:40+01:00",
  "sorteos": [
+  {
+   "id": "euromillones_2026-11-20",
+   "juego": "euromillones",
+   "fecha": "2026-11-20",
+   "titulo": "Sorteo 93",
+   "numeros": [
+    8,
+    21,
+    24,
+    36,
+    49
+   ],
+   "estrellas": [
+    1,
+    8
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "HPB41745",
+   "premios": {
+    "5+2": null,
+    "5+1": 312267.03,
+    "5": 11227.99,
+    "4+2": 1377.7,
+    "4+1": 125.94,
+    "3+2": 61.91,
+    "4": 38.81,
+    "2+2": 15.01,
+    "3+1": 11.85,
+    "3": 9.76,
+    "1+2": 7.18,
+    "2+1": 5.78,
+    "2": 4.1
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-21T01:09:35+01:00"
+  },
   {
    "id": "primitiva_2026-11-19",
    "juego": "primitiva",
