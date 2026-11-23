@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-23T21:56:02+01:00",
+ "actualizado": "2026-11-23T22:14:31+01:00",
  "sorteos": [
   {
    "id": "primitiva_2026-11-23",
@@ -21,20 +21,20 @@
    "millon": null,
    "premios": {
     "especial": null,
-    "1": null,
-    "2": null,
-    "3": null,
-    "4": null,
-    "5": null,
-    "R": null
+    "1": 687862.39,
+    "2": 55772.63,
+    "3": 2493.9,
+    "4": 61.31,
+    "5": 8.0,
+    "R": 1.0
    },
    "premiosNumericos": [],
    "acumulables": true,
    "precioDecimo": null,
-   "completo": false,
+   "completo": true,
    "notas": "",
    "fuente": "https://www.loteriasyapuestas.es/es/resultados",
-   "actualizado": "2026-11-23T21:55:58+01:00"
+   "actualizado": "2026-11-23T22:14:27+01:00"
   },
   {
    "id": "primitiva_2026-11-21",
