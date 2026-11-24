@@ -1,5 +1,5 @@
 {
- "actualizado": "2026-11-24T21:26:25+01:00",
+ "actualizado": "2026-11-24T22:12:36+01:00",
  "sorteos": [
   {
    "id": "euromillones_2026-11-24",
@@ -23,26 +23,26 @@
    "millon": "HRP50707",
    "premios": {
     "5+2": null,
-    "5+1": null,
+    "5+1": 486463.07,
     "5": null,
-    "4+2": null,
-    "4+1": null,
-    "3+2": null,
-    "4": null,
-    "2+2": null,
-    "3+1": null,
-    "3": null,
-    "1+2": null,
-    "2+1": null,
-    "2": null
+    "4+2": 14910.75,
+    "4+1": 146.59,
+    "3+2": 73.52,
+    "4": 51.01,
+    "2+2": 15.64,
+    "3+1": 12.22,
+    "3": 10.91,
+    "1+2": 6.98,
+    "2+1": 5.48,
+    "2": 4.31
    },
    "premiosNumericos": [],
    "acumulables": true,
    "precioDecimo": null,
-   "completo": false,
+   "completo": true,
    "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
    "fuente": "https://www.loteriasyapuestas.es/es/resultados",
-   "actualizado": "2026-11-24T21:26:20+01:00"
+   "actualizado": "2026-11-24T22:12:31+01:00"
   },
   {
    "id": "primitiva_2026-11-23",
