@@ -1,6 +1,49 @@
 {
- "actualizado": "2026-11-27T04:40:38+01:00",
+ "actualizado": "2026-11-28T02:38:34+01:00",
  "sorteos": [
+  {
+   "id": "euromillones_2026-11-27",
+   "juego": "euromillones",
+   "fecha": "2026-11-27",
+   "titulo": "Sorteo 95",
+   "numeros": [
+    12,
+    17,
+    26,
+    34,
+    38
+   ],
+   "estrellas": [
+    5,
+    9
+   ],
+   "complementario": null,
+   "reintegro": null,
+   "joker": null,
+   "millon": "HRF32442",
+   "premios": {
+    "5+2": null,
+    "5+1": 110077.58,
+    "5": 17151.3,
+    "4+2": 601.0,
+    "4+1": 90.84,
+    "3+2": 37.6,
+    "4": 34.39,
+    "2+2": 10.52,
+    "3+1": 9.67,
+    "3": 8.95,
+    "1+2": 5.32,
+    "2+1": 5.08,
+    "2": 3.99
+   },
+   "premiosNumericos": [],
+   "acumulables": true,
+   "precioDecimo": null,
+   "completo": true,
+   "notas": "Importes por acertante en España. 5+2: bote o sin acertantes.",
+   "fuente": "https://www.loteriasyapuestas.es/es/resultados",
+   "actualizado": "2026-11-28T02:38:29+01:00"
+  },
   {
    "id": "primitiva_2026-11-26",
    "juego": "primitiva",
